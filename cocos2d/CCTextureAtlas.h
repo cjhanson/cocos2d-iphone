@@ -47,8 +47,8 @@
 	GLushort			*indices_;
 	CCTexture2D			*texture_;
 #if CC_USES_VBO
-	GLuint				buffersVBO_[2]; //0: vertex  1: indices
-	BOOL				dirty_; //indicates whether or not the array buffer of the VBO needs to be updated
+	GLuint				buffersVBO_[3]; //0: vertex0  1: vertex1 2: indices (double buffered vertex buffers)
+	unsigned int		currentBufferIDX_;
 #endif // CC_USES_VBO
 }
 

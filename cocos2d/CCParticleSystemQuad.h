@@ -2,7 +2,7 @@
  * cocos2d for iPhone: http://www.cocos2d-iphone.org
  *
  * Copyright (c) 2008-2010 Ricardo Quesada
- * Copyright (c) 2009 Leonardo Kasperavičius
+ * Copyright (c) 2009 Leonardo Kasperaviƒçius
  * 
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -49,7 +49,8 @@
 	ccV2F_C4B_T2F_Quad	*quads_;		// quads to be rendered
 	GLushort			*indices_;		// indices
 #if CC_USES_VBO
-	GLuint				quadsID_;		// VBO id
+	GLuint				quadsID_[2];		// VBO id
+	unsigned int		currentQuadsIndex_;
 #endif
 }
 

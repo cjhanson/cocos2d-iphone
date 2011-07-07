@@ -69,11 +69,15 @@
 
 #if CC_USES_VBO
 		// create the VBO buffer
-		glGenBuffers(1, &quadsID_);
-		
+		glGenBuffers(2, &quadsID_[0]);
+		currentQuadsIndex_ = 0;
 		// initial binding
-		glBindBuffer(GL_ARRAY_BUFFER, quadsID_);
+		glBindBuffer(GL_ARRAY_BUFFER, quadsID_[0]);
 		glBufferData(GL_ARRAY_BUFFER, sizeof(quads_[0])*totalParticles, quads_,GL_DYNAMIC_DRAW);	
+		
+		glBindBuffer(GL_ARRAY_BUFFER, quadsID_[1]);
+		glBufferData(GL_ARRAY_BUFFER, sizeof(quads_[0])*totalParticles, quads_,GL_DYNAMIC_DRAW);	
+		
 		glBindBuffer(GL_ARRAY_BUFFER, 0);
 #endif
 	}
@@ -86,7 +90,7 @@
 	free(quads_);
 	free(indices_);
 #if CC_USES_VBO
-	glDeleteBuffers(1, &quadsID_);
+	glDeleteBuffers(2, &quadsID_[0]);
 #endif
 	
 	[super dealloc];
@@ -247,7 +251,7 @@
 -(void) postStep
 {
 #if CC_USES_VBO
-	glBindBuffer(GL_ARRAY_BUFFER, quadsID_);
+	glBindBuffer(GL_ARRAY_BUFFER, quadsID_[currentQuadsIndex_]);
 	glBufferSubData(GL_ARRAY_BUFFER, 0, sizeof(quads_[0])*particleCount, quads_);
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
 #endif
@@ -265,8 +269,8 @@
 #define kQuadSize sizeof(quads_[0].bl)
 
 #if CC_USES_VBO
-	glBindBuffer(GL_ARRAY_BUFFER, quadsID_);
-
+	glBindBuffer(GL_ARRAY_BUFFER, quadsID_[currentQuadsIndex_]);
+	
 	glVertexPointer(2,GL_FLOAT, kQuadSize, 0);
 
 	glColorPointer(4, GL_UNSIGNED_BYTE, kQuadSize, (GLvoid*) offsetof(ccV2F_C4B_T2F,colors) );
@@ -303,6 +307,7 @@
 
 #if CC_USES_VBO
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
+	currentQuadsIndex_ = !currentQuadsIndex_;
 #endif
 
 	// restore GL default state
