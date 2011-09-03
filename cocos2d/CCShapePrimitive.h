@@ -2,6 +2,8 @@
  * cocos2d for iPhone: http://www.cocos2d-iphone.org
  *
  * Copyright (c) 2011 CJ Hanson
+ * Copyright (c) 2008-2010 Ricardo Quesada
+ * Copyright (c) 2011 Zynga Inc.
  * 
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -27,9 +29,58 @@
 #import "CCTextureAtlas.h"
 #import "ccMacros.h"
 #import "ccTypes.h"
-#import "CCSprite.h"
 
-@class CCSpriteBatchNode;
+@class CCShapeBatchNode;
+@class CCSpriteFrame;
+@class CCAnimation;
+
+#pragma mark CCShapePrimitive
+
+#define CCShapeBatchIndexNotInitialized 0xffffffff 	// invalid index on the CCShapeBatchnode
+
+/**
+ Whether or not a node will rotate, scale or translate with it's parent.
+ Useful in health bars, when you want that the health bar translates with it's parent but you don't
+ want it to rotate with its parent.
+ @since v0.99.0
+ */
+typedef enum {
+	//! Translate with it's parent
+	CC_HONOR_PARENT_TRANSFORM_TRANSLATE =  1 << 0,
+	//! Rotate with it's parent
+	CC_HONOR_PARENT_TRANSFORM_ROTATE	=  1 << 1,
+	//! Scale with it's parent
+	CC_HONOR_PARENT_TRANSFORM_SCALE		=  1 << 2,
+	//! Skew with it's parent
+	CC_HONOR_PARENT_TRANSFORM_SKEW		=  1 << 3,
+	
+	//! All possible transformation enabled. Default value.
+	CC_HONOR_PARENT_TRANSFORM_ALL		=  CC_HONOR_PARENT_TRANSFORM_TRANSLATE | CC_HONOR_PARENT_TRANSFORM_ROTATE | CC_HONOR_PARENT_TRANSFORM_SCALE | CC_HONOR_PARENT_TRANSFORM_SKEW,
+	
+} ccHonorParentTransform;
+
+/** CCShapePrim is a 2d image ( http://en.wikipedia.org/wiki/Sprite_(computer_graphics) )
+ *
+ * CCSprite can be created with an image, or with a sub-rectangle of an image.
+ *
+ * If the parent or any of its ancestors is a CCSpriteBatchNode then the following features/limitations are valid
+ *	- Features when the parent is a CCBatchNode:
+ *		- MUCH faster rendering, specially if the CCSpriteBatchNode has many children. All the children will be drawn in a single batch.
+ *
+ *	- Limitations
+ *		- Camera is not supported yet (eg: CCOrbitCamera action doesn't work)
+ *		- GridBase actions are not supported (eg: CCLens, CCRipple, CCTwirl)
+ *		- The Alias/Antialias property belongs to CCSpriteBatchNode, so you can't individually set the aliased property.
+ *		- The Blending function property belongs to CCSpriteBatchNode, so you can't individually set the blending function property.
+ *		- Parallax scroller is not supported, but can be simulated with a "proxy" sprite.
+ *
+ *  If the parent is an standard CCNode, then CCSprite behaves like any other CCNode:
+ *    - It supports blending functions
+ *    - It supports aliasing / antialiasing
+ *    - But the rendering will be slower: 1 draw per children.
+ *
+ * The default anchorPoint in CCSprite is (0.5, 0.5).
+ */
 
 @interface CCShapePrimitive : CCNode <CCRGBAProtocol, CCBlendProtocol, CCTextureProtocol>
 {
@@ -39,7 +90,7 @@
 	//
 	CCTextureAtlas			*textureAtlas_;			// Sprite Sheet texture atlas (weak reference)
 	NSUInteger				atlasIndex_;			// Absolute (real) Index on the batch node
-	CCSpriteBatchNode		*batchNode_;			// Used batch node (weak reference)
+	CCShapeBatchNode		*batchNode_;			// Used batch node (weak reference)
 	ccHonorParentTransform	honorParentTransform_;	// whether or not to transform according to its parent transformations
 	BOOL					dirty_:1;				// Sprite needs to be updated
 	BOOL					recursiveDirty_:1;		// Subchildren needs to be updated

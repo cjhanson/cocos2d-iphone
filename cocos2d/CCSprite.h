@@ -61,6 +61,7 @@ typedef enum {
 /** CCSprite is a 2d image ( http://en.wikipedia.org/wiki/Sprite_(computer_graphics) )
  *
  * CCSprite can be created with an image, or with a sub-rectangle of an image.
+ * It can be represented by any number of triangles. By default it will be two triangles made into a rectangle.
  *
  * If the parent or any of its ancestors is a CCSpriteBatchNode then the following features/limitations are valid
  *	- Features when the parent is a CCBatchNode:
@@ -104,7 +105,7 @@ typedef enum {
 	// Shared data
 	//
 
-	// texture
+	// texture (For non-rectangular polygons the shape will be placed in the center of the texture rect by default (like a cookie cutter)).
 	CGRect	rect_;
 	CGRect	rectInPixels_;
 	BOOL	rectRotated_:1;
@@ -117,7 +118,8 @@ typedef enum {
 	CGPoint unflippedOffsetPositionFromCenter_;
 
 	// vertex coords, texture coords and color info
-	ccV3F_C4B_T2F_Quad quad_;
+	ccV3F_C4B_T2F *vertices_;
+	NSUInteger vertexCount_;
 	
 	// opacity and RGB protocol
 	GLubyte		opacity_;
@@ -136,8 +138,10 @@ typedef enum {
 
 /** whether or not the Sprite needs to be updated in the Atlas */
 @property (nonatomic,readwrite) BOOL dirty;
-/** the quad (tex coords, vertex coords and color) information */
-@property (nonatomic,readonly) ccV3F_C4B_T2F_Quad quad;
+/** the vertices (tex coords, vertex coords and color) information */
+@property (nonatomic,readonly) ccV3F_C4B_T2F *vertices;
+/** the number of vertices */
+@property (nonatomic,readonly) NSUInteger vertexCount;
 /** The index used on the TextureAtlas. Don't modify this value unless you know what you are doing */
 @property (nonatomic,readwrite) NSUInteger atlasIndex;
 /** returns the rect of the CCSprite in points */
@@ -281,6 +285,10 @@ typedef enum {
  */
 -(id) initWithBatchNode:(CCSpriteBatchNode*)batchNode rectInPixels:(CGRect)rect;
 
+
+#pragma mark CCSprite - Internal methods (used by subclasses)
+-(void) updateColor;
+-(void) updateVertices;
 
 
 #pragma mark CCSprite - BatchNode methods

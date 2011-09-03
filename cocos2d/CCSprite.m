@@ -74,7 +74,8 @@ struct transformValues_ {
 @implementation CCSprite
 
 @synthesize dirty = dirty_;
-@synthesize quad = quad_;
+@synthesize vertices = vertices_;
+@synthesize vertexCount = vertexCount_;
 @synthesize atlasIndex = atlasIndex_;
 @synthesize textureRect = rect_;
 @synthesize textureRectRotated = rectRotated_;
@@ -152,8 +153,9 @@ struct transformValues_ {
 		// update texture (calls updateBlendFunc)
 		[self setTexture:nil];
 		
-		// clean the Quad
-		bzero(&quad_, sizeof(quad_));
+		// make a Quad (Subclasses should realloc an appropriate amount of memory)
+		vertexCount_		= 4;
+		vertices_			= (ccV3F_C4B_T2F *)calloc(vertexCount_, sizeof(ccV3F_C4B_T2F));
 		
 		flipY_ = flipX_ = NO;
 		
@@ -294,6 +296,8 @@ struct transformValues_ {
 - (void) dealloc
 {
 	[texture_ release];
+	if(vertices_)
+		free(vertices_);
 	[super dealloc];
 }
 
@@ -350,13 +354,17 @@ struct transformValues_ {
 	offsetPosition_.x = relativeOffset.x + (contentSize_.width - rect_.size.width) / 2;
 	offsetPosition_.y = relativeOffset.y + (contentSize_.height - rect_.size.height) / 2;
 	
-	
+	[self updateVertices];
+}
+
+-(void) updateVertices
+{
 	// rendering using batch node
 	if( usesBatchNode_ ) {
 		// update dirty_, don't update recursiveDirty_
 		dirty_ = YES;
 	}
-
+	
 	// self rendering
 	else
 	{
@@ -367,11 +375,23 @@ struct transformValues_ {
 		float y2 = y1 + rect_.size.height;
 		
 		// Don't update Z.
-		quad_.bl.vertices = (ccVertex3F) { x1, y1, 0 };
-		quad_.br.vertices = (ccVertex3F) { x2, y1, 0 };
-		quad_.tl.vertices = (ccVertex3F) { x1, y2, 0 };
-		quad_.tr.vertices = (ccVertex3F) { x2, y2, 0 };	
-	}			
+		NSUInteger i = 0;
+		vertices_[i].vertices.x = x1;
+		vertices_[i].vertices.y = y1;
+		//vertices_[i].vertices.z = 0;
+		++i;
+		vertices_[i].vertices.x = x2;
+		vertices_[i].vertices.y = y1;
+		//vertices_[i].vertices.z = 0;
+		++i;
+		vertices_[i].vertices.x = x1;
+		vertices_[i].vertices.y = y2;
+		//vertices_[i].vertices.z = 0;
+		++i;
+		vertices_[i].vertices.x = x2;
+		vertices_[i].vertices.y = y2;
+		//vertices_[i].vertices.z = 0;
+	}	
 }
 
 -(void)updateTextureCoords:(CGRect)rect
@@ -404,14 +424,19 @@ struct transformValues_ {
 		if( flipY_)
 			CC_SWAP(left,right);
 		
-		quad_.bl.texCoords.u = left;
-		quad_.bl.texCoords.v = top;
-		quad_.br.texCoords.u = left;
-		quad_.br.texCoords.v = bottom;
-		quad_.tl.texCoords.u = right;
-		quad_.tl.texCoords.v = top;
-		quad_.tr.texCoords.u = right;
-		quad_.tr.texCoords.v = bottom;
+		NSUInteger i = 0;
+		vertices_[i].texCoords.u = left;
+		vertices_[i].texCoords.v = top;
+		++i;
+		vertices_[i].texCoords.u = left;
+		vertices_[i].texCoords.v = bottom;
+		++i;
+		vertices_[i].texCoords.u = right;
+		vertices_[i].texCoords.v = top;
+		++i;
+		vertices_[i].texCoords.u = right;
+		vertices_[i].texCoords.v = bottom;
+		
 	} else {
 #if CC_FIX_ARTIFACTS_BY_STRECHING_TEXEL
 		left	= (2*rect.origin.x+1)/(2*atlasWidth);
@@ -430,14 +455,18 @@ struct transformValues_ {
 		if( flipY_)
 			CC_SWAP(top,bottom);
 		
-		quad_.bl.texCoords.u = left;
-		quad_.bl.texCoords.v = bottom;
-		quad_.br.texCoords.u = right;
-		quad_.br.texCoords.v = bottom;
-		quad_.tl.texCoords.u = left;
-		quad_.tl.texCoords.v = top;
-		quad_.tr.texCoords.u = right;
-		quad_.tr.texCoords.v = top;
+		NSUInteger i = 0;
+		vertices_[i].texCoords.u = left;
+		vertices_[i].texCoords.v = bottom;
+		++i;
+		vertices_[i].texCoords.u = right;
+		vertices_[i].texCoords.v = bottom;
+		++i;
+		vertices_[i].texCoords.u = left;
+		vertices_[i].texCoords.v = top;
+		++i;
+		vertices_[i].texCoords.u = right;
+		vertices_[i].texCoords.v = top;
 	}
 }
 
