@@ -46,15 +46,12 @@
 
 @synthesize textureAtlas = textureAtlas_;
 @synthesize blendFunc = blendFunc_;
+@synthesize quadsToDraw = quadsToDraw_;
 
 #pragma mark CCAtlasNode - Creation & Init
 - (id) init
 {
-    if( (self=[super init]) ) {
-		self.shaderProgram = [[CCShaderCache sharedShaderCache] programForKey:kCCShader_PositionTextureColor];		
-		blendFunc_.src = CC_BLEND_SRC;
-		blendFunc_.dst = CC_BLEND_DST;
-    }
+	NSAssert( NO, @"Not supported - Use initWtihTileFile instead");
     return self;
 }
 
@@ -93,7 +90,11 @@
 		
 		[self calculateMaxItems];
 		
-		self.shaderProgram = [[CCShaderCache sharedShaderCache] programForKey:kCCShader_PositionTextureColor];		
+		self.quadsToDraw = c;
+		
+		// shader stuff
+		self.shaderProgram = [[CCShaderCache sharedShaderCache] programForKey:kCCShader_PositionTexture_uColor];
+		uniformColor_ = glGetUniformLocation( shaderProgram_->program_, "u_color");
 	}
 	return self;
 }
@@ -122,22 +123,23 @@
 #pragma mark CCAtlasNode - draw
 - (void) draw
 {
-	// Default Attribs & States: GL_TEXTURE0, k,CCAttribVertex, kCCAttribColor, kCCAttribTexCoords
-	// Needed states: GL_TEXTURE0, k,CCAttribVertex, kCCAttribColor, kCCAttribTexCoords
-	// Unneeded states: -
-	
+	[super draw];
+
+	ccGLEnableVertexAttribs( kCCVertexAttribFlag_Position | kCCVertexAttribFlag_TexCoords );
+
 	ccGLBlendFunc( blendFunc_.src, blendFunc_.dst );
 	
 	ccGLUseProgram( shaderProgram_->program_ );
-	ccGLUniformProjectionMatrix( shaderProgram_ );
-	ccGLUniformModelViewMatrix( shaderProgram_ );	
+	ccGLUniformModelViewProjectionMatrix( shaderProgram_ );	
 	
-	[textureAtlas_ drawQuads];		
+	glUniform4f( uniformColor_, color_.r / 255.0f, color_.g / 255.0f, color_.b / 255.0f, opacity_ / 255.0f );
+	
+	[textureAtlas_ drawNumberOfQuads:quadsToDraw_ fromIndex:0];	
 }
 
 #pragma mark CCAtlasNode - RGBA protocol
 
-- (ccColor3UB) color
+- (ccColor3B) color
 {
 	if(opacityModifyRGB_)
 		return colorUnmodified_;
@@ -145,7 +147,7 @@
 	return color_;
 }
 
--(void) setColor:(ccColor3UB)color3
+-(void) setColor:(ccColor3B)color3
 {
 	color_ = colorUnmodified_ = color3;
 	
@@ -167,12 +169,12 @@
 	
 	// special opacity for premultiplied textures
 	if( opacityModifyRGB_ )
-		[self setColor: colorUnmodified_];	
+		[self setColor: colorUnmodified_];
 }
 
 -(void) setOpacityModifyRGB:(BOOL)modify
 {
-	ccColor3UB oldColor	= self.color;
+	ccColor3B oldColor	= self.color;
 	opacityModifyRGB_	= modify;
 	self.color			= oldColor;
 }

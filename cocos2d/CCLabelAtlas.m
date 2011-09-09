@@ -42,20 +42,18 @@
 @implementation CCLabelAtlas
 
 #pragma mark CCLabelAtlas - Creation & Init
-+(id) labelWithString:(NSString*)string charMapFile:(NSString*)charmapfile itemWidth:(int)w itemHeight:(int)h startCharMap:(char)c
++(id) labelWithString:(NSString*)string charMapFile:(NSString*)charmapfile itemWidth:(NSUInteger)w itemHeight:(NSUInteger)h startCharMap:(unsigned char)c
 {
 	return [[[self alloc] initWithString:string charMapFile:charmapfile itemWidth:w itemHeight:h startCharMap:c] autorelease];
 }
 
--(id) initWithString:(NSString*) theString charMapFile: (NSString*) charmapfile itemWidth:(int)w itemHeight:(int)h startCharMap:(char)c
+-(id) initWithString:(NSString*) theString charMapFile: (NSString*) charmapfile itemWidth:(NSUInteger)w itemHeight:(NSUInteger)h startCharMap:(unsigned char)c
 {
 
 	if ((self=[super initWithTileFile:charmapfile tileWidth:w tileHeight:h itemsToRender:[theString length] ]) ) {
 
-		mapStartChar = c;		
+		mapStartChar_ = c;		
 		[self setString: theString];
-		
-		self.shaderProgram = [[CCShaderCache sharedShaderCache] programForKey:kCCShader_PositionTextureColor];
 	}
 
 	return self;
@@ -72,11 +70,11 @@
 
 -(void) updateAtlasValues
 {
-	NSInteger n = [string_ length];
+	NSUInteger n = [string_ length];
 	
 	ccV3F_C4B_T2F_Quad quad;
 
-	const char *s = [string_ UTF8String];
+	const unsigned char *s = (unsigned char*) [string_ UTF8String];
 
 	CCTexture2D *texture = [textureAtlas_ texture];
 	float textureWide = [texture pixelsWide];
@@ -85,9 +83,9 @@
     float itemHeightInPixels = itemHeight_ * CC_CONTENT_SCALE_FACTOR();
 
 
-	for( NSUInteger i = 0; i < n; i++)
-    {
-		unsigned char a = s[i] - mapStartChar;
+	for( NSUInteger i=0; i<n; i++)
+	{
+		unsigned char a = s[i] - mapStartChar_;
 		float row = (a % itemsPerRow_);
 		float col = (a / itemsPerRow_);
 		
@@ -126,7 +124,7 @@
 		quad.tr.vertices.y = (int)(itemHeight_);
 		quad.tr.vertices.z = 0.0f;
 		
-		ccColor4UB c = { color_.r, color_.g, color_.b, opacity_ };
+		ccColor4B c = { color_.r, color_.g, color_.b, opacity_ };
 		quad.tl.colors = c;
 		quad.tr.colors = c;
 		quad.bl.colors = c;
@@ -149,6 +147,8 @@
 
 	CGSize s = CGSizeMake(len * itemWidth_, itemHeight_);
 	[self setContentSize:s];
+	
+	self.quadsToDraw = len;
 }
 
 -(NSString*) string
@@ -156,31 +156,20 @@
 	return string_;
 }
 
-#pragma mark CCLabelAtlas - draw
+#pragma mark CCLabelAtlas - DebugDraw
 
-// XXX: overriding draw from AtlasNode
+#if CC_LABELATLAS_DEBUG_DRAW
 - (void) draw
 {	
-	// Default Attribs & States: GL_TEXTURE0, kCCAttribVertex, kCCAttribColor, kCCAttribTexCoords
-	// Needed states: GL_TEXTURE0, k,CCAttribVertex, kCCAttribColor, kCCAttribTexCoords
-	// Unneeded states: -
-	
-	ccGLBlendFunc( blendFunc_.src, blendFunc_.dst );
+	[super draw];
 
-	ccGLUseProgram( shaderProgram_->program_ );
-	ccGLUniformProjectionMatrix( shaderProgram_ );
-	ccGLUniformModelViewMatrix( shaderProgram_ );
-	
-	[textureAtlas_ drawNumberOfQuads:string_.length fromIndex:0];
-	
-#if CC_LABELATLAS_DEBUG_DRAW
 	CGSize s = [self contentSize];
 	CGPoint vertices[4]={
 		ccp(0,0),ccp(s.width,0),
 		ccp(s.width,s.height),ccp(0,s.height),
 	};
 	ccDrawPoly(vertices, 4, YES);
+}
 #endif // CC_LABELATLAS_DEBUG_DRAW
 
-}
 @end

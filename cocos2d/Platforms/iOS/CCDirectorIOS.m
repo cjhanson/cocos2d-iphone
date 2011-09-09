@@ -45,7 +45,6 @@
 #import "../../CCLayer.h"
 
 // support imports
-#import "glu.h"
 #import "../../Support/OpenGL_Internal.h"
 #import "../../Support/CGPointExtension.h"
 #import "../../Support/TransformUtils.h"
@@ -130,9 +129,6 @@ CGFloat	__ccContentScaleFactor = 1;
 
 	kmGLPushMatrix();
 
-	// By default enable VertexArray, ColorArray, TextureCoordArray and Texture2D
-	CC_ENABLE_DEFAULT_GL_STATES();
-
 	[runningScene_ visit];
 
 	[notificationNode_ visit];
@@ -140,13 +136,9 @@ CGFloat	__ccContentScaleFactor = 1;
 	if( displayFPS_ )
 		[self showFPS];
 
-	CC_DISABLE_DEFAULT_GL_STATES();
-
-#if CC_ENABLE_PROFILERS
-	[self showProfilers];
-#endif
-	
 	kmGLPopMatrix();
+
+	totalFrames_++;
 
 	[openGLView_ swapBuffers];
 }
@@ -358,8 +350,6 @@ CGFloat	__ccContentScaleFactor = 1;
 		CCLOG(@"cocos2d: DisplayLinkDirector: Error on gettimeofday");
 	}
 	
-	nextDeltaTimeZero_ = YES;
-	
 	// approximate frame rate
 	// assumes device refreshes at 60 fps
 	int frameInterval = (int) floor(animationInterval_ * 60.0f);
@@ -368,9 +358,7 @@ CGFloat	__ccContentScaleFactor = 1;
 
 	displayLink = [CADisplayLink displayLinkWithTarget:self selector:@selector(mainLoop:)];
 	[displayLink setFrameInterval:frameInterval];
-	[displayLink addToRunLoop:[NSRunLoop currentRunLoop] forMode:NSRunLoopCommonModes];
-	
-	[self mainLoop:self];
+	[displayLink addToRunLoop:[NSRunLoop currentRunLoop] forMode:NSDefaultRunLoopMode];	
 }
 
 -(void) mainLoop:(id)sender

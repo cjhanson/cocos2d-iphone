@@ -1,39 +1,82 @@
 
-version 2.0-alpha XX-Jul-2011
+version 2.0-alpha XX-Ago-2011
 . [NEW] Action: Added new CallBlockO action
 . [NEW] AtlasNode: added init method
-. [NEW] ccGLState: added helper functions that keeps the GL state in order to prevent setters/getters
+. [NEW] ccGLState: added helper functions that keeps the GL state
 . [NEW] CProgressTimer: 
             - Convenience class constructor now passes in CCSprite (this gives developers easier access to timer with CCSpriteFrames, CCSprites, etc)
             - Reduced the progress timer types to just radial and bar - added in reverse, midpoint, barChangeRate to be have more flexible options to modify the progress.
 			- Supports Tint + Color
 . [NEW] Director: Removed Fast, FastThreaded and NSTimer director. The only one available is DisplayLink.
 . [NEW] Director: Orientations are no longer supported. Only Portrait mode is supported. Use a ViewController to rotate the EAGL view.
+. [NEW] Director: The FPS position can be configured via ccConfig.h file
+. [NEW] Director: Fast FPS is the only supported way to display FPS. Removed the CCLabelTTF way of doing it
 . [NEW] Macros: ccgl* replaced with ccGL*
-. [NEW] Math: Using kazmath for matrix and projection operations, and matrix GL stack
-. [NEW] Math: Using NEON Matrix Multiplication from Oolong project
+. [NEW] Macros: CC_ENABLE/DISABLE_DEFAULT_STATE: Removed. No longer needed.
+. [NEW] MotionStreak: Using new motion streak code. 10x faster than the old one.
 . [NEW] OpenGL ES: Added support for OpenGL ES 2.0. OpenGL ES 1.1 is no longer supported
+. [NEW] Profiler: API heavily updated to make it easier to integrate into any kind of component
+. [NEW] Sprite: initWithTexture:rect is the designated initializer
+. [NEW] SpriteFrameCache: addSpriteFramesWithFile:textureFile renamed to addSpriteFramesWithFile:textureFilename to be consistent with the new API
 . [NEW] Templates: Removed Xcode3 templates. Updated Xcode4 templates.
 . [NEW] Tests: All tests use RootViewController
 . [NEW] Tests: FontTest uses  "bundle" fonts instead of FontLabel
 . [NEW] Tests: Removed HelloWorld* tests
 . [NEW] Tests: TextureTest has TextureCache#asyncWithBlock test
+. [NEW] Tests: Removed Chipmunk iOS TestBed since it was outdated
 . [NEW] Texture: Uses NPOT textures (gles20 already supports them)
+. [NEW] Texture: PVRTC-RAW format is no longer supported. Use the non-raw format instead.
 . [NEW] TextureCache: Added asyncWithBlock method
 . [NEW] Tiled: cc_vertexz property is no longer supported. Will raise exception if found.
-. [NEW] Types: ccColor*B replaced with ccColor*UB
 . [FIX] All: Removed deprecated methods and classes that were scheduled for removal post 1.0
-. [FIX] CCProgressTimer: reverse renamed to reverseDirection in order to prevent possible collision with action#reverse
+. [FIX] ProgressTimer: reverse renamed to reverseDirection in order to prevent possible collision with action#reverse
+. [FIX] RenderTexture: getUIImageFromBuffer doesn't return artifacs
 . [FIX] TextureCache: Uses "self" instead of "CCTextureCache" in shared instance
+. [FIX] SpriteFrameCache: it doesn't retain the textures when they are loaded from a dictionary file (issue #1227)
 . [FIX] Xcode: cocosLive: Removed. Use OpenFeint or GameCenter instead
 . [FIX] Xcode: FontLabel: Removed since in iOS 4 you can load custom TTF
 . [FIX] Xcode: TouchJSON: Removed. No longer needed since cocosLive was removed
 . [FIX] Xcode: Tremor / vorbis: Removed. Experimental sound engine is no longer supported
 . [FIX] Xcode: iOS 4 is minimun required to run
+. [3RD] Box2d: Using Box2D 2.2.0
+. [3RD] Chipmunk: Using Chipmunk v6.0.1
+. [3RD] [NEW] Kazmath: Added kazmath library for matrix and projection operations, and matrix GL stack
+. [3RD] Kazmath: Added NEON Matrix Multiplication from Oolong project
 
-version 1.0.0 -
+
+version 1.1 - XX-Ago-2011
+. [NEW] Animation: Added file format. AnimationCache can load animations from file (issue #1209)
+. [NEW] FileUtils: Added iPad / RetinaDisplay extension. To use it, call [CCFileUtils setiPadSuffix:@"-ipad"] or setRetinaDisplaySuffix (issue #1211)
+. [NEW] FileUtils: Added xxxFileExistAtPath for iPad and RetinaDisplay resources
+. [NEW] ccConfig: Removed CC_RETINA_DISPLAY_FILENAME_SUFFIX. Use CCFileUtils API instead
+. [NEW] ccConfig: Removed CC_RETINA_DISPLAY_SUPPORT. It is always enabled.
+. [NEW] TileMap: TMX map supports flipped tiles (issue #1233)
+. [FIX] Actions: removed #undef CLAMP (issue #1210)
+. [FIX] FileUtils: Loads -hd resources even if the sd resource is not present (issue #1179)
+. [FIX] FileUtils: renamed ccRemoveSuffixFromFile to +[CCFileUtils removeSuffixFromFile:];
+. [FIX] FileUtils: localized resources can be loaded using fullPathFromRelativePath (issue #1230)
+. [FIX] LayerColor: init calls initWithColor:width:height (issue #1226)
+. [FIX] Texture2D: drawAtPoint uses the correct vertices
+. [FIX] Texture2D: drawAtPoint, drawInRect disables color state (issue #1222)
+. [FIX-MAC] Director: Only call set setAcceptsTouchEvents: when OS X >= 10.6 (issue #1225)
+
+version 1.0.1 - 28-July-2011
+. [FIX] All: Implicit atomic properties converted to nonatomic
+. [FIX] All: Removed deprected code
+. [FIX] CCArray: copyWithZone fixed
+. [FIX] Director: frames -> totalFrames, and it works as expected. Value is not being reset.
+. [FIX] Menu: If any ancestor is invisible, then touches won't be accepted
+. [FIX] Node: vertexZ returns points, not "pixels"
+. [FIX] LabelTTF: don't crash when calling description after dealloc
+. [FIX] Tests: [window release] instead of [window dealloc]
+. [FIX] Texture: TextureCache#dump reports the right info (issue #1205)
+. [FIX-MAC] CocosDenshion: Cleanup buffers to prevent noise
+
+version 1.0.0 - 13-July-2011
 . [NEW] ccpSegmentIntersect & ccpPointIntersect: Added helper functions for ccpLineIntersect (issue #1193)
+. [NEW] ccConfig: Added possibility to define the configuration as preprocessor macros
 . [NEW] Director: frames is a readonly property
+. [NEW] Menu: MenuItemFont can change size and font from instance (issue #1192)
 . [NEW] Scheduler: Added isTargetPaused method
 . [NEW] Sprite: Debugging draw for texture (issue #879)
 . [NEW] Textures: PVR supports NPOT textures
@@ -41,8 +84,12 @@ version 1.0.0 -
 . [FIX] ccpLineIntersect works as expected. Improved performance (issue #1174, #1193)
 . [FIX] cocosLive: fixed memory leak in ScoreServerPost
 . [FIX] Director: Added asserts to prevent calling startAnimation twice.
+. [FIX] EAGLView: Fixed leak when using multisampling and resizing the layer (issue #1198)
+. [FIX] Menu: Column aligment is centered. Removed the +10 pixels padding.
+. [FIX] Node: Node#Draw calls super#draw
 . [FIX] Tests: Fixed memory leak in ParticleTest
 . [FIX] Tests: Fixed memory leak in cocosLiveTest
+. [FIX] Tiles: Worked around memory leak in NSXMLParser (issue #1197)
 . [FIX] TouchDispatcher: added setPriority (issue #757)
 . [FIX] Xcode: cocos2d compiles OK with Xcode 4.2 + llvm 3.0
 . [3RD] Chipmunk: updated to v5.3.5

@@ -105,33 +105,6 @@ default gl blend src function. Compatible with premultiplied alpha images.
 #define CC_BLEND_DST GL_ONE_MINUS_SRC_ALPHA
 #endif // ! CC_OPTIMIZE_BLEND_FUNC_FOR_PREMULTIPLIED_ALPHA
 
-/** @def CC_ENABLE_DEFAULT_GL_STATES
- GL states that are enabled:
-	- GL_TEXTURE_2D
-	- GL_VERTEX_ARRAY
-	- GL_TEXTURE_COORD_ARRAY
-	- GL_COLOR_ARRAY
- */
-#define CC_ENABLE_DEFAULT_GL_STATES() {				\
-	glActiveTexture(GL_TEXTURE0);					\
-	glEnableVertexAttribArray(kCCAttribPosition);	\
-	glEnableVertexAttribArray(kCCAttribColor);		\
-	glEnableVertexAttribArray(kCCAttribTexCoords);	\
-}
-
-/** @def CC_DISABLE_DEFAULT_GL_STATES 
- Disable default GL states:
-	- GL_TEXTURE_2D
-	- GL_VERTEX_ARRAY
-	- GL_TEXTURE_COORD_ARRAY
-	- GL_COLOR_ARRAY
- */
-#define CC_DISABLE_DEFAULT_GL_STATES() {			\
-	glDisableVertexAttribArray(kCCAttribTexCoords);	\
-	glDisableVertexAttribArray(kCCAttribColor);		\
-	glDisableVertexAttribArray(kCCAttribPosition);	\
-}
-
 /** @def CC_DIRECTOR_INIT
 	- Initializes an EAGLView with 0-bit depth format, and RGB565 render buffer.
 	- The EAGLView view will have multiple touches disabled.
@@ -211,7 +184,9 @@ do {															\
 } while(0)
 
 
-#if CC_IS_RETINA_DISPLAY_SUPPORTED
+
+
+#if __IPHONE_OS_VERSION_MAX_ALLOWED
 
 /****************************/
 /** RETINA DISPLAY ENABLED **/
@@ -264,7 +239,7 @@ CGSizeMake( (__pixels__).width / CC_CONTENT_SCALE_FACTOR(), (__pixels__).height 
 CGSizeMake( (__points__).width * CC_CONTENT_SCALE_FACTOR(), (__points__).height * CC_CONTENT_SCALE_FACTOR())
 
 
-#else // retina disabled
+#elif defined(__MAC_OS_X_VERSION_MAX_ALLOWED)
 
 /*****************************/
 /** RETINA DISPLAY DISABLED **/
@@ -279,4 +254,45 @@ CGSizeMake( (__points__).width * CC_CONTENT_SCALE_FACTOR(), (__points__).height 
 #define CC_POINT_POINTS_TO_PIXELS(__points__) __points__
 
 
-#endif // CC_IS_RETINA_DISPLAY_SUPPORTED
+#endif // __MAC_OS_X_VERSION_MAX_ALLOWED
+
+
+/**********************/
+/** Profiling Macros **/
+/**********************/
+#if CC_ENABLE_PROFILERS
+
+#define CC_PROFILER_DISPLAY_TIMERS() [[CCProfiler sharedProfiler] displayTimers]
+#define CC_PROFILER_PURGE_ALL() [[CCProfiler sharedProfiler] releaseAllTimers]
+
+#define CC_PROFILER_START(__name__) CCProfilingBeginTimingBlock(__name__)
+#define CC_PROFILER_STOP(__name__) CCProfilingEndTimingBlock(__name__)
+#define CC_PROFILER_RESET(__name__) CCProfilingResetTimingBlock(__name__)
+
+#define CC_PROFILER_START_CATEGORY(__cat__, __name__) do{ if(__cat__) CCProfilingBeginTimingBlock(__name__); } while(0)
+#define CC_PROFILER_STOP_CATEGORY(__cat__, __name__) do{ if(__cat__) CCProfilingEndTimingBlock(__name__); } while(0)
+#define CC_PROFILER_RESET_CATEGORY(__cat__, __name__) do{ if(__cat__) CCProfilingResetTimingBlock(__name__); } while(0)
+
+#define CC_PROFILER_START_INSTANCE(__id__, __name__) do{ CCProfilingBeginTimingBlock( [NSString stringWithFormat:@"%08X - %@", __id__, __name__] ); } while(0)
+#define CC_PROFILER_STOP_INSTANCE(__id__, __name__) do{ CCProfilingEndTimingBlock(    [NSString stringWithFormat:@"%08X - %@", __id__, __name__] ); } while(0)
+#define CC_PROFILER_RESET_INSTANCE(__id__, __name__) do{ CCProfilingResetTimingBlock( [NSString stringWithFormat:@"%08X - %@", __id__, __name__] ); } while(0)
+
+
+#else
+
+#define CC_PROFILER_DISPLAY_TIMERS() do {} while (0)
+#define CC_PROFILER_PURGE_ALL() do {} while (0)
+
+#define CC_PROFILER_START(__name__)  do {} while (0)
+#define CC_PROFILER_STOP(__name__) do {} while (0)
+#define CC_PROFILER_RESET(__name__) do {} while (0)
+
+#define CC_PROFILER_START_CATEGORY(__cat__, __name__) do {} while(0)
+#define CC_PROFILER_STOP_CATEGORY(__cat__, __name__) do {} while(0)
+#define CC_PROFILER_RESET_CATEGORY(__cat__, __name__) do {} while(0)
+
+#define CC_PROFILER_START_INSTANCE(__id__, __name__) do {} while(0)
+#define CC_PROFILER_STOP_INSTANCE(__id__, __name__) do {} while(0)
+#define CC_PROFILER_RESET_INSTANCE(__id__, __name__) do {} while(0)
+
+#endif

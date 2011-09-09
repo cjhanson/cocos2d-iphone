@@ -172,7 +172,7 @@ enum {
 	GLProgram *shader = [[GLProgram alloc] initWithVertexShaderFilename:vert
 												 fragmentShaderFilename:frag];
 	
-	[shader addAttribute:@"aVertex" index:kCCAttribPosition];
+	[shader addAttribute:@"aVertex" index:kCCVertexAttrib_Position];
 	
 	[shader link];
 	
@@ -205,22 +205,17 @@ enum {
 	// Uniforms
 	//
 	
-	ccGLUniformProjectionMatrix( shaderProgram_ );
-	ccGLUniformModelViewMatrix( shaderProgram_ );
+	ccGLUniformModelViewProjectionMatrix( shaderProgram_ );
 
 	glUniform2fv( uniformCenter, 1, (GLfloat*)&position_ );
 	glUniform2fv( uniformResolution, 1, (GLfloat*)&resolution_ );
 	glUniform1f( uniformTime, time_ );
 	
-	glDisableVertexAttribArray(kCCAttribColor);
-	glDisableVertexAttribArray(kCCAttribTexCoords);
+	ccGLEnableVertexAttribs( kCCVertexAttribFlag_Position );
 
-	glVertexAttribPointer(kCCAttribPosition, 2, GL_FLOAT, GL_FALSE, 0, vertices);
+	glVertexAttribPointer(kCCVertexAttrib_Position, 2, GL_FLOAT, GL_FALSE, 0, vertices);
 
-	glDrawArrays(GL_TRIANGLES, 0, 6);
-	
-	glEnableVertexAttribArray(kCCAttribColor);
-	glEnableVertexAttribArray(kCCAttribTexCoords);
+	glDrawArrays(GL_TRIANGLES, 0, 6);	
 }
 @end
 
@@ -232,7 +227,7 @@ enum {
 -(id) init
 {
 	if( (self=[super init]) ) {
-		ShaderNode *sn = [ShaderNode shaderNodeWithVertex:@"Shaders/Monjori.vert" fragment:@"Shaders/Monjori.frag"];
+		ShaderNode *sn = [ShaderNode shaderNodeWithVertex:@"Monjori.vsh" fragment:@"Monjori.fsh"];
 		
 		CGSize s = [[CCDirector sharedDirector] winSize];
 		[sn setPosition:ccp(s.width/2, s.height/2)];
@@ -262,7 +257,7 @@ enum {
 -(id) init
 {
 	if( (self=[super init] ) ) {
-		ShaderNode *sn = [ShaderNode shaderNodeWithVertex:@"Shaders/Mandelbrot.vert" fragment:@"Shaders/Mandelbrot.frag"];
+		ShaderNode *sn = [ShaderNode shaderNodeWithVertex:@"Mandelbrot.vsh" fragment:@"Mandelbrot.fsh"];
 		
 		CGSize s = [[CCDirector sharedDirector] winSize];
 		[sn setPosition:ccp(s.width/2, s.height/2)];
@@ -291,7 +286,7 @@ enum {
 -(id) init
 {
 	if( (self=[super init] ) ) {
-		ShaderNode *sn = [ShaderNode shaderNodeWithVertex:@"Shaders/Julia.vert" fragment:@"Shaders/Julia.frag"];
+		ShaderNode *sn = [ShaderNode shaderNodeWithVertex:@"Julia.vsh" fragment:@"Julia.fsh"];
 		
 		CGSize s = [[CCDirector sharedDirector] winSize];
 		[sn setPosition:ccp(s.width/2, s.height/2)];
@@ -322,7 +317,7 @@ enum {
 {
 	if( (self=[super init] ) ) {
 		
-		ShaderNode *sn = [ShaderNode shaderNodeWithVertex:@"Shaders/Heart.vert" fragment:@"Shaders/Heart.frag"];
+		ShaderNode *sn = [ShaderNode shaderNodeWithVertex:@"Heart.vsh" fragment:@"Heart.fsh"];
 		
 		CGSize s = [[CCDirector sharedDirector] winSize];
 		[sn setPosition:ccp(s.width/2, s.height/2)];
@@ -352,7 +347,7 @@ enum {
 {
 	if( (self=[super init] ) ) {
 		
-		ShaderNode *sn = [ShaderNode shaderNodeWithVertex:@"Shaders/Flower.vert" fragment:@"Shaders/Flower.frag"];
+		ShaderNode *sn = [ShaderNode shaderNodeWithVertex:@"Flower.vsh" fragment:@"Flower.fsh"];
 		
 		CGSize s = [[CCDirector sharedDirector] winSize];
 		[sn setPosition:ccp(s.width/2, s.height/2)];
@@ -381,7 +376,7 @@ enum {
 -(id) init
 {
 	if( (self=[super init] ) ) {
-		ShaderNode *sn = [ShaderNode shaderNodeWithVertex:@"Shaders/Plasma.vert" fragment:@"Shaders/Plasma.frag"];
+		ShaderNode *sn = [ShaderNode shaderNodeWithVertex:@"Plasma.vsh" fragment:@"Plasma.fsh"];
 		
 		CGSize s = [[CCDirector sharedDirector] winSize];
 		[sn setPosition:ccp(s.width/2, s.height/2)];
@@ -426,16 +421,16 @@ enum {
 		blur_ = ccp(1/s.width, 1/s.height);
 		sub_[0] = sub_[1] = sub_[2] = sub_[3] = 0;
 		
-		self.shaderProgram = [[GLProgram alloc] initWithVertexShaderFilename:@"Shaders/PositionTextureColor.vert"
-													 fragmentShaderFilename:@"Shaders/Blur.frag"];
+		self.shaderProgram = [[GLProgram alloc] initWithVertexShaderFilename:@"PositionTextureColor.vsh"
+													 fragmentShaderFilename:@"Blur.fsh"];
 		
 		[self.shaderProgram release];
 
 		CHECK_GL_ERROR_DEBUG();
 
-		[shaderProgram_ addAttribute:kCCAttributeNamePosition index:kCCAttribPosition];
-		[shaderProgram_ addAttribute:kCCAttributeNameColor index:kCCAttribColor];
-		[shaderProgram_ addAttribute:kCCAttributeNameTexCoord index:kCCAttribTexCoords];
+		[shaderProgram_ addAttribute:kCCAttributeNamePosition index:kCCVertexAttrib_Position];
+		[shaderProgram_ addAttribute:kCCAttributeNameColor index:kCCVertexAttrib_Color];
+		[shaderProgram_ addAttribute:kCCAttributeNameTexCoord index:kCCVertexAttrib_TexCoords];
 		
 		CHECK_GL_ERROR_DEBUG();
 		
@@ -458,20 +453,16 @@ enum {
 
 -(void) draw
 {
-	// Default Attribs & States: GL_TEXTURE0, k,CCAttribVertex, kCCAttribColor, kCCAttribTexCoords
-	// Needed states: GL_TEXTURE0, k,CCAttribVertex, kCCAttribColor, kCCAttribTexCoords
-	// Unneeded states: -
-	
+	ccGLEnableVertexAttribs(kCCVertexAttribFlag_PosColorTex );
 	ccGLBlendFunc( blendFunc_.src, blendFunc_.dst );	
 	
 	ccGLUseProgram( shaderProgram_->program_ );
-	ccGLUniformProjectionMatrix( shaderProgram_ );
-	ccGLUniformModelViewMatrix( shaderProgram_ );
+	ccGLUniformModelViewProjectionMatrix( shaderProgram_ );
 
 	glUniform2f( blurLocation, blur_.x, blur_.y );
 	glUniform4f( subLocation, sub_[0], sub_[1], sub_[2], sub_[3] );
 	
-	glBindTexture( GL_TEXTURE_2D,  [texture_ name] );
+	ccGLBindTexture2D(  [texture_ name] );
 	
 	//
 	// Attributes
@@ -481,15 +472,15 @@ enum {
 	
 	// vertex
 	NSInteger diff = offsetof( ccV3F_C4B_T2F, vertices);
-	glVertexAttribPointer(kCCAttribPosition, 3, GL_FLOAT, GL_FALSE, kQuadSize, (void*) (offset + diff));
+	glVertexAttribPointer(kCCVertexAttrib_Position, 3, GL_FLOAT, GL_FALSE, kQuadSize, (void*) (offset + diff));
 	
 	// texCoods
 	diff = offsetof( ccV3F_C4B_T2F, texCoords);
-	glVertexAttribPointer(kCCAttribTexCoords, 2, GL_FLOAT, GL_FALSE, kQuadSize, (void*)(offset + diff));
+	glVertexAttribPointer(kCCVertexAttrib_TexCoords, 2, GL_FLOAT, GL_FALSE, kQuadSize, (void*)(offset + diff));
 	
 	// color
 	diff = offsetof( ccV3F_C4B_T2F, colors);
-	glVertexAttribPointer(kCCAttribColor, 4, GL_UNSIGNED_BYTE, GL_TRUE, kQuadSize, (void*)(offset + diff));
+	glVertexAttribPointer(kCCVertexAttrib_Color, 4, GL_UNSIGNED_BYTE, GL_TRUE, kQuadSize, (void*)(offset + diff));
 	
 	
 	glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);

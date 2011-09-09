@@ -53,13 +53,13 @@ typedef enum {
 	CGPoint				barChangeRate_;
 	BOOL				reverseDirection_;
 }
-@property (nonatomic) ccColor3UB color;
+@property (nonatomic) ccColor3B color;
 @property (nonatomic) GLubyte opacity;
 /**	Change the percentage to change progress. */
 @property (nonatomic, readwrite) CCProgressTimerType type;
 @property (nonatomic, readwrite) BOOL reverseDirection;
-@property (readonly) ccV2F_C4B_T2F *vertexData;
-@property (readonly) int vertexDataCount;
+@property (nonatomic, readonly) ccV2F_C4B_T2F *vertexData;
+@property (nonatomic, readonly) int vertexDataCount;
 
 /**
  *	Midpoint is used to modify the progress start position.

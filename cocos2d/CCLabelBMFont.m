@@ -619,7 +619,7 @@ typedef struct _KerningHashElement
 
 #pragma mark LabelBMFont - CCRGBAProtocol protocol
 
--(void) setColor:(ccColor3UB)color
+-(void) setColor:(ccColor3B)color
 {
 	color_ = color;
 	
@@ -664,6 +664,7 @@ typedef struct _KerningHashElement
 -(void) draw
 {
 	[super draw];
+
 	CGSize s = [self contentSize];
 	CGPoint vertices[4]={
 		ccp(0,0),ccp(s.width,0),

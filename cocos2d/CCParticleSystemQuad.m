@@ -194,7 +194,7 @@
 	// colors
 	ccV2F_C4B_T2F_Quad *quad = &(quads_[particleIdx]);
 	
-	ccColor4UB color = { p->color.r*255, p->color.g*255, p->color.b*255, p->color.a*255};
+	ccColor4B color = { p->color.r*255, p->color.g*255, p->color.b*255, p->color.a*255};
 	quad->bl.colors = color;
 	quad->br.colors = color;
 	quad->tl.colors = color;
@@ -269,11 +269,11 @@
 // overriding draw method
 -(void) draw
 {	
-	// Default Attribs & States: GL_TEXTURE0, k,CCAttribVertex, kCCAttribColor, kCCAttribTexCoords
-	// Needed states: GL_TEXTURE0, k,CCAttribVertex, kCCAttribColor, kCCAttribTexCoords
-	// Unneeded states: -
+	[super draw];
+
+	ccGLEnableVertexAttribs( kCCVertexAttribFlag_PosColorTex );
 	
-	glBindTexture( GL_TEXTURE_2D, [texture_ name] );
+	ccGLBindTexture2D( [texture_ name] );
 
 #define kQuadSize sizeof(quads_[0].bl)
 
@@ -281,13 +281,13 @@
 	glBindBuffer(GL_ARRAY_BUFFER, quadsID_);
 	
 	// vertices
-	glVertexAttribPointer(kCCAttribPosition, 2, GL_FLOAT, GL_FALSE, kQuadSize, (GLvoid*) offsetof( ccV2F_C4B_T2F, vertices));
+	glVertexAttribPointer(kCCVertexAttrib_Position, 2, GL_FLOAT, GL_FALSE, kQuadSize, (GLvoid*) offsetof( ccV2F_C4B_T2F, vertices));
 	
 	// colors
-	glVertexAttribPointer(kCCAttribColor, 4, GL_UNSIGNED_BYTE, GL_TRUE, kQuadSize, (GLvoid*) offsetof( ccV2F_C4B_T2F, colors));
+	glVertexAttribPointer(kCCVertexAttrib_Color, 4, GL_UNSIGNED_BYTE, GL_TRUE, kQuadSize, (GLvoid*) offsetof( ccV2F_C4B_T2F, colors));
 	
 	// tex coords
-	glVertexAttribPointer(kCCAttribTexCoords, 2, GL_FLOAT, GL_FALSE, kQuadSize, (GLvoid*) offsetof( ccV2F_C4B_T2F, texCoords));
+	glVertexAttribPointer(kCCVertexAttrib_TexCoords, 2, GL_FLOAT, GL_FALSE, kQuadSize, (GLvoid*) offsetof( ccV2F_C4B_T2F, texCoords));
 		
 #else // vertex array list
 
@@ -295,23 +295,22 @@
 	
 	// vertex
 	NSInteger diff = offsetof( ccV2F_C4B_T2F, vertices);
-	glVertexAttribPointer(kCCAttribPosition, 2, GL_FLOAT, GL_FALSE, kQuadSize, (GLvoid*) (offset + diff));
+	glVertexAttribPointer(kCCVertexAttrib_Position, 2, GL_FLOAT, GL_FALSE, kQuadSize, (GLvoid*) (offset + diff));
 	
 	// color
 	diff = offsetof( ccV2F_C4B_T2F, colors);
-	glVertexAttribPointer(kCCAttribColor, 4, GL_UNSIGNED_BYTE, GL_FALSE, kQuadSize, (GLvoid*)(offset + diff));
+	glVertexAttribPointer(kCCVertexAttrib_Color, 4, GL_UNSIGNED_BYTE, GL_FALSE, kQuadSize, (GLvoid*)(offset + diff));
 	
 	// texCoods
 	diff = offsetof( ccV2F_C4B_T2F, texCoords);
-	glVertexAttribPointer(kCCAttribTexCoords, 2, GL_FLOAT, GL_FALSE, kQuadSize, (GLvoid*)(offset + diff));	
+	glVertexAttribPointer(kCCVertexAttrib_TexCoords, 2, GL_FLOAT, GL_FALSE, kQuadSize, (GLvoid*)(offset + diff));	
 
 #endif // ! CC_USES_VBO
 	
 	ccGLBlendFunc( blendFunc_.src, blendFunc_.dst );
 	
 	ccGLUseProgram( shaderProgram_->program_ );	
-	ccGLUniformProjectionMatrix( shaderProgram_ );
-	ccGLUniformModelViewMatrix( shaderProgram_ );
+	ccGLUniformModelViewProjectionMatrix( shaderProgram_ );
 	
 	NSAssert( particleIdx == particleCount, @"Abnormal error in particle quad");
 	glDrawElements(GL_TRIANGLES, (GLsizei) particleIdx*6, GL_UNSIGNED_SHORT, indices_);

@@ -47,20 +47,26 @@
 	NSUInteger		itemsPerRow_;
 	// chars per column
 	NSUInteger		itemsPerColumn_;
-		
+	
 	// width of each char
 	NSUInteger		itemWidth_;
 	// height of each char
 	NSUInteger		itemHeight_;
+
+	// quads to draw
+	NSUInteger		quadsToDraw_;
 
 	// blend function
 	ccBlendFunc		blendFunc_;
 
 	// texture RGBA. 
 	GLubyte		opacity_;
-	ccColor3UB	color_;
-	ccColor3UB	colorUnmodified_;
+	ccColor3B	color_;
+	ccColor3B	colorUnmodified_;
 	BOOL opacityModifyRGB_;
+	
+	// color uniform
+	GLint	uniformColor_;
 }
 
 /** conforms to CCTextureProtocol protocol */
@@ -72,8 +78,10 @@
 /** conforms to CCRGBAProtocol protocol */
 @property (nonatomic,readwrite) GLubyte opacity;
 /** conforms to CCRGBAProtocol protocol */
-@property (nonatomic,readwrite) ccColor3UB color;
+@property (nonatomic,readwrite) ccColor3B color;
 
+/** how many quads to draw */
+@property (nonatomic,readwrite) NSUInteger quadsToDraw;
 
 /** creates a CCAtlasNode  with an Atlas file the width and height of each item measured in points and the quantity of items to render*/
 +(id) atlasWithTileFile:(NSString*)tile tileWidth:(NSUInteger)w tileHeight:(NSUInteger)h itemsToRender: (NSUInteger) c;

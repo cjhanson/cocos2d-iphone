@@ -37,6 +37,7 @@ static NSString *transitions[] = {
 	@"TMXResizeTest",
 	@"TMXIsoMoveLayer",
 	@"TMXOrthoMoveLayer",
+	@"TMXOrthoFlipTest",
 	@"TMXBug987",
 	@"TMXBug787",
 
@@ -295,7 +296,7 @@ Class restartAction()
 	// over all your tiles in every frame. It's very expensive
 	//	for(int x=0; x < tilemap.tgaInfo->width; x++) {
 	//		for(int y=0; y < tilemap.tgaInfo->height; y++) {
-	//			ccColor3UB c =[tilemap tileAt:ccg(x,y)];
+	//			ccColor3B c =[tilemap tileAt:ccg(x,y)];
 	//			if( c.r != 0 ) {
 	//				NSLog(@"%d,%d = %d", x,y,c.r);
 	//			}
@@ -303,7 +304,7 @@ Class restartAction()
 	//	}
 	
 	// NEW since v0.7
-	ccColor3UB c =[tilemap tileAt:ccg(13,21)];		
+	ccColor3B c =[tilemap tileAt:ccg(13,21)];		
 	c.r++;
 	c.r %= 50;
 	if( c.r==0)
@@ -1222,6 +1223,36 @@ Class restartAction()
 @end
 
 #pragma mark -
+#pragma mark TMXOrthoFlipTest
+
+@implementation TMXOrthoFlipTest
+-(id) init
+{
+	if( (self=[super init]) ) {		
+		CCTMXTiledMap *map = [CCTMXTiledMap tiledMapWithTMXFile:@"TileMaps/ortho-rotation-test.tmx"];
+		[self addChild:map z:0 tag:kTagTileMap];
+		
+		CGSize s = map.contentSize;
+		NSLog(@"ContentSize: %f, %f", s.width,s.height);
+		
+		for( CCSpriteBatchNode* child in [map children] ) {
+			[[child texture] setAntiAliasTexParameters];
+		}
+		
+		id action = [CCScaleBy actionWithDuration:2 scale:0.5f];
+		[map runAction:action];
+	}	
+	return self;
+}
+
+-(NSString *) title
+{
+	return @"TMX tile flip test";
+}
+@end
+
+
+#pragma mark -
 #pragma mark TMXBug987
 
 @implementation TMXBug987
@@ -1325,6 +1356,11 @@ Class restartAction()
 
 	[viewController_ setView:glView];
 
+	// When in iPad / RetinaDisplay mode, CCFileUtils will append the "-ipad" / "-hd" to all loaded files
+	// If the -ipad  / -hdfile is not found, it will load the non-suffixed version
+	[CCFileUtils setiPadSuffix:@"-ipad"];			// Default on iPad is "" (empty string)
+	[CCFileUtils setRetinaDisplaySuffix:@"-hd"];	// Default on RetinaDisplay is "-hd"
+	
 	// glview is a child of the main window
 	[window_ addSubview:viewController_.view];
 	

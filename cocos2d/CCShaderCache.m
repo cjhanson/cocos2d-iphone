@@ -83,12 +83,12 @@ static CCShaderCache *_sharedShaderCache;
 -(void) loadDefaultShaders
 {
 	// Position Texture Color shader
-	GLProgram *p = [[GLProgram alloc] initWithVertexShaderFilename:@"Shaders/PositionTextureColor.vert"
-											fragmentShaderFilename:@"Shaders/PositionTextureColor.frag"];
+	GLProgram *p = [[GLProgram alloc] initWithVertexShaderFilename:@"PositionTextureColor.vsh"
+											fragmentShaderFilename:@"PositionTextureColor.fsh"];
 	
-	[p addAttribute:kCCAttributeNamePosition index:kCCAttribPosition];
-	[p addAttribute:kCCAttributeNameColor index:kCCAttribColor];
-	[p addAttribute:kCCAttributeNameTexCoord index:kCCAttribTexCoords];
+	[p addAttribute:kCCAttributeNamePosition index:kCCVertexAttrib_Position];
+	[p addAttribute:kCCAttributeNameColor index:kCCVertexAttrib_Color];
+	[p addAttribute:kCCAttributeNameTexCoord index:kCCVertexAttrib_TexCoords];
 	
 	[p link];
 	[p updateUniforms];
@@ -97,28 +97,28 @@ static CCShaderCache *_sharedShaderCache;
 	[p release];
 	
 	//
-	// Position Color shader
+	// Position, Color shader
 	//
-	p = [[GLProgram alloc] initWithVertexShaderFilename:@"Shaders/PositionColor.vert"
-								 fragmentShaderFilename:@"Shaders/PositionColor.frag"];
+	p = [[GLProgram alloc] initWithVertexShaderFilename:@"PositionColor.vsh"
+								 fragmentShaderFilename:@"PositionColor.fsh"];
 	
-	[p addAttribute:kCCAttributeNamePosition index:kCCAttribPosition];
-	[p addAttribute:kCCAttributeNameColor index:kCCAttribColor];
+	[p addAttribute:kCCAttributeNamePosition index:kCCVertexAttrib_Position];
+	[p addAttribute:kCCAttributeNameColor index:kCCVertexAttrib_Color];
 	
 	[p link];
 	[p updateUniforms];
 	
 	[programs_ setObject:p forKey:kCCShader_PositionColor];
 	[p release];
-	
+
 	//
 	// Position Texture shader
 	//
-	p = [[GLProgram alloc] initWithVertexShaderFilename:@"Shaders/PositionTexture.vert"
-								 fragmentShaderFilename:@"Shaders/PositionTexture.frag"];
+	p = [[GLProgram alloc] initWithVertexShaderFilename:@"PositionTexture.vsh"
+								 fragmentShaderFilename:@"PositionTexture.fsh"];
 	
-	[p addAttribute:kCCAttributeNamePosition index:kCCAttribPosition];
-	[p addAttribute:kCCAttributeNameTexCoord index:kCCAttribTexCoords];
+	[p addAttribute:kCCAttributeNamePosition index:kCCVertexAttrib_Position];
+	[p addAttribute:kCCAttributeNameTexCoord index:kCCVertexAttrib_TexCoords];
 	
 	[p link];
 	[p updateUniforms];
@@ -127,14 +127,29 @@ static CCShaderCache *_sharedShaderCache;
 	[p release];	
 
 	//
+	// Position, Texture attribs, 1 Color as uniform shader
+	//
+	p = [[GLProgram alloc] initWithVertexShaderFilename:@"PositionTexture_uColor.vsh"
+								 fragmentShaderFilename:@"PositionTexture_uColor.fsh"];
+	
+	[p addAttribute:kCCAttributeNamePosition index:kCCVertexAttrib_Position];
+	[p addAttribute:kCCAttributeNameTexCoord index:kCCVertexAttrib_TexCoords];
+	
+	[p link];
+	[p updateUniforms];
+	
+	[programs_ setObject:p forKey:kCCShader_PositionTexture_uColor];
+	[p release];
+
+	//
 	// Position Texture A8 Color shader
 	//
-	p = [[GLProgram alloc] initWithVertexShaderFilename:@"Shaders/PositionTextureA8Color.vert"
-								 fragmentShaderFilename:@"Shaders/PositionTextureA8Color.frag"];
+	p = [[GLProgram alloc] initWithVertexShaderFilename:@"PositionTextureA8Color.vsh"
+								 fragmentShaderFilename:@"PositionTextureA8Color.fsh"];
 	
-	[p addAttribute:kCCAttributeNamePosition index:kCCAttribPosition];
-	[p addAttribute:kCCAttributeNameColor index:kCCAttribColor];
-	[p addAttribute:kCCAttributeNameTexCoord index:kCCAttribTexCoords];
+	[p addAttribute:kCCAttributeNamePosition index:kCCVertexAttrib_Position];
+	[p addAttribute:kCCAttributeNameColor index:kCCVertexAttrib_Color];
+	[p addAttribute:kCCAttributeNameTexCoord index:kCCVertexAttrib_TexCoords];
 	
 	[p link];
 	[p updateUniforms];
@@ -148,6 +163,11 @@ static CCShaderCache *_sharedShaderCache;
 -(GLProgram *) programForKey:(NSString*)key
 {
 	return [programs_ objectForKey:key];
+}
+
+- (void) addProgram:(GLProgram*)program forKey:(NSString*)key
+{
+    [programs_ setObject:program forKey:key];
 }
 
 @end

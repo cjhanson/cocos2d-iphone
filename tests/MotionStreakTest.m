@@ -77,6 +77,16 @@ Class restartAction()
 		item3.position = ccp( s.width/2 + 100,30);
 		[self addChild: menu z:1];
 		
+		
+		CCMenuItemToggle *itemMode = [CCMenuItemToggle itemWithTarget:self
+														  selector:@selector(modeCallback:)
+															 items: [CCMenuItemFont itemFromString: @"Fast"], [CCMenuItemFont itemFromString: @"Slow"], nil];
+		
+		CCMenu *menuMode = [CCMenu menuWithItems:itemMode, nil];
+		[self addChild:menuMode];
+		
+		[menuMode setPosition:ccp(30,65)];
+		
 	}
 	return self;
 }
@@ -87,6 +97,11 @@ Class restartAction()
 	[[CCTextureCache sharedTextureCache] removeUnusedTextures];
 }
 
+-(void) modeCallback: (id) sender
+{
+	BOOL fastMode = [streak_ isFastMode];
+	[streak_ setFastMode: ! fastMode];
+}
 -(void) restartCallback: (id) sender
 {
 	CCScene *s = [CCScene node];
@@ -143,8 +158,9 @@ Class restartAction()
 	[target setPosition:ccp(100,0)];
 
 	// create the streak object and add it to the scene
-	streak = [CCMotionStreak streakWithFade:2 minSeg:3 image:@"streak.png" width:32 length:32 color:ccc4(0,255,0,255)];
+	streak = [CCMotionStreak streakWithFade:2 minSeg:3 width:32 color:ccGREEN textureFilename:@"streak.png"];
 	[self addChild:streak];
+	
 	// schedule an update on each frame so we can syncronize the streak with the target
 	[self schedule:@selector(onUpdate:)];
   
@@ -154,14 +170,28 @@ Class restartAction()
 	id motion = [CCMoveBy actionWithDuration:2 position:ccp(100,0)];
 	[root runAction:[CCRepeatForever actionWithAction:[CCSequence actions:motion, [motion reverse], nil]]];
 	[root runAction:action1];
+    
+    
+    CCActionInterval *colorAction = [CCRepeatForever actionWithAction:[CCSequence actions:
+                                                                  [CCTintTo actionWithDuration:0.2f red:255 green:0 blue:0],
+                                                                  [CCTintTo actionWithDuration:0.2f red:0 green:255 blue:0],
+                                                                  [CCTintTo actionWithDuration:0.2f red:0 green:0 blue:255],
+                                                                  [CCTintTo actionWithDuration:0.2f red:0 green:255 blue:255],
+                                                                  [CCTintTo actionWithDuration:0.2f red:255 green:255 blue:0],
+                                                                  [CCTintTo actionWithDuration:0.2f red:255 green:0 blue:255],
+                                                                  [CCTintTo actionWithDuration:0.2f red:255 green:255 blue:255],nil
+                                                                  ]
+                                ];
+    [streak runAction:colorAction];
+	
+	
+	// weak ref
+	streak_ = streak;
 }
 
 -(void)onUpdate:(ccTime)delta
 {
-//  CGPoint p = [target absolutePosition];
-//  float r = [root rotation];
 	[streak setPosition:[target convertToWorldSpace:CGPointZero]];
-
 }
 @end
 
@@ -186,10 +216,14 @@ Class restartAction()
 	CGSize s = [[CCDirector sharedDirector] winSize];
 		
 	// create the streak object and add it to the scene
-	streak = [CCMotionStreak streakWithFade:3 minSeg:3 image:@"streak.png" width:64 length:32 color:ccc4(255,255,255,255)];
+	streak = [CCMotionStreak streakWithFade:3 minSeg:3 width:64 color:ccWHITE textureFilename:@"streak.png"];
 	[self addChild:streak];
 	
 	streak.position = ccp(s.width/2, s.height/2);
+	
+	
+	// weak ref
+	streak_ = streak;
 }
 
 -(void)ccTouchesMoved:(NSSet *)touches withEvent:(UIEvent *)event
@@ -236,6 +270,11 @@ Class restartAction()
 	// Enables High Res mode (Retina Display) on iPhone 4 and maintains low res on all other devices
 	if( ! [director enableRetinaDisplay:YES] )
 		CCLOG(@"Retina Display Not supported");
+	
+	// When in iPad / RetinaDisplay mode, CCFileUtils will append the "-ipad" / "-hd" to all loaded files
+	// If the -ipad  / -hdfile is not found, it will load the non-suffixed version
+	[CCFileUtils setiPadSuffix:@"-ipad"];			// Default on iPad is "" (empty string)
+	[CCFileUtils setRetinaDisplaySuffix:@"-hd"];	// Default on RetinaDisplay is "-hd"
 	
 	CCScene *scene = [CCScene node];
 	[scene addChild: [nextAction() node]];

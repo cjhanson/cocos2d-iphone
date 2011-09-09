@@ -123,8 +123,8 @@ typedef enum {
 	
 	// opacity and RGB protocol
 	GLubyte		opacity_;
-	ccColor3UB	color_;
-	ccColor3UB	colorUnmodified_;
+	ccColor3B	color_;
+	ccColor3B	colorUnmodified_;
 	BOOL		opacityModifyRGB_:1;
 	
 	// image is flipped
@@ -167,7 +167,7 @@ typedef enum {
 /** opacity: conforms to CCRGBAProtocol protocol */
 @property (nonatomic,readwrite) GLubyte opacity;
 /** RGB colors: conforms to CCRGBAProtocol protocol */
-@property (nonatomic,readwrite) ccColor3UB color;
+@property (nonatomic,readwrite) ccColor3B color;
 /** whether or not the Sprite is rendered using a CCSpriteBatchNode */
 @property (nonatomic,readwrite) BOOL usesBatchNode;
 /** weak reference of the CCTextureAtlas used when the sprite is rendered using a CCSpriteBatchNode */
@@ -243,6 +243,7 @@ typedef enum {
 
 /** Initializes an sprite with a texture and a rect in points.
  The offset will be (0,0).
+ IMPORTANT: This is the designated initializer.
  */
 -(id) initWithTexture:(CCTexture2D*)texture rect:(CGRect)rect;
 
@@ -333,4 +334,5 @@ typedef enum {
  @since v0.99.5
  */
 -(void) setDisplayFrameWithAnimationName:(NSString*)animationName index:(int) frameIndex;
+
 @end

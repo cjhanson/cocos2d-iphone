@@ -56,28 +56,27 @@ typedef void (*GLLogFunction) (GLuint program,
 {
     if ((self = [super init]) )
     {
-        NSString *vertShaderPathname, *fragShaderPathname;
         program_ = glCreateProgram();
         
 		vertShader_ = fragShader_ = 0;
 
 		if( vShaderFilename ) {
-			vertShaderPathname = [CCFileUtils fullPathFromRelativePath:vShaderFilename]; 
+			NSString *fullname = [CCFileUtils fullPathFromRelativePath:vShaderFilename]; 
 
 			if (![self compileShader:&vertShader_
 								type:GL_VERTEX_SHADER 
-								file:vertShaderPathname])
-				NSLog(@"Failed to compile vertex shader");
+								file:fullname])
+				CCLOG(@"cocos2d: ERROR: Failed to compile vertex shader: %@", vShaderFilename);
 		}
         
         // Create and compile fragment shader
 		if( fShaderFilename ) {
-			fragShaderPathname = [CCFileUtils fullPathFromRelativePath:fShaderFilename];
+			NSString *fullname = [CCFileUtils fullPathFromRelativePath:fShaderFilename];
 
 			if (![self compileShader:&fragShader_
 								type:GL_FRAGMENT_SHADER 
-								file:fragShaderPathname])
-				NSLog(@"Failed to compile fragment shader");
+								file:fullname])
+				CCLOG(@"cocos2d: ERROR: Failed to compile fragment shader: %@", fShaderFilename);
 		}
         
 		if( vertShader_ )
@@ -109,10 +108,7 @@ typedef void (*GLLogFunction) (GLuint program,
                                            encoding:NSUTF8StringEncoding 
                                               error:nil] UTF8String];
     if (!source)
-    {
-        NSLog(@"Failed to load shader");
         return NO;
-    }
     
     *shader = glCreateShader(type);
     glShaderSource(*shader, 1, &source, NULL);
@@ -122,9 +118,9 @@ typedef void (*GLLogFunction) (GLuint program,
 	
 	if( ! status ) {
 		if( type == GL_VERTEX_SHADER )
-			NSLog(@"%@: %@", file, [self vertexShaderLog] );
+			CCLOG(@"cocos2d: %@: %@", file, [self vertexShaderLog] );
 		else
-			NSLog(@"%@: %@", file, [self fragmentShaderLog] );
+			CCLOG(@"cocos2d: %@: %@", file, [self fragmentShaderLog] );
 
 	}
     return status == GL_TRUE;
@@ -143,10 +139,7 @@ typedef void (*GLLogFunction) (GLuint program,
 {
 	// Since sample most probably won't change, set it to 0 now.
 	
-	// update uniforms
-	uniforms_[kCCUniformPMatrix] = glGetUniformLocation(program_, kCCUniformPMatrix_s);
-
-	uniforms_[kCCUniformMVMatrix] = glGetUniformLocation(program_, kCCUniformMVMatrix_s);
+	uniforms_[kCCUniformMVPMatrix] = glGetUniformLocation(program_, kCCUniformMVPMatrix_s);
 
 	uniforms_[kCCUniformSampler] = glGetUniformLocation(program_, kCCUniformSampler_s);
 	
@@ -157,15 +150,16 @@ typedef void (*GLLogFunction) (GLuint program,
 #pragma mark -
 
 - (BOOL)link
-{
-    GLint status;
-    
+{    
     glLinkProgram(program_);
+
+#if DEBUG
+	GLint status;
     glValidateProgram(program_);
     
     glGetProgramiv(program_, GL_LINK_STATUS, &status);
     if (status == GL_FALSE) {
-		CCLOG(@"cocos2d: GLProgram: error linking program: %i", program_);
+		CCLOG(@"cocos2d: ERROR: Failed to link program: %i", program_);
 		if( vertShader_ )
 			glDeleteShader( vertShader_ );
 		if( fragShader_ )
@@ -174,6 +168,7 @@ typedef void (*GLLogFunction) (GLuint program,
 		vertShader_ = fragShader_ = program_ = 0;
         return NO;
 	}
+#endif
     
     if (vertShader_)
         glDeleteShader(vertShader_);

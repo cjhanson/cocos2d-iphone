@@ -427,7 +427,7 @@ enum {
 	// Default texture format for PNG/BMP/TIFF/JPEG/GIF images
 	// It can be RGBA8888, RGBA4444, RGB5_A1, RGB565
 	// You can change anytime.
-	[CCTexture2D setDefaultAlphaPixelFormat:kTexture2DPixelFormat_RGBA8888];	
+	[CCTexture2D setDefaultAlphaPixelFormat:kCCTexture2DPixelFormat_RGBA8888];	
 	
 	CCScene *scene = [CCScene node];
 	
@@ -478,7 +478,8 @@ enum {
 - (void) dealloc
 {
 	[viewController_ release];
-	[window_ dealloc];
+	[window_ release];
+
 	[super dealloc];
 }
 

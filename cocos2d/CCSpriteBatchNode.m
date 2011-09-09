@@ -39,6 +39,7 @@
 #import "CCDirector.h"
 #import "Support/CGPointExtension.h"
 #import "Support/TransformUtils.h"
+#import "Support/CCProfiling.h"
 
 // external
 #import "kazmath/GL/matrix.h"
@@ -145,6 +146,8 @@ static 	SEL selUpdate = NULL;
 // Don't call visit on it's children
 -(void) visit
 {
+	CC_PROFILER_START_CATEGORY(kCCProfilerCategoryBatchSprite, @"CCSpriteBatchNode - visit");
+
 	NSAssert(parent_ != nil, @"CCSpriteBatchNode should NOT be root node");
 
 	// CAREFUL:
@@ -170,9 +173,10 @@ static 	SEL selUpdate = NULL;
 	
 	if ( grid_ && grid_.active)
 		[grid_ afterDraw:self];
-	
 
 	kmGLPopMatrix();
+	
+	CC_PROFILER_STOP_CATEGORY(kCCProfilerCategoryBatchSprite, @"CCSpriteBatchNode - visit");
 }
 
 // override addChild:
@@ -238,6 +242,10 @@ static 	SEL selUpdate = NULL;
 #pragma mark CCSpriteBatchNode - draw
 -(void) draw
 {
+	CC_PROFILER_START(@"CCSpriteBatchNode - draw");
+
+	[super draw];
+
 	// Optimization: Fast Dispatch	
 	if( textureAtlas_.totalQuads == 0 )
 		return;	
@@ -270,17 +278,16 @@ static 	SEL selUpdate = NULL;
 		}
 	}
 	
-	// Default Attribs & States: GL_TEXTURE0, k,CCAttribVertex, kCCAttribColor, kCCAttribTexCoords
-	// Needed states: GL_TEXTURE0, k,CCAttribVertex, kCCAttribColor, kCCAttribTexCoords
-	// Unneeded states: -
+	ccGLEnableVertexAttribs( kCCVertexAttribFlag_PosColorTex );
 
 	ccGLBlendFunc( blendFunc_.src, blendFunc_.dst );
 	
 	ccGLUseProgram( shaderProgram_->program_ );	
-	ccGLUniformProjectionMatrix( shaderProgram_ );	
-	ccGLUniformModelViewMatrix( shaderProgram_ );
+	ccGLUniformModelViewProjectionMatrix( shaderProgram_ );
 	
 	[textureAtlas_ drawQuads];
+	
+	CC_PROFILER_STOP(@"CCSpriteBatchNode - draw");
 }
 
 #pragma mark CCSpriteBatchNode - private
@@ -299,8 +306,8 @@ static 	SEL selUpdate = NULL;
 	if( ! [textureAtlas_ resizeCapacity:quantity] ) {
 		// serious problems
 		CCLOG(@"cocos2d: WARNING: Not enough memory to resize the atlas");
-		NSAssert(NO,@"XXX: SpriteSheet#increaseAtlasCapacity SHALL handle this assert");
-	}	
+		NSAssert(NO,@"XXX: CCSpriteBatchNode#increaseAtlasCapacity SHALL handle this assert");
+	}		
 }
 
 

@@ -233,17 +233,7 @@ Class restartTransition()
 		x = size.width;
 		y = size.height;
 
-		CCSprite *bg1;
-		
-#ifdef __IPHONE_OS_VERSION_MAX_ALLOWED
-		if (UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPad) {
-			bg1 = [CCSprite spriteWithFile:@"background1-ipad.jpg"];
-		} else {
-			bg1 = [CCSprite spriteWithFile:@"background1.jpg"];
-		}
-#elif defined(__MAC_OS_X_VERSION_MAX_ALLOWED)
-		bg1 = [CCSprite spriteWithFile:@"background1.jpg"];
-#endif // Mac
+		CCSprite *bg1 = [CCSprite spriteWithFile:@"background1.jpg"];
 		
 		bg1.position = ccp(size.width/2, size.height/2);
 		[self addChild:bg1 z:-1];
@@ -342,16 +332,8 @@ Class restartTransition()
 		x = size.width;
 		y = size.height;
 		
-		CCSprite *bg2;
-#ifdef __IPHONE_OS_VERSION_MAX_ALLOWED
-		if (UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPad) {
-			bg2 = [CCSprite spriteWithFile:@"background2-ipad.jpg"];
-		} else {
-			bg2 = [CCSprite spriteWithFile:@"background2.jpg"];
-		}
-#elif defined(__MAC_OS_X_VERSION_MAX_ALLOWED)
-		bg2 = [CCSprite spriteWithFile:@"background2.jpg"];
-#endif // Mac
+		CCSprite *bg2 = [CCSprite spriteWithFile:@"background2.jpg"];
+
 		bg2.position = ccp(size.width/2, size.height/2);
 		[self addChild:bg2 z:-1];
 		
@@ -489,6 +471,12 @@ Class restartTransition()
 	
 	// make the OpenGLView a child of the main window
 	[window_ addSubview:viewController_.view];
+
+	// When in iPad / RetinaDisplay mode, CCFileUtils will append the "-ipad" / "-hd" to all loaded files
+	// If the -ipad  / -hdfile is not found, it will load the non-suffixed version
+	[CCFileUtils setiPadSuffix:@"-ipad"];			// Default on iPad is "" (empty string)
+	[CCFileUtils setRetinaDisplaySuffix:@"-hd"];	// Default on RetinaDisplay is "-hd"
+
 	
 	// Make the window visible
 	[window_ makeKeyAndVisible];
@@ -548,7 +536,9 @@ Class restartTransition()
 
 - (void) dealloc
 {
-	[window_ dealloc];
+	[viewController_ release];
+	[window_ release];
+
 	[super dealloc];
 }
 

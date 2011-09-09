@@ -30,14 +30,15 @@
 #import "CCActionInterval.h"
 #import "CCSprite.h"
 #import "Support/CGPointExtension.h"
+#import "CCBlockSupport.h"
 
-static int _fontSize = kItemSize;
+static NSUInteger _fontSize = kCCItemSize;
 static NSString *_fontName = @"Marker Felt";
 static BOOL _fontNameRelease = NO;
 
 
-const uint32_t	kCurrentItem = 0xc0c05001;
-const uint32_t	kZoomActionTag = 0xc0c05002;
+const NSInteger	kCurrentItem = 0xc0c05001;
+const NSInteger	kZoomActionTag = 0xc0c05002;
 
 
 #pragma mark -
@@ -262,11 +263,11 @@ const uint32_t	kZoomActionTag = 0xc0c05002;
 {
 	return [label_ opacity];
 }
--(void) setColor:(ccColor3UB)color
+-(void) setColor:(ccColor3B)color
 {
 	[label_ setColor:color];
 }
--(ccColor3UB) color
+-(ccColor3B) color
 {
 	return [label_ color];
 }
@@ -322,12 +323,12 @@ const uint32_t	kZoomActionTag = 0xc0c05002;
 
 @implementation CCMenuItemFont
 
-+(void) setFontSize: (int) s
++(void) setFontSize: (NSUInteger) s
 {
 	_fontSize = s;
 }
 
-+(int) fontSize
++(NSUInteger) fontSize
 {
 	return _fontSize;
 }
@@ -360,7 +361,10 @@ const uint32_t	kZoomActionTag = 0xc0c05002;
 {
 	NSAssert( [value length] != 0, @"Value length must be greater than 0");
 	
-	CCLabelTTF *label = [CCLabelTTF labelWithString:value fontName:_fontName fontSize:_fontSize];
+	fontName_ = [_fontName copy];
+	fontSize_ = _fontSize;
+	
+	CCLabelTTF *label = [CCLabelTTF labelWithString:value fontName:fontName_ fontSize:fontSize_];
 
 	if((self=[super initWithLabel:label target:rec selector:cb]) ) {
 		// do something ?
@@ -369,11 +373,44 @@ const uint32_t	kZoomActionTag = 0xc0c05002;
 	return self;
 }
 
-+(id) itemFromString: (NSString*) value block:(void(^)(id sender))block {
++(id) itemFromString: (NSString*) value block:(void(^)(id sender))block
+{
 	return [[[self alloc] initFromString:value block:block] autorelease];
 }
 
--(id) initFromString: (NSString*) value block:(void(^)(id sender))block {
+-(void) recreateLabel
+{
+	CCLabelTTF *label = [CCLabelTTF labelWithString:[label_ string] fontName:fontName_ fontSize:fontSize_];
+	self.label = label;
+}
+
+-(void) setFontSize: (NSUInteger) size
+{
+	fontSize_ = size;
+	[self recreateLabel];
+}
+
+-(NSUInteger) fontSize
+{
+	return fontSize_;
+}
+
+-(void) setFontName: (NSString*) fontName
+{
+	if (fontName_)
+		[fontName_ release];
+
+	fontName_ = [fontName copy];
+	[self recreateLabel];
+}
+
+-(NSString*) fontName
+{
+	return fontName_;
+}
+
+-(id) initFromString: (NSString*) value block:(void(^)(id sender))block
+{
 	block_ = [block copy];
 	return [self initFromString:value target:block_ selector:@selector(ccCallbackBlockWithSender:)];
 }
@@ -471,7 +508,7 @@ const uint32_t	kZoomActionTag = 0xc0c05002;
 	[disabledImage_ setOpacity:opacity];
 }
 
--(void) setColor:(ccColor3UB)color
+-(void) setColor:(ccColor3B)color
 {
 	[normalImage_ setColor:color];
 	[selectedImage_ setColor:color];
@@ -483,7 +520,7 @@ const uint32_t	kZoomActionTag = 0xc0c05002;
 	return [normalImage_ opacity];
 }
 
--(ccColor3UB) color
+-(ccColor3B) color
 {
 	return [normalImage_ color];
 }
@@ -721,7 +758,7 @@ const uint32_t	kZoomActionTag = 0xc0c05002;
 		[item setOpacity:opacity];
 }
 
-- (void) setColor:(ccColor3UB)color
+- (void) setColor:(ccColor3B)color
 {
 	color_ = color;
 	for(CCMenuItem<CCRGBAProtocol>* item in subItems_)

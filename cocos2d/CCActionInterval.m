@@ -135,7 +135,7 @@
 {
 	CCFiniteTimeAction *prev = [actions objectAtIndex:0];
 	
-	for (int i = 1; i < [actions count]; i++)
+	for (NSUInteger i = 1; i < [actions count]; i++)
 		prev = [self actionOne:prev two:[actions objectAtIndex:i]];
 	
 	return prev;
@@ -364,7 +364,7 @@
 {
 	CCFiniteTimeAction *prev = [actions objectAtIndex:0];
 	
-	for (int i = 1; i < [actions count]; i++)
+	for (NSUInteger i = 1; i < [actions count]; i++)
 		prev = [self actionOne:prev two:[actions objectAtIndex:i]];
 	
 	return prev;
@@ -1138,7 +1138,7 @@ static inline float bezierat( float a, float b, float c, float d, ccTime t )
 	[super startWithTarget:aTarget];
 	
 	id<CCRGBAProtocol> tn = (id<CCRGBAProtocol>) target_;
-	ccColor3UB color = [tn color];
+	ccColor3B color = [tn color];
 	fromR_ = color.r;
 	fromG_ = color.g;
 	fromB_ = color.b;

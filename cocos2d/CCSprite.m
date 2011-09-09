@@ -41,6 +41,7 @@
 #import "CCDirector.h"
 #import "Support/CGPointExtension.h"
 #import "Support/TransformUtils.h"
+#import "Support/CCProfiling.h"
 
 // external
 #import "kazmath/GL/matrix.h"
@@ -132,7 +133,14 @@ struct transformValues_ {
 
 -(id) init
 {
-	if( (self=[super init]) ) {
+	return [self initWithTexture:nil rect:CGRectZero];
+}
+
+// designated initializer
+-(id) initWithTexture:(CCTexture2D*)texture rect:(CGRect)rect
+{
+	if( (self = [super init]) )
+	{
 		dirty_ = recursiveDirty_ = NO;
 		
 		// by default use "Self Render".
@@ -149,9 +157,6 @@ struct transformValues_ {
 		
 		// shader program
 		self.shaderProgram = [[CCShaderCache sharedShaderCache] programForKey:kCCShader_PositionTextureColor];
-
-		// update texture (calls updateBlendFunc)
-		[self setTexture:nil];
 		
 		// make a Quad (Subclasses should realloc an appropriate amount of memory)
 		vertexCount_		= 4;
@@ -161,7 +166,7 @@ struct transformValues_ {
 		
 		// default transform anchor: center
 		anchorPoint_ =  ccp(0.5f, 0.5f);
-		
+
 		// zwoptex default values
 		offsetPosition_ = CGPointZero;
 		
@@ -169,34 +174,17 @@ struct transformValues_ {
 		hasChildren_ = NO;
 		
 		// Atlas: Color
-		ccColor4UB tmpColor = {255,255,255,255};
+		ccColor4B tmpColor = {255,255,255,255};
 		quad_.bl.colors = tmpColor;
 		quad_.br.colors = tmpColor;
 		quad_.tl.colors = tmpColor;
 		quad_.tr.colors = tmpColor;	
-		
-		// Atlas: Vertex
-		
-		// updated in "useSelfRender"
-		
-		// Atlas: TexCoords
-		[self setTextureRectInPixels:CGRectZero rotated:NO untrimmedSize:CGSizeZero];
+
+		[self setTexture:texture];
+		[self setTextureRect:rect];
 		
 		// updateMethod selector
 		updateMethod = (__typeof__(updateMethod))[self methodForSelector:@selector(updateTransform)];
-	}
-	
-	return self;
-}
-
--(id) initWithTexture:(CCTexture2D*)texture rect:(CGRect)rect
-{
-	NSAssert(texture!=nil, @"Invalid texture for sprite");
-	// IMPORTANT: [self init] and not [super init];
-	if( (self = [self init]) )
-	{
-		[self setTexture:texture];
-		[self setTextureRect:rect];
 	}
 	return self;
 }
@@ -615,17 +603,20 @@ struct transformValues_ {
 
 -(void) draw
 {
-	// Default Attribs & States: GL_TEXTURE0, k,CCAttribVertex, kCCAttribColor, kCCAttribTexCoords
-	// Needed states: GL_TEXTURE0, k,CCAttribVertex, kCCAttribColor, kCCAttribTexCoords
-	// Unneeded states: -
+	CC_PROFILER_START_CATEGORY(kCCProfilerCategorySprite, @"CCSprite - draw");
+
+	[super draw];
+	
+	NSAssert(!usesBatchNode_, @"If CCSprite is being rendered by CCSpriteBatchNode, CCSprite#draw SHOULD NOT be called");
+
+	ccGLEnableVertexAttribs( kCCVertexAttribFlag_PosColorTex );
 	
 	ccGLBlendFunc( blendFunc_.src, blendFunc_.dst );
 
 	ccGLUseProgram( shaderProgram_->program_ );
-	ccGLUniformProjectionMatrix( shaderProgram_ );
-	ccGLUniformModelViewMatrix( shaderProgram_ );
+	ccGLUniformModelViewProjectionMatrix( shaderProgram_ );
 	
-	glBindTexture( GL_TEXTURE_2D, [texture_ name] );
+	ccGLBindTexture2D( [texture_ name] );
 		
 	//
 	// Attributes
@@ -635,15 +626,15 @@ struct transformValues_ {
 	
 	// vertex
 	NSInteger diff = offsetof( ccV3F_C4B_T2F, vertices);
-	glVertexAttribPointer(kCCAttribPosition, 3, GL_FLOAT, GL_FALSE, kQuadSize, (void*) (offset + diff));
+	glVertexAttribPointer(kCCVertexAttrib_Position, 3, GL_FLOAT, GL_FALSE, kQuadSize, (void*) (offset + diff));
 	
 	// texCoods
 	diff = offsetof( ccV3F_C4B_T2F, texCoords);
-	glVertexAttribPointer(kCCAttribTexCoords, 2, GL_FLOAT, GL_FALSE, kQuadSize, (void*)(offset + diff));
+	glVertexAttribPointer(kCCVertexAttrib_TexCoords, 2, GL_FLOAT, GL_FALSE, kQuadSize, (void*)(offset + diff));
 
 	// color
 	diff = offsetof( ccV3F_C4B_T2F, colors);
-	glVertexAttribPointer(kCCAttribColor, 4, GL_UNSIGNED_BYTE, GL_TRUE, kQuadSize, (void*)(offset + diff));
+	glVertexAttribPointer(kCCVertexAttrib_Color, 4, GL_UNSIGNED_BYTE, GL_TRUE, kQuadSize, (void*)(offset + diff));
 	
 
 	glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
@@ -667,6 +658,9 @@ struct transformValues_ {
 	};
 	ccDrawPoly(vertices, 4, YES);
 #endif // CC_SPRITE_DEBUG_DRAW
+	
+
+	CC_PROFILER_STOP_CATEGORY(kCCProfilerCategorySprite, @"CCSprite - draw");
 }
 
 #pragma mark CCSprite - CCNode overrides
@@ -856,7 +850,7 @@ struct transformValues_ {
 #pragma mark CCSprite - RGBA protocol
 -(void) updateColor
 {
-	ccColor4UB color4 = {color_.r, color_.g, color_.b, opacity_};
+	ccColor4B color4 = {color_.r, color_.g, color_.b, opacity_};
 	
 	quad_.bl.colors = color4;
 	quad_.br.colors = color4;
@@ -892,7 +886,7 @@ struct transformValues_ {
 	[self updateColor];
 }
 
-- (ccColor3UB) color
+- (ccColor3B) color
 {
 	if(opacityModifyRGB_)
 		return colorUnmodified_;
@@ -900,7 +894,7 @@ struct transformValues_ {
 	return color_;
 }
 
--(void) setColor:(ccColor3UB)color3
+-(void) setColor:(ccColor3B)color3
 {
 	color_ = colorUnmodified_ = color3;
 	
@@ -915,7 +909,7 @@ struct transformValues_ {
 
 -(void) setOpacityModifyRGB:(BOOL)modify
 {
-	ccColor3UB oldColor	= self.color;
+	ccColor3B oldColor	= self.color;
 	opacityModifyRGB_	= modify;
 	self.color			= oldColor;
 }
@@ -941,6 +935,7 @@ struct transformValues_ {
 	
 	// update rect
 	rectRotated_ = frame.rotated;
+
 	[self setTextureRectInPixels:frame.rectInPixels rotated:rectRotated_ untrimmedSize:frame.originalSizeInPixels];
 }
 

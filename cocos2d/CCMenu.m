@@ -170,6 +170,10 @@ enum {
 	if( state_ != kCCMenuStateWaiting || !visible_ )
 		return NO;
 	
+	for( CCNode *c = self.parent; c != nil; c = c.parent )
+		if( c.visible == NO )
+			return NO;
+
 	selectedItem_ = [self itemForTouch:touch];
 	[selectedItem_ selected];
 	
@@ -397,7 +401,7 @@ enum {
 		[item setPosition:ccp(x - winSize.width / 2,
 							  y - itemSize.height / 2)];
             
-		x += w + 10;
+		x += w;
 		++columnsOccupied;
 		
 		if(columnsOccupied >= rowColumns) {
@@ -508,7 +512,7 @@ enum {
 		[item setOpacity:opacity_];
 }
 
--(void) setColor:(ccColor3UB)color
+-(void) setColor:(ccColor3B)color
 {
 	color_ = color;
 	

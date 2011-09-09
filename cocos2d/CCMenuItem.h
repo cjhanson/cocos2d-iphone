@@ -31,7 +31,7 @@
 
 @class CCSprite;
 
-#define kItemSize 32
+#define kCCItemSize 32
 
 #pragma mark -
 #pragma mark CCMenuItem
@@ -101,13 +101,13 @@
 @interface CCMenuItemLabel : CCMenuItem  <CCRGBAProtocol>
 {
 	CCNode<CCLabelProtocol, CCRGBAProtocol> *label_;
-	ccColor3UB	colorBackup;
-	ccColor3UB	disabledColor_;
+	ccColor3B	colorBackup;
+	ccColor3B	disabledColor_;
 	float		originalScale_;
 }
 
 /** the color that will be used to disable the item */
-@property (nonatomic,readwrite) ccColor3UB disabledColor;
+@property (nonatomic,readwrite) ccColor3B disabledColor;
 
 /** Label that is rendered. It can be any CCNode that implements the CCLabelProtocol */
 @property (nonatomic,readwrite,assign) CCNode<CCLabelProtocol, CCRGBAProtocol>* label;
@@ -179,17 +179,19 @@
  */
 @interface CCMenuItemFont : CCMenuItemLabel
 {
+	NSUInteger fontSize_;
+	NSString *fontName_;
 }
-/** set font size */
-+(void) setFontSize: (int) s;
+/** set default font size */
++(void) setFontSize: (NSUInteger) s;
 
-/** get font size */
-+(int) fontSize;
+/** get default font size */
++(NSUInteger) fontSize;
 
-/** set the font name */
+/** set default font name */
 +(void) setFontName: (NSString*) n;
 
-/** get the font name */
+/** get default font name */
 +(NSString*) fontName;
 
 /** creates a menu item from a string without target/selector. To be used with CCMenuItemToggle */
@@ -200,6 +202,18 @@
 
 /** initializes a menu item from a string with a target/selector */
 -(id) initFromString: (NSString*) value target:(id) r selector:(SEL) s;
+
+/** set font size */
+-(void) setFontSize: (NSUInteger) s;
+
+/** get font size */
+-(NSUInteger) fontSize;
+
+/** set the font name */
+-(void) setFontName: (NSString*) n;
+
+/** get the font name */
+-(NSString*) fontName;
 
 /** creates a menu item from a string with the specified block.
  The block will be "copied".
@@ -311,13 +325,13 @@
 	NSUInteger selectedIndex_;
 	NSMutableArray* subItems_;
 	GLubyte		opacity_;
-	ccColor3UB	color_;
+	ccColor3B	color_;
 }
 
 /** conforms with CCRGBAProtocol protocol */
 @property (nonatomic,readonly) GLubyte opacity;
 /** conforms with CCRGBAProtocol protocol */
-@property (nonatomic,readonly) ccColor3UB color;
+@property (nonatomic,readonly) ccColor3B color;
 
 /** returns the selected item */
 @property (nonatomic,readwrite) NSUInteger selectedIndex;
