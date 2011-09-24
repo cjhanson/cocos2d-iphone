@@ -108,14 +108,14 @@
 #define CC_DIRECTOR_MAC_USE_DISPLAY_LINK_THREAD 1
 #endif
 
-/** @def CC_COCOSNODE_RENDER_SUBPIXEL
+/** @def CC_NODE_RENDER_SUBPIXEL
  If enabled, the CCNode objects (CCSprite, CCLabel,etc) will be able to render in subpixels.
  If disabled, integer pixels will be used.
  
  To enable set it to 1. Enabled by default.
  */
-#ifndef CC_COCOSNODE_RENDER_SUBPIXEL
-#define CC_COCOSNODE_RENDER_SUBPIXEL 1
+#ifndef CC_NODE_RENDER_SUBPIXEL
+#define CC_NODE_RENDER_SUBPIXEL 1
 #endif
 
 /** @def CC_SPRITEBATCHNODE_RENDER_SUBPIXEL
@@ -126,18 +126,6 @@
  */
 #ifndef CC_SPRITEBATCHNODE_RENDER_SUBPIXEL
 #define CC_SPRITEBATCHNODE_RENDER_SUBPIXEL	1
-#endif
-
-/** @def CC_OPTIMIZE_BLEND_FUNC_FOR_PREMULTIPLIED_ALPHA
- If most of your imamges have pre-multiplied alpha, set it to 1 (if you are going to use .PNG/.JPG file images).
- Only set to 0 if ALL your images by-pass Apple UIImage loading system (eg: if you use libpng or PVR images)
-
- To enable set it to a value different than 0. Enabled by default.
-
- @since v0.99.5
- */
-#ifndef CC_OPTIMIZE_BLEND_FUNC_FOR_PREMULTIPLIED_ALPHA
-#define CC_OPTIMIZE_BLEND_FUNC_FOR_PREMULTIPLIED_ALPHA 1
 #endif
 
 /** @def CC_TEXTURE_ATLAS_USE_TRIANGLE_STRIP
@@ -166,9 +154,10 @@
 #endif
 
 /** @def CC_SPRITE_DEBUG_DRAW
- If enabled, all subclasses of CCSprite will draw a bounding box
+ If enabled, all subclasses of CCSprite will draw a bounding box.
  Useful for debugging purposes only. It is recommened to leave it disabled.
  
+ If the CCSprite is being drawn by a CCSpriteBatchNode, the bounding box might be a bit different.
  To enable set it to a value different than 0. Disabled by default:
  0 -- disabled
  1 -- draw bounding box
@@ -178,15 +167,6 @@
 #define CC_SPRITE_DEBUG_DRAW 0
 #endif
 
-/** @def CC_SPRITEBATCHNODE_DEBUG_DRAW
- If enabled, all subclasses of CCSprite that are rendered using an CCSpriteBatchNode draw a bounding box.
- Useful for debugging purposes only. It is recommened to leave it disabled.
- 
- To enable set it to a value different than 0. Disabled by default.
- */
-#ifndef CC_SPRITEBATCHNODE_DEBUG_DRAW
-#define CC_SPRITEBATCHNODE_DEBUG_DRAW 0
-#endif
 
 /** @def CC_LABELBMFONT_DEBUG_DRAW
  If enabled, all subclasses of CCLabelBMFont will draw a bounding box

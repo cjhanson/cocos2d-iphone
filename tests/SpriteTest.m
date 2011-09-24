@@ -16,8 +16,6 @@
 
 static int sceneIdx=-1;
 static NSString *transitions[] = {	
-//	@"SpriteZVertex",
-//	@"SpriteBatchNodeZVertex",
 
 	@"Sprite1",
 	@"SpriteBatchNode1",
@@ -55,7 +53,6 @@ static NSString *transitions[] = {
 	@"SpriteBatchNodeNewTexture",
 	@"SpriteHybrid",
 	@"SpriteBatchNodeChildren",
-	@"SpriteBatchNodeChildren2",
 	@"SpriteBatchNodeChildrenZ",
 	@"SpriteChildrenVisibility",
 	@"SpriteChildrenVisibilityIssue665",
@@ -66,6 +63,8 @@ static NSString *transitions[] = {
 	@"SpriteBatchNodeChildrenChildren",
 	@"SpriteNilTexture",
 	@"SpriteSubclass",
+	@"SpriteDoubleResolution",
+
 	@"AnimationCache",
 	@"AnimationCacheFile",
 };
@@ -941,7 +940,7 @@ Class restartAction()
 		// If you are going to use it is better to use a 3D projection
 		//
 		// WARNING:
-		// The developer is resposible for ordering it's sprites according to it's Z if the sprite has
+		// The developer is resposible for ordering its sprites according to its Z if the sprite has
 		// transparent parts.
 		//
 		
@@ -1014,7 +1013,7 @@ Class restartAction()
 		// If you are going to use it is better to use a 3D projection
 		//
 		// WARNING:
-		// The developer is resposible for ordering it's sprites according to it's Z if the sprite has
+		// The developer is resposible for ordering its sprites according to its Z if the sprite has
 		// transparent parts.
 		//
 		
@@ -2224,7 +2223,7 @@ Class restartAction()
 
 -(NSString *) title
 {
-	return @"Sprite offset + anchor + scale";
+	return @"Sprite offset + anchor + skew";
 }
 @end
 
@@ -2885,101 +2884,6 @@ Class restartAction()
 }
 @end
 
-#pragma mark -
-#pragma mark SpriteBatchNode Children2
-
-@implementation SpriteBatchNodeChildren2
-
--(id) init
-{
-	if( (self=[super init]) ) {
-		
-		CGSize s = [[CCDirector sharedDirector] winSize];
-		
-		// parents
-		CCSpriteBatchNode *batch = [CCSpriteBatchNode batchNodeWithFile:@"animations/grossini.pvr.gz" capacity:50];
-		[batch.texture generateMipmap];
-		
-		[self addChild:batch z:0 tag:kTagSpriteBatchNode];
-		
-		[[CCSpriteFrameCache sharedSpriteFrameCache] addSpriteFramesWithFile:@"animations/grossini.plist"];
-		
-		
-		CCSprite *sprite11 = [CCSprite spriteWithSpriteFrameName:@"grossini_dance_01.png"];
-		[sprite11 setPosition:ccp( s.width/3, s.height/2)];
-
-		CCSprite *sprite12 = [CCSprite spriteWithSpriteFrameName:@"grossini_dance_02.png"];
-		[sprite12 setPosition:ccp(20,30)];
-		sprite12.scale = 0.2f;
-
-		CCSprite *sprite13 = [CCSprite spriteWithSpriteFrameName:@"grossini_dance_03.png"];
-		[sprite13 setPosition:ccp(-20,30)];
-		sprite13.scale = 0.2f;
-		
-		[batch addChild:sprite11];
-		[sprite11 addChild:sprite12 z:-2];
-		[sprite11 addChild:sprite13 z:2];
-
-		// don't rotate with it's parent
-		sprite12.honorParentTransform &= ~CC_HONOR_PARENT_TRANSFORM_ROTATE;
-
-		// don't scale and rotate with it's parent
-		sprite13.honorParentTransform &= ~(CC_HONOR_PARENT_TRANSFORM_SCALE | CC_HONOR_PARENT_TRANSFORM_ROTATE);
-		
-		id action = [CCMoveBy actionWithDuration:2 position:ccp(200,0)];
-		id action_back = [action reverse];
-		id action_rot = [CCRotateBy actionWithDuration:2 angle:360];
-		id action_s = [CCScaleBy actionWithDuration:2 scale:2];
-		id action_s_back = [action_s reverse];
-
-		[sprite11 runAction: [CCRepeatForever actionWithAction:action_rot]];
-		[sprite11 runAction: [CCRepeatForever actionWithAction:[CCSequence actions:action, action_back, nil]]];
-		[sprite11 runAction: [CCRepeatForever actionWithAction:[CCSequence actions:action_s, action_s_back, nil]]];
-		
-		//
-		// another set of parent / children
-		//
-		
-		CCSprite *sprite21 = [CCSprite spriteWithSpriteFrameName:@"grossini_dance_01.png"];
-		[sprite21 setPosition:ccp( 2*s.width/3, s.height/2-50)];
-		
-		CCSprite *sprite22 = [CCSprite spriteWithSpriteFrameName:@"grossini_dance_02.png"];
-		[sprite22 setPosition:ccp(20,30)];
-		sprite22.scale = 0.8f;
-		
-		CCSprite *sprite23 = [CCSprite spriteWithSpriteFrameName:@"grossini_dance_03.png"];
-		[sprite23 setPosition:ccp(-20,30)];
-		sprite23.scale = 0.8f;
-		
-		[batch addChild:sprite21];
-		[sprite21 addChild:sprite22 z:-2];
-		[sprite21 addChild:sprite23 z:2];
-		
-		// don't rotate with it's parent
-		sprite22.honorParentTransform &= ~CC_HONOR_PARENT_TRANSFORM_TRANSLATE;
-		
-		// don't scale and rotate with it's parent
-		sprite23.honorParentTransform &= ~CC_HONOR_PARENT_TRANSFORM_SCALE;
-		
-		[sprite21 runAction:[CCRepeatForever actionWithAction:[CCRotateBy actionWithDuration:1 angle:360]]];
-		[sprite21 runAction:[CCRepeatForever actionWithAction:[CCSequence actions:[CCScaleTo actionWithDuration:0.5f scale:5.0f],[CCScaleTo	actionWithDuration:0.5f scale:1],nil]]];
-		
-	}	
-	return self;
-}
-
-- (void) dealloc
-{
-	[[CCSpriteFrameCache sharedSpriteFrameCache] removeUnusedSpriteFrames];
-	[super dealloc];
-}
-
--(NSString *) title
-{
-	return @"SpriteBatchNode HonorTransform";
-}
-@end
-
 
 #pragma mark -
 #pragma mark SpriteBatchNode ChildrenZ
@@ -3209,7 +3113,7 @@ Class restartAction()
 		[aParent addChild:sprite1];
 		[sprite1 addChild:sprite2 z:-2];
 		[sprite1 addChild:sprite3 z:2];
-				
+
 		//
 		// Sprite
 		//
@@ -3894,6 +3798,124 @@ Class restartAction()
 @end
 
 #pragma mark -
+#pragma mark SpriteSubclass
+
+@interface DoubleSprite : CCSprite
+{
+	BOOL isHD_;
+}
+@end
+
+@implementation DoubleSprite
+-(id) initWithTexture:(CCTexture2D*)texture rect:(CGRect)rect
+{
+	if( (self=[super initWithTexture:texture rect:rect]) ) {
+		
+#ifdef __IPHONE_OS_VERSION_MAX_ALLOWED
+		isHD_ = ( [texture resolutionType] == kCCResolutionRetinaDisplay );
+#endif
+	}
+	
+	return self;
+}
+
+// Called everytime the vertex needs to be updated.
+-(void) setContentSize:(CGSize)size
+{
+	// If Retina Display and Texture is in HD then scale the vertex rect
+	if( CC_CONTENT_SCALE_FACTOR() == 2 && ! isHD_ ) {
+		size.width *= 2;
+		size.height *= 2;
+	}
+	
+	[super setContentSize:size];
+}
+
+// rect used only for the vertex. Called everytime the vertex needs to be updated.
+-(void) setVertexRect:(CGRect)rect
+{
+	// If Retina Display and Texture is in HD then scale the vertex rect
+	if( CC_CONTENT_SCALE_FACTOR() == 2 && ! isHD_ ) {
+		rect.size.width *= 2;
+		rect.size.height *= 2;
+	}
+	
+	[super setVertexRect:rect];
+}
+@end
+
+@implementation SpriteDoubleResolution
+
+-(id) init
+{
+	if( (self=[super init]) ) {
+		
+		CGSize s = [[CCDirector sharedDirector] winSize];
+	
+		//
+		// LEFT: SD sprite
+		//
+		// there is no HD resolution file of grossini_dance_08.
+		DoubleSprite *spriteSD = [DoubleSprite spriteWithFile:@"grossini_dance_08.png"];
+		[self addChild:spriteSD];
+		[spriteSD setPosition:ccp(s.width/4*1,s.height/2)];
+
+		CCSprite *child1_left = [DoubleSprite spriteWithFile:@"grossini_dance_08.png"];
+		[spriteSD addChild:child1_left];
+		[child1_left setPosition:ccp(-30,0)];
+
+		CCSprite *child1_right = [CCSprite spriteWithFile:@"grossini.png"];
+		[spriteSD addChild:child1_right];
+		[child1_left setPosition:ccp( spriteSD.contentSize.height, 0)];
+
+		
+		
+		//
+		// RIGHT: HD sprite
+		//
+		// there is an HD version of grossini.png
+		CCSprite *spriteHD = [CCSprite spriteWithFile:@"grossini.png"];
+		[self addChild:spriteHD];
+		[spriteHD setPosition:ccp(s.width/4*3,s.height/2)];
+		
+		CCSprite *child2_left = [DoubleSprite spriteWithFile:@"grossini_dance_08.png"];
+		[spriteHD addChild:child2_left];
+		[child2_left setPosition:ccp(-30,0)];
+		
+		CCSprite *child2_right = [CCSprite spriteWithFile:@"grossini.png"];
+		[spriteHD addChild:child2_right];
+		[child2_left setPosition:ccp( spriteHD.contentSize.height, 0)];
+		
+		
+		
+		// Actions
+		id scale = [CCScaleBy actionWithDuration:2 scale:0.5];
+		id scale_back = [scale reverse];
+		id seq = [CCSequence actions:scale, scale_back, nil];
+		
+		id seq_copy = [[seq copy] autorelease];
+		
+		[spriteSD runAction:seq];
+		[spriteHD runAction:seq_copy];
+
+		
+	}	
+	return self;
+}
+
+-(NSString *) title
+{
+	return @"Sprite Double resolution";
+}
+
+-(NSString*) subtitle
+{
+	return @"Retina Display. SD (left) should be equal to HD (right)";
+}
+@end
+
+
+#pragma mark -
 #pragma mark AnimationCache
 
 @implementation AnimationCache
@@ -4073,7 +4095,7 @@ Class restartAction()
 
 
 #pragma mark -
-#pragma mark AppDelegate
+#pragma mark AppDelegate - iOS
 
 // CLASS IMPLEMENTATIONS
 

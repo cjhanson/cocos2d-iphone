@@ -49,8 +49,6 @@ const NSUInteger defaultCapacity = 29;
 #pragma mark -
 #pragma mark CCSpriteBatchNode
 
-static 	SEL selUpdate = NULL;
-
 @interface CCSpriteBatchNode (private)
 -(void) updateBlendFunc;
 @end
@@ -62,12 +60,6 @@ static 	SEL selUpdate = NULL;
 @synthesize descendants = descendants_;
 
 
-+(void) initialize
-{
-	if ( self == [CCSpriteBatchNode class] ) {
-		selUpdate = @selector(updateTransform);
-	}
-}
 /*
  * creation with CCTexture2D
  */
@@ -143,7 +135,7 @@ static 	SEL selUpdate = NULL;
 #pragma mark CCSpriteBatchNode - composition
 
 // override visit.
-// Don't call visit on it's children
+// Don't call visit on its children
 -(void) visit
 {
 	CC_PROFILER_START_CATEGORY(kCCProfilerCategoryBatchSprite, @"CCSpriteBatchNode - visit");
@@ -152,7 +144,7 @@ static 	SEL selUpdate = NULL;
 
 	// CAREFUL:
 	// This visit is almost identical to CocosNode#visit
-	// with the exception that it doesn't call visit on it's children
+	// with the exception that it doesn't call visit on its children
 	//
 	// The alternative is to have a void CCSprite#visit, but
 	// although this is less mantainable, is faster
@@ -232,7 +224,7 @@ static 	SEL selUpdate = NULL;
 {
 	// Invalidate atlas index. issue #569
 	// useSelfRender should be performed on all descendants. issue #1216
-	[descendants_ makeObjectsPerformSelector:@selector(useSelfRender)];
+	[descendants_ makeObjectsPerformSelector:@selector(setBatchNode:) withObject:nil];
         
 	[super removeAllChildrenWithCleanup:doCleanup];
 
@@ -250,37 +242,9 @@ static 	SEL selUpdate = NULL;
 	// Optimization: Fast Dispatch	
 	if( textureAtlas_.totalQuads == 0 )
 		return;	
-	
-	CCSprite *child;
-	ccArray *array = descendants_->data;
-	
-	NSUInteger i = array->num;
-	id *arr = array->arr;
 
-	if( i > 0 ) {
-		
-		while (i-- > 0) {
-			child = *arr++;
-			
-			// fast dispatch
-			child->updateMethod(child, selUpdate);
-			
-#if CC_SPRITEBATCHNODE_DEBUG_DRAW
-			//Issue #528
-			CGRect rect = [child boundingBox];
-			CGPoint vertices[4]={
-				ccp(rect.origin.x,rect.origin.y),
-				ccp(rect.origin.x+rect.size.width,rect.origin.y),
-				ccp(rect.origin.x+rect.size.width,rect.origin.y+rect.size.height),
-				ccp(rect.origin.x,rect.origin.y+rect.size.height),
-			};
-			ccDrawPoly(vertices, 4, YES);
-#endif // CC_SPRITEBATCHNODE_DEBUG_DRAW
-		}
-	}
+	[children_ makeObjectsPerformSelector:@selector(updateTransform)];
 	
-	ccGLEnableVertexAttribs( kCCVertexAttribFlag_PosColorTex );
-
 	ccGLBlendFunc( blendFunc_.src, blendFunc_.dst );
 	
 	ccGLUseProgram( shaderProgram_->program_ );	
@@ -407,7 +371,7 @@ static 	SEL selUpdate = NULL;
 // add child helper
 -(void) insertChild:(CCSprite*)sprite inAtlasAtIndex:(NSUInteger)index
 {
-	[sprite useBatchNode:self];
+	[sprite setBatchNode:self];
 	[sprite setAtlasIndex:index];
 	[sprite setDirty: YES];
 	
@@ -443,7 +407,7 @@ static 	SEL selUpdate = NULL;
 	[textureAtlas_ removeQuadAtIndex:sprite.atlasIndex];
 	
 	// Cleanup sprite. It might be reused (issue #569)
-	[sprite useSelfRender];
+	[sprite setBatchNode:nil];
 	
 	ccArray *descendantsData = descendants_->data;
 	NSUInteger index = ccArrayGetIndexOfObject(descendantsData, sprite);

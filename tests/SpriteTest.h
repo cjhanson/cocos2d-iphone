@@ -211,10 +211,6 @@
 {}
 @end
 
-@interface SpriteBatchNodeChildren2 : SpriteDemo
-{}
-@end
-
 @interface SpriteBatchNodeChildrenZ : SpriteDemo
 {}
 @end
@@ -254,6 +250,11 @@
 @interface SpriteSubclass : SpriteDemo
 {}
 @end
+
+@interface SpriteDoubleResolution : SpriteDemo
+{}
+@end
+
 
 @interface AnimationCache : SpriteDemo
 {}

@@ -46,6 +46,18 @@ static GLenum	_ccBlendingDest = -1;
 
 #pragma mark - GL State Cache functions
 
+void ccGLInvalidateStateCache( void )
+{
+	kmGLFreeAll();
+
+#if CC_ENABLE_GL_STATE_CACHE
+	_ccCurrentShaderProgram = -1;
+	_ccCurrentBoundTexture = -1;
+	_ccBlendingSource = -1;
+	_ccBlendingDest = -1;
+#endif
+}
+
 void ccGLDeleteProgram( GLuint program )
 {
 #if CC_ENABLE_GL_STATE_CACHE
@@ -108,8 +120,6 @@ void ccGLDeleteTexture( GLuint textureId )
 
 void ccGLEnableVertexAttribs( unsigned int flags )
 {
-	
-
 	/* Position */
 	BOOL enablePosition = flags & kCCVertexAttribFlag_Position;
 

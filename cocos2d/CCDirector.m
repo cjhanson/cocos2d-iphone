@@ -259,7 +259,7 @@ static CCDirector *_sharedDirector = nil;
 - (void) setDepthTest: (BOOL) on
 {
 	if (on) {
-		ccGLClearDepth(1.0f);
+		glClearDepth(1.0f);
 
 		glEnable(GL_DEPTH_TEST);
 		glDepthFunc(GL_LEQUAL);
@@ -412,6 +412,9 @@ static CCDirector *_sharedDirector = nil;
 
 	[openGLView_ release];
 	openGLView_ = nil;
+	
+	// Invalidate GL state cache
+	ccGLInvalidateStateCache();
 	
 	CHECK_GL_ERROR();
 }
