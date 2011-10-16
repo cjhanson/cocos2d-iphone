@@ -126,14 +126,7 @@ do	{																							\
 	CCDirector *__director = [CCDirector sharedDirector];										\
 	[__director setDisplayFPS:NO];																\
 	[__director setAnimationInterval:1.0/60];													\
-	EAGLView *__glView = [EAGLView viewWithFrame:[window_ bounds]								\
-									pixelFormat:kEAGLColorFormatRGB565							\
-									depthFormat:0 /* GL_DEPTH_COMPONENT24_OES */				\
-							 preserveBackbuffer:NO												\
-									 sharegroup:nil												\
-								  multiSampling:NO												\
-								numberOfSamples:0												\
-													];											\
+	EAGLView *__glView = [EAGLView viewWithFrame:[window_ bounds]];								\
 	[__director setOpenGLView:__glView];														\
 	viewController_ = [[RootViewController alloc] initWithNibName:nil bundle:nil];				\
 	viewController_.wantsFullScreenLayout = YES;												\

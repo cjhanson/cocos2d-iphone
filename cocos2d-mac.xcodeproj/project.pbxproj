@@ -35,6 +35,8 @@
 /* End PBXAggregateTarget section */
 
 /* Begin PBXBuildFile section */
+		37C73B9E144B68510040573C /* EAGLConfiguration.h in Headers */ = {isa = PBXBuildFile; fileRef = 37C73B9C144B68500040573C /* EAGLConfiguration.h */; };
+		37C73B9F144B68510040573C /* EAGLConfiguration.m in Sources */ = {isa = PBXBuildFile; fileRef = 37C73B9D144B68500040573C /* EAGLConfiguration.m */; };
 		A064312713C1418200CC5554 /* libkazmath.a in Frameworks */ = {isa = PBXBuildFile; fileRef = A06430E713C1414300CC5554 /* libkazmath.a */; };
 		A0B532B913C141FF0072EDA4 /* aabb.h in Headers */ = {isa = PBXBuildFile; fileRef = A0B5329A13C141FF0072EDA4 /* aabb.h */; };
 		A0B532BA13C141FF0072EDA4 /* mat4stack.h in Headers */ = {isa = PBXBuildFile; fileRef = A0B5329C13C141FF0072EDA4 /* mat4stack.h */; };
@@ -3718,6 +3720,8 @@
 		13E42FB307B3F0F600E4EEF1 /* CoreData.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreData.framework; path = /System/Library/Frameworks/CoreData.framework; sourceTree = "<absolute>"; };
 		29B97324FDCFA39411CA2CEA /* AppKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AppKit.framework; path = /System/Library/Frameworks/AppKit.framework; sourceTree = "<absolute>"; };
 		29B97325FDCFA39411CA2CEA /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = /System/Library/Frameworks/Foundation.framework; sourceTree = "<absolute>"; };
+		37C73B9C144B68500040573C /* EAGLConfiguration.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EAGLConfiguration.h; sourceTree = "<group>"; };
+		37C73B9D144B68500040573C /* EAGLConfiguration.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = EAGLConfiguration.m; sourceTree = "<group>"; };
 		A06430E713C1414300CC5554 /* libkazmath.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libkazmath.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		A0B5329A13C141FF0072EDA4 /* aabb.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = aabb.h; sourceTree = "<group>"; };
 		A0B5329C13C141FF0072EDA4 /* mat4stack.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = mat4stack.h; sourceTree = "<group>"; };
@@ -5330,6 +5334,8 @@
 				E0D5D7051344056600A7B1B9 /* ES2Renderer.h */,
 				E0D5D7061344056600A7B1B9 /* ES2Renderer.m */,
 				E0D5D7071344056600A7B1B9 /* ESRenderer.h */,
+				37C73B9C144B68500040573C /* EAGLConfiguration.h */,
+				37C73B9D144B68500040573C /* EAGLConfiguration.m */,
 			);
 			path = iOS;
 			sourceTree = "<group>";
@@ -5451,6 +5457,7 @@
 				E04C31211357138100F65F71 /* CCShaderCache.h in Headers */,
 				E04C31231357138100F65F71 /* GLProgram.h in Headers */,
 				A0BE62FC140552BD00DAA336 /* CCVertex.h in Headers */,
+				37C73B9E144B68510040573C /* EAGLConfiguration.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -9142,6 +9149,7 @@
 				E04C31221357138100F65F71 /* CCShaderCache.m in Sources */,
 				E04C31241357138100F65F71 /* GLProgram.m in Sources */,
 				A0BE62FD140552BD00DAA336 /* CCVertex.m in Sources */,
+				37C73B9F144B68510040573C /* EAGLConfiguration.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

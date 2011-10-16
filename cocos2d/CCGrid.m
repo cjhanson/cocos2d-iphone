@@ -46,6 +46,7 @@
 
 #ifdef __IPHONE_OS_VERSION_MAX_ALLOWED
 #import "Platforms/iOS/CCDirectorIOS.h"
+#import "Platforms/iOS/EAGLConfiguration.h"
 #endif // __IPHONE_OS_VERSION_MAX_ALLOWED
 
 #pragma mark -
@@ -106,7 +107,7 @@
 	
 #ifdef __IPHONE_OS_VERSION_MAX_ALLOWED
 	EAGLView *glview = [[CCDirector sharedDirector] openGLView];
-	NSString *pixelFormat = [glview pixelFormat];
+	NSString *pixelFormat = glview.configuration.colorFormat;
 
 	CCTexture2DPixelFormat format = [pixelFormat isEqualToString: kEAGLColorFormatRGB565] ? kCCTexture2DPixelFormat_RGB565 : kCCTexture2DPixelFormat_RGBA8888;
 #else

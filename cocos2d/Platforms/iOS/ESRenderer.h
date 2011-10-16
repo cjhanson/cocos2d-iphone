@@ -1,6 +1,7 @@
 /*
  * cocos2d for iPhone: http://www.cocos2d-iphone.org
  *
+ * Modified by CJ Hanson on 17 OCT 2011
  * Copyright (c) 2010 Ricardo Quesada
  * Copyright (c) 2011 Zynga Inc.
  * 
@@ -39,12 +40,13 @@
 
 @protocol ESRenderer <NSObject>
 
-- (id) initWithDepthFormat:(GLuint)depthFormat withPixelFormat:(GLuint)pixelFormat withSharegroup:(EAGLSharegroup*)sharegroup withMultiSampling:(BOOL) multiSampling withNumberOfSamples:(GLuint) requestedSamples;
+- (id) initWithDepthFormat:(GLuint)depthFormat sharegroup:(EAGLSharegroup*)sharegroup useMultiSampling:(BOOL) useMultiSampling numberOfSamples:(GLuint) requestedSamples;
 
+- (BOOL) setupOpenGLFromLayer:(CAEAGLLayer *)layer;
 - (BOOL) resizeFromLayer:(CAEAGLLayer *)layer;
 - (BOOL) recreateFromLayer:(CAEAGLLayer *)layer;
 
-- (void) presentRenderbuffer;
+- (BOOL) presentRenderbuffer;
 - (void) makeCurrentAndBindBuffers;
 
 - (EAGLContext*) context;

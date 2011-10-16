@@ -60,6 +60,8 @@
 		05CA7AFE10ED674700F12774 /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2D500B990D5A79CF00DBA0E3 /* QuartzCore.framework */; };
 		05CA7B0010ED674700F12774 /* libz.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 503092B210447296005F7AFC /* libz.dylib */; };
 		05CA7B0C10ED67CE00F12774 /* ActionsWithBlocks.m in Sources */ = {isa = PBXBuildFile; fileRef = 05CA7B0B10ED67CE00F12774 /* ActionsWithBlocks.m */; };
+		37C73B9A144B62EF0040573C /* EAGLConfiguration.h in Headers */ = {isa = PBXBuildFile; fileRef = 37C73B98144B62ED0040573C /* EAGLConfiguration.h */; settings = {ATTRIBUTES = (); }; };
+		37C73B9B144B62EF0040573C /* EAGLConfiguration.m in Sources */ = {isa = PBXBuildFile; fileRef = 37C73B99144B62ED0040573C /* EAGLConfiguration.m */; };
 		3BB5C8E911410A4000DD65EF /* blocks.png in Resources */ = {isa = PBXBuildFile; fileRef = AAEA834A0FD5704400F08728 /* blocks.png */; };
 		3BB5C8EF11410A5300DD65EF /* blocks.png in Resources */ = {isa = PBXBuildFile; fileRef = AAEA834A0FD5704400F08728 /* blocks.png */; };
 		495E73FD104B75090012BB52 /* r1.png in Resources */ = {isa = PBXBuildFile; fileRef = 500165990E72DB0E0085673F /* r1.png */; };
@@ -4132,6 +4134,8 @@
 		1DF5F4DF0D08C38300B7A737 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
 		2D500B920D5A79C200DBA0E3 /* OpenGLES.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGLES.framework; path = System/Library/Frameworks/OpenGLES.framework; sourceTree = SDKROOT; };
 		2D500B990D5A79CF00DBA0E3 /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = System/Library/Frameworks/QuartzCore.framework; sourceTree = SDKROOT; };
+		37C73B98144B62ED0040573C /* EAGLConfiguration.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EAGLConfiguration.h; sourceTree = "<group>"; };
+		37C73B99144B62ED0040573C /* EAGLConfiguration.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = EAGLConfiguration.m; sourceTree = "<group>"; };
 		495E73F7104B74E20012BB52 /* RenderTextureTest.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = RenderTextureTest.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		495E74F6104B756D0012BB52 /* RenderTextureTest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = RenderTextureTest.h; path = tests/RenderTextureTest.h; sourceTree = "<group>"; };
 		495E74F7104B756D0012BB52 /* RenderTextureTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = RenderTextureTest.m; path = tests/RenderTextureTest.m; sourceTree = "<group>"; };
@@ -7727,6 +7731,8 @@
 				E0BC7DA61342CF27001B4DCC /* ES2Renderer.h */,
 				E0BC7DA71342CF27001B4DCC /* ES2Renderer.m */,
 				E0EAD0F7121F4B4600B0C81C /* ESRenderer.h */,
+				37C73B98144B62ED0040573C /* EAGLConfiguration.h */,
+				37C73B99144B62ED0040573C /* EAGLConfiguration.m */,
 			);
 			path = iOS;
 			sourceTree = "<group>";
@@ -7808,6 +7814,7 @@
 				E0EAD103121F4B4600B0C81C /* CCTouchDelegateProtocol.h in Headers */,
 				E0EAD104121F4B4600B0C81C /* CCTouchDispatcher.h in Headers */,
 				E0EAD106121F4B4600B0C81C /* CCTouchHandler.h in Headers */,
+				37C73B9A144B62EF0040573C /* EAGLConfiguration.h in Headers */,
 				E0EAD108121F4B4600B0C81C /* EAGLView.h in Headers */,
 				E0EAD10C121F4B4600B0C81C /* ESRenderer.h in Headers */,
 				E0EAD19D121F4D7300B0C81C /* CCGL.h in Headers */,
@@ -11965,6 +11972,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				37C73B9B144B62EF0040573C /* EAGLConfiguration.m in Sources */,
 				506887F70E96D4F000F943E5 /* CCAtlasNode.m in Sources */,
 				506884D70E96921100F943E5 /* CCLabelAtlas.m in Sources */,
 				506882160E95770400F943E5 /* CCTextureAtlas.m in Sources */,

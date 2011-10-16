@@ -1,6 +1,7 @@
 /*
  * cocos2d for iPhone: http://www.cocos2d-iphone.org
  *
+ * Modified by CJ Hanson on 17 OCT 2011
  * Copyright (c) 2011 Ricardo Quesada
  * Copyright (c) 2011 Zynga Inc.
  * 
@@ -35,9 +36,9 @@
 
 #import "../../Support/OpenGL_Internal.h"
 #import "../../ccMacros.h"
+#import "CCConfiguration.h"
 
 @interface ES2Renderer (InternalMethods)
-- (BOOL) setupOpenGLFromLayer:(CAEAGLLayer *)layer;
 - (void) tearDownOpenGL;
 @end
 
@@ -46,7 +47,7 @@
 @synthesize context=context_;
 
 // Create an OpenGL ES 2.0 context
-- (id) initWithDepthFormat:(unsigned int)depthFormat withPixelFormat:(unsigned int)pixelFormat withSharegroup:(EAGLSharegroup*)sharegroup withMultiSampling:(BOOL) multiSampling withNumberOfSamples:(unsigned int) requestedSamples
+- (id) initWithDepthFormat:(GLuint)depthFormat sharegroup:(EAGLSharegroup*)sharegroup useMultiSampling:(BOOL) useMultiSampling numberOfSamples:(GLuint) requestedSamples
 {
     self = [super init];
     if (self)
@@ -78,7 +79,6 @@
         glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_RENDERBUFFER, colorRenderbuffer_);
 		
 		depthFormat_ = depthFormat;
-		pixelFormat_ = pixelFormat;
 		
 		if(depthFormat_ != 0){
 			glGenRenderbuffers(1, &depthBuffer_);
@@ -91,6 +91,8 @@
 		
 		glBindFramebuffer(GL_FRAMEBUFFER, oldFB);
 		glBindRenderbuffer(GL_RENDERBUFFER, oldCRB);
+		
+		discardFramebufferSupported_ = [[CCConfiguration sharedConfiguration] supportsDiscardFramebuffer];
 		
 		CHECK_GL_ERROR_DEBUG();
     }
@@ -193,9 +195,62 @@
         [EAGLContext setCurrentContext:nil];
 }
 
-- (void) presentRenderbuffer
+- (BOOL) presentRenderbuffer
 {
-	[context_ presentRenderbuffer:GL_RENDERBUFFER];
+	BOOL allOK;
+	
+	// IMPORTANT:
+	// - preconditions
+	//	-> context_ MUST be the OpenGL context
+	//	-> renderbuffer_ must be the the RENDER BUFFER
+	
+	if (multiSampling_)
+	{
+		/* Resolve from msaaFramebuffer to resolveFramebuffer */
+		//glDisable(GL_SCISSOR_TEST);     
+		glBindFramebuffer(GL_READ_FRAMEBUFFER_APPLE, msaaFramebuffer_);
+		glBindFramebuffer(GL_DRAW_FRAMEBUFFER_APPLE, defaultFramebuffer_);
+		glResolveMultisampleFramebufferAPPLE();
+	}
+	
+	if( discardFramebufferSupported_)
+	{	
+		if (multiSampling_)
+		{
+			if (depthFormat_)
+			{
+				GLenum attachments[] = {GL_COLOR_ATTACHMENT0, GL_DEPTH_ATTACHMENT};
+				glDiscardFramebufferEXT(GL_READ_FRAMEBUFFER_APPLE, 2, attachments);
+			}
+			else
+			{
+				GLenum attachments[] = {GL_COLOR_ATTACHMENT0};
+				glDiscardFramebufferEXT(GL_READ_FRAMEBUFFER_APPLE, 1, attachments);
+			}
+			
+			glBindRenderbuffer(GL_RENDERBUFFER, colorRenderbuffer_);
+		}	
+		
+		// not MSAA
+		else if (depthFormat_ ) {
+			GLenum attachments[] = { GL_DEPTH_ATTACHMENT};
+			glDiscardFramebufferEXT(GL_FRAMEBUFFER, 1, attachments);
+		}
+	}
+	
+	allOK = [context_ presentRenderbuffer:GL_RENDERBUFFER];
+	
+	// We can safely re-bind the framebuffer here, since this will be the
+	// 1st instruction of the new main loop
+	if( multiSampling_ )
+		glBindFramebuffer(GL_FRAMEBUFFER, msaaFramebuffer_);
+	
+	if(!allOK)
+		CCLOG(@"cocos2d: Failed to swap renderbuffer in %s\n", __FUNCTION__);
+	
+	CHECK_GL_ERROR_DEBUG();
+
+	return allOK;
 }
 
 -(CGSize) backingSize

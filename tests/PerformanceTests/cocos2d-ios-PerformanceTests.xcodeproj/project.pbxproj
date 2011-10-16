@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		37C73BA3144B686B0040573C /* EAGLConfiguration.h in Headers */ = {isa = PBXBuildFile; fileRef = 37C73BA1144B686B0040573C /* EAGLConfiguration.h */; };
+		37C73BA4144B686B0040573C /* EAGLConfiguration.m in Sources */ = {isa = PBXBuildFile; fileRef = 37C73BA2144B686B0040573C /* EAGLConfiguration.m */; };
 		5006BA3B11BBF4DB00E488BD /* Default.png in Resources */ = {isa = PBXBuildFile; fileRef = 50F48B0B1045AD2F00755CFB /* Default.png */; };
 		5006BA3F11BBF4DB00E488BD /* fps_images.png in Resources */ = {isa = PBXBuildFile; fileRef = 50F411A81068D563002A0D5E /* fps_images.png */; };
 		5006BA4211BBF4DB00E488BD /* b1.png in Resources */ = {isa = PBXBuildFile; fileRef = 5030946E10447D98005F7AFC /* b1.png */; };
@@ -570,6 +572,8 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		37C73BA1144B686B0040573C /* EAGLConfiguration.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EAGLConfiguration.h; sourceTree = "<group>"; };
+		37C73BA2144B686B0040573C /* EAGLConfiguration.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = EAGLConfiguration.m; sourceTree = "<group>"; };
 		5006BA5711BBF4DB00E488BD /* PerformanceTest-ChildrenNode.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "PerformanceTest-ChildrenNode.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		5006BA5B11BBF58600E488BD /* AppController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AppController.h; sourceTree = "<group>"; };
 		5006BA5C11BBF58600E488BD /* AppController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AppController.m; sourceTree = "<group>"; };
@@ -1423,6 +1427,8 @@
 				A037D0F8141510D80091B5C7 /* ES2Renderer.h */,
 				A037D0F9141510D80091B5C7 /* ES2Renderer.m */,
 				A037D0FA141510D80091B5C7 /* ESRenderer.h */,
+				37C73BA1144B686B0040573C /* EAGLConfiguration.h */,
+				37C73BA2144B686B0040573C /* EAGLConfiguration.m */,
 			);
 			path = iOS;
 			sourceTree = "<group>";
@@ -1715,6 +1721,7 @@
 				A037D1F4141510EB0091B5C7 /* vec2.h in Headers */,
 				A037D1F5141510EB0091B5C7 /* vec3.h in Headers */,
 				A037D1F6141510EB0091B5C7 /* vec4.h in Headers */,
+				37C73BA3144B686B0040573C /* EAGLConfiguration.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2295,6 +2302,7 @@
 				A037D201141510EB0091B5C7 /* vec2.c in Sources */,
 				A037D202141510EB0091B5C7 /* vec3.c in Sources */,
 				A037D203141510EB0091B5C7 /* vec4.c in Sources */,
+				37C73BA4144B686B0040573C /* EAGLConfiguration.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

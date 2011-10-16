@@ -1,4 +1,6 @@
 /*
+ 
+ Modified by CJ Hanson on 17 OCT 2011
 
 ===== IMPORTANT =====
 
@@ -74,10 +76,14 @@ Copyright (C) 2008 Apple Inc. All Rights Reserved.
 
 #import "ESRenderer.h"
 
+/** Notification to communicate that the view has been resized */
+extern NSString *const kEAGLViewResizedNotification;
+
 //CLASSES:
 
 @class EAGLView;
 @class EAGLSharegroup;
+@class EAGLConfiguration;
 
 //PROTOCOLS:
 
@@ -97,53 +103,35 @@ Copyright (C) 2008 Apple Inc. All Rights Reserved.
  */
 @interface EAGLView : UIView
 {
-    id<ESRenderer>			renderer_;	
-	EAGLContext				*context_; // weak ref
-
-	NSString				*pixelformat_;
-	GLuint					depthFormat_;
-	BOOL					preserveBackbuffer_;
-
-	CGSize					size_;
-	BOOL					discardFramebufferSupported_;
+    id<ESRenderer>			renderer_;
+	EAGLConfiguration		*configuration_;
+	
 	id<EAGLTouchDelegate>   touchDelegate_;
-
-	//fsaa addition
-	BOOL					multisampling_;
-	unsigned int			requestedSamples_;	
 }
 
-/** creates an initializes an EAGLView with a frame and 0-bit depth buffer, and a RGB565 color buffer. */
+/** creates and initializes the EAGLView with the frame and creates a default ESRenderer and EAGLConfiguration */
 + (id) viewWithFrame:(CGRect)frame;
-/** creates an initializes an EAGLView with a frame, a color buffer format, and 0-bit depth buffer. */
-+ (id) viewWithFrame:(CGRect)frame pixelFormat:(NSString*)format;
-/** creates an initializes an EAGLView with a frame, a color buffer format, and a depth buffer. */
-+ (id) viewWithFrame:(CGRect)frame pixelFormat:(NSString*)format depthFormat:(GLuint)depth;
-/** creates an initializes an EAGLView with a frame, a color buffer format, a depth buffer format, a sharegroup, and multisamping */
-+ (id) viewWithFrame:(CGRect)frame pixelFormat:(NSString*)format depthFormat:(GLuint)depth preserveBackbuffer:(BOOL)retained sharegroup:(EAGLSharegroup*)sharegroup multiSampling:(BOOL)multisampling numberOfSamples:(unsigned int)samples;
 
-/** Initializes an EAGLView with a frame and 0-bit depth buffer, and a RGB565 color buffer */
-- (id) initWithFrame:(CGRect)frame; //These also set the current context
-/** Initializes an EAGLView with a frame, a color buffer format, and 0-bit depth buffer */
-- (id) initWithFrame:(CGRect)frame pixelFormat:(NSString*)format;
-/** Initializes an EAGLView with a frame, a color buffer format, a depth buffer format, a sharegroup and multisampling support */
-- (id) initWithFrame:(CGRect)frame pixelFormat:(NSString*)format depthFormat:(GLuint)depth preserveBackbuffer:(BOOL)retained sharegroup:(EAGLSharegroup*)sharegroup multiSampling:(BOOL)sampling numberOfSamples:(unsigned int)nSamples;
+/** creates and initializes the EAGLView with the frame and creates a default ESRenderer and EAGLConfiguration */
+- (id) initWithFrame:(CGRect)frame;
 
-/** pixel format: it could be RGBA8 (32-bit) or RGB565 (16-bit) */
-@property(nonatomic,readonly) NSString* pixelFormat;
-/** depth format of the render buffer: 0, 16 or 24 bits*/
-@property(nonatomic,readonly) GLuint depthFormat;
+/** creates and initializes an EAGLView with a frame, an ESRenderer and EAGLConfiguration */
++ (id) viewWithFrame:(CGRect)frame renderer:(id<ESRenderer>)renderer andConfiguration:(EAGLConfiguration *)configuration;
 
-/** returns surface size in pixels */
-@property(nonatomic,readonly) CGSize surfaceSize;
+/** Initializes an EAGLView with a frame, an ESRenderer and EAGLConfiguration */
+- (id) initWithFrame:(CGRect)frame renderer:(id<ESRenderer>)renderer andConfiguration:(EAGLConfiguration *)configuration;
 
-/** OpenGL context */
-@property(nonatomic,readonly) EAGLContext *context;
+/** OpenGL renderer */
+@property(nonatomic,retain,readonly) id<ESRenderer> renderer;
 
-@property(nonatomic,readwrite) BOOL multiSampling;
+/** Configuration contains properties of the rendering view */
+@property(nonatomic,retain,readonly) EAGLConfiguration *configuration;
 
 /** touch delegate */
 @property(nonatomic,readwrite,assign) id<EAGLTouchDelegate> touchDelegate;
+
+/** returns surface size in pixels */
+@property(nonatomic,readonly) CGSize surfaceSize;
 
 /** EAGLView uses double-buffer. This method swaps the buffers */
 -(void) swapBuffers;

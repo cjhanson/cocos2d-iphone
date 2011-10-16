@@ -89,7 +89,7 @@ static CCTextureCache *sharedTextureCache;
 		NSAssert(view, @"Do not initialize the TextureCache before the Director");
 		_auxGLcontext = [[EAGLContext alloc]
 						 initWithAPI:kEAGLRenderingAPIOpenGLES2
-						 sharegroup:[[view context] sharegroup]];
+						 sharegroup:[[view.renderer context] sharegroup]];
 		
 #elif defined(__MAC_OS_X_VERSION_MAX_ALLOWED)
 		
