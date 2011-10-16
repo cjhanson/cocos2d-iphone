@@ -32,23 +32,28 @@
 #ifdef __IPHONE_OS_VERSION_MAX_ALLOWED
 
 #import <QuartzCore/QuartzCore.h>
+#import <OpenGLES/ES2/gl.h>
 
 #import <OpenGLES/EAGL.h>
 #import <OpenGLES/EAGLDrawable.h>
 
 @protocol ESRenderer <NSObject>
 
-- (id) initWithDepthFormat:(unsigned int)depthFormat withPixelFormat:(unsigned int)pixelFormat withSharegroup:(EAGLSharegroup*)sharegroup withMultiSampling:(BOOL) multiSampling withNumberOfSamples:(unsigned int) requestedSamples;
+- (id) initWithDepthFormat:(GLuint)depthFormat withPixelFormat:(GLuint)pixelFormat withSharegroup:(EAGLSharegroup*)sharegroup withMultiSampling:(BOOL) multiSampling withNumberOfSamples:(GLuint) requestedSamples;
 
 - (BOOL) resizeFromLayer:(CAEAGLLayer *)layer;
+- (BOOL) recreateFromLayer:(CAEAGLLayer *)layer;
+
+- (void) presentRenderbuffer;
+- (void) makeCurrentAndBindBuffers;
 
 - (EAGLContext*) context;
 - (CGSize) backingSize;
 
-- (unsigned int) colorRenderBuffer;
-- (unsigned int) defaultFrameBuffer;
-- (unsigned int) msaaFrameBuffer;
-- (unsigned int) msaaColorBuffer;
+- (GLuint) colorRenderBuffer;
+- (GLuint) defaultFrameBuffer;
+- (GLuint) msaaFrameBuffer;
+- (GLuint) msaaColorBuffer;
 @end
 
 #endif // __IPHONE_OS_VERSION_MAX_ALLOWED

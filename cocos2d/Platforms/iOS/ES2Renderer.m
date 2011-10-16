@@ -36,6 +36,11 @@
 #import "../../Support/OpenGL_Internal.h"
 #import "../../ccMacros.h"
 
+@interface ES2Renderer (InternalMethods)
+- (BOOL) setupOpenGLFromLayer:(CAEAGLLayer *)layer;
+- (void) tearDownOpenGL;
+@end
+
 @implementation ES2Renderer
 
 @synthesize context=context_;
@@ -56,14 +61,18 @@
             [self release];
             return nil;
         }
-
+		
+		GLint oldFB, oldCRB;
+		glGetIntegerv(GL_FRAMEBUFFER_BINDING, &oldFB);
+		glGetIntegerv(GL_RENDERBUFFER_BINDING, &oldCRB);
+		
         // Create default framebuffer object. The backing will be allocated for the current layer in -resizeFromLayer
         glGenFramebuffers(1, &defaultFramebuffer_);
 		NSAssert( defaultFramebuffer_, @"Can't create default frame buffer");
-
+		
         glGenRenderbuffers(1, &colorRenderbuffer_);
 		NSAssert( colorRenderbuffer_, @"Can't create default render buffer");
-
+		
         glBindFramebuffer(GL_FRAMEBUFFER, defaultFramebuffer_);
         glBindRenderbuffer(GL_RENDERBUFFER, colorRenderbuffer_);
         glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_RENDERBUFFER, colorRenderbuffer_);
@@ -71,6 +80,17 @@
 		depthFormat_ = depthFormat;
 		pixelFormat_ = pixelFormat;
 		
+		if(depthFormat_ != 0){
+			glGenRenderbuffers(1, &depthBuffer_);
+			NSAssert(depthBuffer_, @"ES2Renderer failed to gen Depth render Buffer");
+			glBindRenderbuffer(GL_RENDERBUFFER, depthBuffer_);
+			glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, depthBuffer_);
+			
+			glBindRenderbuffer(GL_RENDERBUFFER, colorRenderbuffer_);
+		}
+		
+		glBindFramebuffer(GL_FRAMEBUFFER, oldFB);
+		glBindRenderbuffer(GL_RENDERBUFFER, oldCRB);
 		
 		CHECK_GL_ERROR_DEBUG();
     }
@@ -78,50 +98,109 @@
     return self;
 }
 
+- (void) makeCurrentAndBindBuffers
+{
+	[EAGLContext setCurrentContext:context_];
+	
+	glBindFramebuffer(GL_FRAMEBUFFER, defaultFramebuffer_);
+}
+
+- (BOOL) recreateFromLayer:(CAEAGLLayer *)layer
+{
+	[self tearDownOpenGL];
+	return [self setupOpenGLFromLayer:layer];
+}
+
 - (BOOL)resizeFromLayer:(CAEAGLLayer *)layer
 {
-	// Allocate color buffer backing based on the current layer size
-	glBindRenderbuffer(GL_RENDERBUFFER, colorRenderbuffer_);
+	return [self setupOpenGLFromLayer:layer];
+}
 
-	if( ! [context_ renderbufferStorage:GL_RENDERBUFFER fromDrawable:layer] )
-		CCLOG(@"failed to call context");
+- (BOOL) setupOpenGLFromLayer:(CAEAGLLayer *)layer
+{
+	[EAGLContext setCurrentContext:context_];
+	glBindFramebuffer(GL_FRAMEBUFFER, defaultFramebuffer_);
+	
+    glBindRenderbuffer(GL_RENDERBUFFER, colorRenderbuffer_);
+	
+	if(backingWidth_ != 0 && backingHeight_ != 0){
+		GLint oldWidth, oldHeight;
+		
+		glGetRenderbufferParameteriv(GL_RENDERBUFFER, GL_RENDERBUFFER_WIDTH, &oldWidth);
+		glGetRenderbufferParameteriv(GL_RENDERBUFFER, GL_RENDERBUFFER_HEIGHT, &oldHeight);
+		
+		if(oldWidth == backingWidth_ && oldHeight == backingHeight_){
+			CCLOG(@"cocos2d: Not resizing ES2 Render context because it will be the same size.");
+			return NO;
+		}
+	}
+	
+	// Allocate color buffer backing based on the current layer size
+    [context_ renderbufferStorage:GL_RENDERBUFFER fromDrawable:layer];
 	
 	glGetRenderbufferParameteriv(GL_RENDERBUFFER, GL_RENDERBUFFER_WIDTH, &backingWidth_);
-	glGetRenderbufferParameteriv(GL_RENDERBUFFER, GL_RENDERBUFFER_HEIGHT, &backingHeight_);
+    glGetRenderbufferParameteriv(GL_RENDERBUFFER, GL_RENDERBUFFER_HEIGHT, &backingHeight_);
 	
-	CCLOG(@"cocos2d: surface size: %dx%d", (int)backingWidth_, (int)backingHeight_);
-
-
-	if (depthFormat_) 
-	{
-		if( ! depthBuffer_ )
+	if(depthFormat_ != 0){
+		if(!depthBuffer_)
 			glGenRenderbuffers(1, &depthBuffer_);
-	
+		
 		glBindRenderbuffer(GL_RENDERBUFFER, depthBuffer_);
-
+		
 		glRenderbufferStorage(GL_RENDERBUFFER, depthFormat_, backingWidth_, backingHeight_);
-
+		
 		glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, depthBuffer_);
 		
-		// bind color buffer
+		//bind color buffer
 		glBindRenderbuffer(GL_RENDERBUFFER, colorRenderbuffer_);
 	}
 	
-	
-	if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
+    if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
 	{
 		NSLog(@"Failed to make complete framebuffer object %x", glCheckFramebufferStatus(GL_FRAMEBUFFER));
 		return NO;
 	}
-
+	
 	CHECK_GL_ERROR();
+	
+	glViewport(0, 0, backingWidth_, backingHeight_);
+	
+    return YES;
+}
 
-	return YES;
+- (void) tearDownOpenGL
+{
+	[EAGLContext setCurrentContext:context_];
+	
+	// Tear down GL
+    if (defaultFramebuffer_) {
+        glDeleteFramebuffers(1, &defaultFramebuffer_);
+        defaultFramebuffer_ = 0;
+    }
+	
+    if (colorRenderbuffer_) {
+        glDeleteRenderbuffers(1, &colorRenderbuffer_);
+        colorRenderbuffer_ = 0;
+    }
+	
+	if( depthBuffer_ ) {
+		glDeleteRenderbuffers(1, &depthBuffer_ );
+		depthBuffer_ = 0;
+	}
+	
+	// Tear down context
+	if ([EAGLContext currentContext] == context_)
+        [EAGLContext setCurrentContext:nil];
+}
+
+- (void) presentRenderbuffer
+{
+	[context_ presentRenderbuffer:GL_RENDERBUFFER];
 }
 
 -(CGSize) backingSize
 {
-	return CGSizeMake( backingWidth_, backingHeight_);
+	return CGSizeMake(backingWidth_, backingHeight_);
 }
 
 - (NSString*) description
@@ -154,24 +233,7 @@
 	CCLOGINFO(@"cocos2d: deallocing %@", self);
 
     // Tear down GL
-    if (defaultFramebuffer_) {
-        glDeleteFramebuffers(1, &defaultFramebuffer_);
-        defaultFramebuffer_ = 0;
-    }
-
-    if (colorRenderbuffer_) {
-        glDeleteRenderbuffers(1, &colorRenderbuffer_);
-        colorRenderbuffer_ = 0;
-    }
-	
-	if( depthBuffer_ ) {
-		glDeleteRenderbuffers(1, &depthBuffer_ );
-		depthBuffer_ = 0;
-	}
-
-    // Tear down context
-    if ([EAGLContext currentContext] == context_)
-        [EAGLContext setCurrentContext:nil];
+    [self tearDownOpenGL];
 
     [context_ release];
     context_ = nil;
