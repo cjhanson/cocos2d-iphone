@@ -106,7 +106,7 @@ typedef enum {
 	// Shared data
 	//
 	GLubyte					opacity_;
-	ccColor3UB				color_;
+	ccColor3B				color_;
 	
 	ccBlendFunc				blendFunc_;
 	
@@ -153,7 +153,7 @@ typedef enum {
 /** Opacity: conforms to CCRGBAProtocol protocol */
 @property (nonatomic,readonly) GLubyte opacity;
 /** Opacity: conforms to CCRGBAProtocol protocol */
-@property (nonatomic,readonly) ccColor3UB color;
+@property (nonatomic,readonly) ccColor3B color;
 /** BlendFunction. Conforms to CCBlendProtocol protocol */
 @property (nonatomic,readwrite) ccBlendFunc blendFunc;
 /** whether or not the Sprite is rendered using a CCSpriteBatchNode */
