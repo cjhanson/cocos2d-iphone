@@ -29,6 +29,13 @@
 @class CCActionInterval;
 @class CCNode;
 
+@interface CCTransitionSceneProxy : CCScene {
+	CCScene *realScene;
+}
+@property (nonatomic, assign) CCScene *realScene;
+-(id) initWithScene:(CCScene *)aScene;
+@end
+
 /** CCTransitionEaseScene can ease the actions of the scene protocol.
  @since v0.8.2
  */
@@ -54,18 +61,18 @@ typedef enum {
 
 /** Base class for CCTransition scenes
  */
-@interface CCTransitionScene : CCScene
-{
-	CCScene	*inScene_;
-	CCScene	*outScene_;
+@interface CCTransitionScene : CCScene {
+	CCTransitionSceneProxy *inScene_;
+	CCTransitionSceneProxy *outScene_;
 	ccTime	duration_;
 	BOOL	inSceneOnTop_;
-	BOOL	sendCleanupToScene_;
 }
 /** creates a base transition with duration and incoming scene */
 +(id) transitionWithDuration:(ccTime) t scene:(CCScene*)s;
 /** initializes a transition with duration and incoming scene */
 -(id) initWithDuration:(ccTime) t scene:(CCScene*)s;
+/** called to start transitioning */
+-(void) start;
 /** called after the transition finishes */
 -(void) finish;
 /** used by some transitions to hide the outter scene */

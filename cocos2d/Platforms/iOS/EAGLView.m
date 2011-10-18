@@ -87,7 +87,6 @@ NSString *const kEAGLViewResizedNotification	= @"kEAGLViewResizedNotification";
 
 @implementation EAGLView
 
-@synthesize touchDelegate=touchDelegate_;
 @synthesize renderer=renderer_;
 @synthesize configuration=configuration_;
 
@@ -193,25 +192,6 @@ NSString *const kEAGLViewResizedNotification	= @"kEAGLViewResizedNotification";
 	[renderer_ presentRenderbuffer];
 }
 
-//TODO look at this
-#if 0
-- (void) layoutSubviews
-{
-	if([renderer_ resizeFromLayer:(CAEAGLLayer*)self.layer]){
-		size_ = [renderer_ backingSize];
-		
-		// TODO: this cannot call director here
-		// Issue #914 #924
-		CCDirector *director = [CCDirector sharedDirector];
-		[director reshapeProjection:size_];
-		// TODO: or here
-		// Avoid flicker. Issue #350
-		NSThread *thread = [director runningThread];
-		[director performSelector:@selector(drawScene) onThread:thread withObject:nil waitUntilDone:YES];
-	}
-}
-#endif
-
 #pragma mark EAGLView - Point conversion
 
 - (CGPoint) convertPointFromViewToSurface:(CGPoint)point
@@ -230,38 +210,22 @@ NSString *const kEAGLViewResizedNotification	= @"kEAGLViewResizedNotification";
 	return CGRectMake((rect.origin.x - bounds.origin.x) / bounds.size.width * size.width, (rect.origin.y - bounds.origin.y) / bounds.size.height * size.height, rect.size.width / bounds.size.width * size.width, rect.size.height / bounds.size.height * size.height);
 }
 
-// Pass the touches to the superview
-#pragma mark EAGLView - Touch Delegate
-
-- (void)touchesBegan:(NSSet *)touches withEvent:(UIEvent *)event
+//TODO (Can somebody step in here and do the opposite of this coordinate conversion?)
+- (CGPoint) convertPointFromSurfaceToView:(CGPoint)point
 {
-	if(touchDelegate_)
-	{
-		[touchDelegate_ touchesBegan:touches withEvent:event];
-	}
+	CGRect bounds	= [self bounds];
+	CGSize size		= [self surfaceSize];
+	
+	return CGPointMake((point.x - bounds.origin.x) / bounds.size.width * size.width, (point.y - bounds.origin.y) / bounds.size.height * size.height);
 }
 
-- (void)touchesMoved:(NSSet *)touches withEvent:(UIEvent *)event
+//TODO (Can somebody step in here and do the opposite of this coordinate conversion?)
+- (CGRect) convertRectFromSurfaceToView:(CGRect)rect
 {
-	if(touchDelegate_)
-	{
-		[touchDelegate_ touchesMoved:touches withEvent:event];
-	}
-}
-
-- (void)touchesEnded:(NSSet *)touches withEvent:(UIEvent *)event
-{
-	if(touchDelegate_)
-	{
-		[touchDelegate_ touchesEnded:touches withEvent:event];
-	}
-}
-- (void)touchesCancelled:(NSSet *)touches withEvent:(UIEvent *)event
-{
-	if(touchDelegate_)
-	{
-		[touchDelegate_ touchesCancelled:touches withEvent:event];
-	}
+	CGRect bounds	= [self bounds];
+	CGSize size		= [self surfaceSize];
+	
+	return CGRectMake((rect.origin.x - bounds.origin.x) / bounds.size.width * size.width, (rect.origin.y - bounds.origin.y) / bounds.size.height * size.height, rect.size.width / bounds.size.width * size.width, rect.size.height / bounds.size.height * size.height);
 }
 
 #pragma mark Renderer convenience methods

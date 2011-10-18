@@ -70,7 +70,7 @@ simple macro that swaps 2 variables
 */
 #define CC_SWAP( x, y )			\
 ({ __typeof__(x) temp  = (x);		\
-		x = y; y = temp;		\
+		x = (y); y = temp;		\
 })
 
 
@@ -109,7 +109,7 @@ default gl blend src function. Compatible with premultiplied alpha images.
 	- It will connect the UIViewController view to the UIWindow.
 	- It will try to run at 60 FPS.
 	- The FPS won't be displayed.
-	- It will connect the director with the EAGLView.
+	- It will connect the director with the view controller.
 
  IMPORTANT: If you want to use another type of render buffer (eg: RGBA8)
  or if you want to use a 16-bit or 24-bit depth buffer, you should NOT
@@ -120,19 +120,41 @@ default gl blend src function. Compatible with premultiplied alpha images.
 
 #ifdef __IPHONE_OS_VERSION_MAX_ALLOWED
 
+#ifndef CC_ROOT_VIEW_CONTROLLER_CLASS
+#define CC_ROOT_VIEW_CONTROLLER_CLASS RootViewController
+#endif
+
 #define CC_DIRECTOR_INIT()																		\
 do	{																							\
 	window_ = [[UIWindow alloc] initWithFrame:[[UIScreen mainScreen] bounds]];					\
-	CCDirector *__director = [CCDirector sharedDirector];										\
-	[__director setDisplayFPS:NO];																\
-	[__director setAnimationInterval:1.0/60];													\
-	EAGLView *__glView = [EAGLView viewWithFrame:[window_ bounds]];								\
-	[__director setOpenGLView:__glView];														\
-	viewController_ = [[RootViewController alloc] initWithNibName:nil bundle:nil];				\
-	viewController_.wantsFullScreenLayout = YES;												\
-	[viewController_ setView:__glView];															\
-	[window_ addSubview:viewController_.view];													\
+																								\
+	EAGLConfiguration *__configuration	= [EAGLConfiguration configuration];					\
+	__configuration.colorFormat			= kEAGLColorFormatRGB565;								\
+	__configuration.depthFormat			= 0;													\
+	__configuration.retainedBacking		= NO;													\
+	__configuration.opaque				= YES;													\
+	__configuration.animationFrameInterval= 1;													\
+	__configuration.multiSampling		= NO;													\
+	__configuration.requestedSamples	= 0;													\
+																								\
+	ES2Renderer *__renderer	= [[[ES2Renderer alloc]												\
+								initWithDepthFormat:__configuration.depthFormat					\
+								sharegroup:nil													\
+								useMultiSampling:__configuration.multiSampling					\
+								numberOfSamples:__configuration.requestedSamples] autorelease];	\
+																								\
+	viewController_ = [[CC_ROOT_VIEW_CONTROLLER_CLASS alloc]									\
+					   initWithRenderer:__renderer andConfiguration:__configuration];			\
+																								\
+	[viewController_ setDisplayFPS:NO];															\
+	[viewController_ setAnimationInterval:1.0/60.0];											\
+																								\
+	[window_ setRootViewController:viewController_];											\
 	[window_ makeKeyAndVisible];																\
+																								\
+	/*Enable the CCDirector singleton (for now,,, but I hope to remove the dependency on this)*/\
+	CCDirector *__director = [CCDirector sharedDirector];										\
+	[__director setOpenGLViewController:viewController_];										\
 } while(0)
 
 
@@ -163,18 +185,19 @@ do	{																							\
   
   @since v0.99.4
   */
-#define CC_DIRECTOR_END()										\
-do {															\
-	CCDirector *__director = [CCDirector sharedDirector];		\
-	CC_GLVIEW *__view = [__director openGLView];				\
-	[__view removeFromSuperview];								\
-	[__director end];											\
+#define CC_DIRECTOR_END()														\
+do {																			\
+	CCDirector *__director = [CCDirector sharedDirector];						\
+	CC_GLVIEWCONTROLLER *__viewcontroller = [__director openGLViewController];	\
+	[__viewcontroller.view removeFromSuperview];								\
+	[__director end];															\
 } while(0)
 
 
-
+#if 0
 
 #if __IPHONE_OS_VERSION_MAX_ALLOWED
+
 
 /****************************/
 /** RETINA DISPLAY ENABLED **/
@@ -185,49 +208,50 @@ do {															\
  On iPhone it returns 2 if RetinaDisplay is On. Otherwise it returns 1
  */
 #import "Platforms/iOS/CCDirectorIOS.h"
-#define CC_CONTENT_SCALE_FACTOR() __ccContentScaleFactor
+#define CC_CONTENT_SCALE_FACTOR(__CC_VIEWCONTROLLER__) ((__CC_VIEWCONTROLLER__).contentScaleFactor)
 
 
 /** @def CC_RECT_PIXELS_TO_POINTS
  Converts a rect in pixels to points
  */
-#define CC_RECT_PIXELS_TO_POINTS(__rect_in_pixels__)																		\
+#define CC_RECT_PIXELS_TO_POINTS(__CC_VIEWCONTROLLER__, __rect_in_pixels__)																		\
 	CGRectMake( (__rect_in_pixels__).origin.x / CC_CONTENT_SCALE_FACTOR(), (__rect_in_pixels__).origin.y / CC_CONTENT_SCALE_FACTOR(),	\
 			(__rect_in_pixels__).size.width / CC_CONTENT_SCALE_FACTOR(), (__rect_in_pixels__).size.height / CC_CONTENT_SCALE_FACTOR() )
 
 /** @def CC_RECT_POINTS_TO_PIXELS
  Converts a rect in points to pixels
  */
-#define CC_RECT_POINTS_TO_PIXELS(__rect_in_points_points__)																		\
+#define CC_RECT_POINTS_TO_PIXELS(__CC_VIEWCONTROLLER__, __rect_in_points_points__)																		\
 	CGRectMake( (__rect_in_points_points__).origin.x * CC_CONTENT_SCALE_FACTOR(), (__rect_in_points_points__).origin.y * CC_CONTENT_SCALE_FACTOR(),	\
 			(__rect_in_points_points__).size.width * CC_CONTENT_SCALE_FACTOR(), (__rect_in_points_points__).size.height * CC_CONTENT_SCALE_FACTOR() )
 
 /** @def CC_POINT_PIXELS_TO_POINTS
  Converts a rect in pixels to points
  */
-#define CC_POINT_PIXELS_TO_POINTS(__pixels__)																		\
+#define CC_POINT_PIXELS_TO_POINTS(__CC_VIEWCONTROLLER__, __pixels__)																		\
 CGPointMake( (__pixels__).x / CC_CONTENT_SCALE_FACTOR(), (__pixels__).y / CC_CONTENT_SCALE_FACTOR())
 
 /** @def CC_POINT_POINTS_TO_PIXELS
  Converts a rect in points to pixels
  */
-#define CC_POINT_POINTS_TO_PIXELS(__points__)																		\
+#define CC_POINT_POINTS_TO_PIXELS(__CC_VIEWCONTROLLER__, __points__)																		\
 CGPointMake( (__points__).x * CC_CONTENT_SCALE_FACTOR(), (__points__).y * CC_CONTENT_SCALE_FACTOR())
 
 /** @def CC_POINT_PIXELS_TO_POINTS
  Converts a rect in pixels to points
  */
-#define CC_SIZE_PIXELS_TO_POINTS(__size_in_pixels__)																		\
+#define CC_SIZE_PIXELS_TO_POINTS(__CC_VIEWCONTROLLER__, __size_in_pixels__)																		\
 CGSizeMake( (__size_in_pixels__).width / CC_CONTENT_SCALE_FACTOR(), (__size_in_pixels__).height / CC_CONTENT_SCALE_FACTOR())
 
 /** @def CC_POINT_POINTS_TO_PIXELS
  Converts a rect in points to pixels
  */
-#define CC_SIZE_POINTS_TO_PIXELS(__size_in_points__)																		\
+#define CC_SIZE_POINTS_TO_PIXELS(__CC_VIEWCONTROLLER__, __size_in_points__)																		\
 CGSizeMake( (__size_in_points__).width * CC_CONTENT_SCALE_FACTOR(), (__size_in_points__).height * CC_CONTENT_SCALE_FACTOR())
 
-
-#elif defined(__MAC_OS_X_VERSION_MAX_ALLOWED)
+#endif
+#endif
+//#elif defined(__MAC_OS_X_VERSION_MAX_ALLOWED)
 
 /*****************************/
 /** RETINA DISPLAY DISABLED **/
@@ -242,7 +266,7 @@ CGSizeMake( (__size_in_points__).width * CC_CONTENT_SCALE_FACTOR(), (__size_in_p
 #define CC_POINT_POINTS_TO_PIXELS(__points__) __points__
 
 
-#endif // __MAC_OS_X_VERSION_MAX_ALLOWED
+//#endif // __MAC_OS_X_VERSION_MAX_ALLOWED
 
 
 /**********************/

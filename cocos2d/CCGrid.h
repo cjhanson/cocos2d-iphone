@@ -30,6 +30,7 @@
 #import "CCCamera.h"
 #import "ccTypes.h"
 #import "kazmath/mat4.h"
+#import "Platforms/CCGL.h"
 
 @class CCTexture2D;
 @class CCGrabber;
@@ -48,7 +49,12 @@
 	BOOL		isTextureFlipped_;
 	
 	GLProgram	*shaderProgram_;
+	
+	CC_GLVIEWCONTROLLER *openGLViewController_;
 }
+
+/** The OpenGLView, where everything is rendered */
+@property (nonatomic,readwrite,retain) CC_GLVIEWCONTROLLER *openGLViewController;
 
 /** wheter or not the grid is active */
 @property (nonatomic,readwrite) BOOL active;

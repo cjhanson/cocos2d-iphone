@@ -43,6 +43,7 @@ enum {
 @class CCCamera;
 @class CCGridBase;
 @class GLProgram;
+@class CCScene;
 
 /** CCNode is the main element. Anything thats gets drawn or contains things that get drawn is a CCNode.
  The most popular CCNodes are: CCScene, CCLayer, CCSprite, CCMenu.
@@ -140,6 +141,9 @@ enum {
 	// array of children
 	CCArray *children_;
 	
+	// weakref to root node
+	CCScene *rootNode_;
+	
 	// weakref to parent
 	CCNode *parent_;
 	
@@ -232,6 +236,8 @@ enum {
 
 /** whether or not the node is running */
 @property(nonatomic,readonly) BOOL isRunning;
+/** the root node when on the display list */
+@property(nonatomic, readwrite, assign) CCScene *rootNode;
 /** A weak reference to the parent */
 @property(nonatomic,readwrite,assign) CCNode* parent;
 /** If YES the transformtions will be relative to its anchor point.
@@ -503,4 +509,8 @@ enum {
  */
 - (CGPoint)convertTouchToNodeSpaceAR:(UITouch *)touch;
 #endif // __IPHONE_OS_VERSION_MAX_ALLOWED
+
+/** childrenAlloc method is exposed so that sub classes may override and call directly (used in CCTransition) */
+-(void) childrenAlloc;
+
 @end

@@ -7,8 +7,9 @@
 //
 
 #import <UIKit/UIKit.h>
+#import "CCEAGLViewController.h"
 
-@interface RootViewController : UIViewController {
+@interface RootViewController : CCEAGLViewController {
 
 }
 

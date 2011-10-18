@@ -123,3 +123,17 @@
  */
 -(void) updateProjection;
 @end
+
+#pragma mark -
+#pragma mark CCPreRenderProtocol
+/** Called before the root node is rendered */
+@protocol CCPreRenderProtocol <NSObject>
+- (void) visit;
+@end
+
+#pragma mark -
+#pragma mark CCPreRenderProtocol
+/** Called before the root node is rendered */
+@protocol CCPostRenderProtocol <NSObject>
+- (void) visit;
+@end

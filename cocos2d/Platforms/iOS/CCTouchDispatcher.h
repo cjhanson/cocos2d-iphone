@@ -29,7 +29,7 @@
 #ifdef __IPHONE_OS_VERSION_MAX_ALLOWED
 
 #import "CCTouchDelegateProtocol.h"
-#import "EAGLView.h"
+#import "EAGLViewController.h"
 
 
 typedef enum

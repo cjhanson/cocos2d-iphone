@@ -29,17 +29,45 @@
 #import "Support/CGPointExtension.h"
 #import "CCDirector.h"
 
-
 @implementation CCScene
--(id) init
+
+@synthesize openGLViewController = openGLViewController_;
+@synthesize isTransition = isTransition_;
+
++ (id) sceneWithViewController:(CC_GLVIEWCONTROLLER *)openGLViewController
 {
-	if( (self=[super init]) ) {
-		CGSize s = [[CCDirector sharedDirector] winSize];
-		self.isRelativeAnchorPoint = NO;
-		anchorPoint_ = ccp(0.5f, 0.5f);
-		[self setContentSize:s];	
+	return [[self alloc] initWithViewController:openGLViewController];
+}
+
+- (id) initWithViewController:(CC_GLVIEWCONTROLLER *)openGLViewController
+{
+	self = [super init];
+	
+	if(self){
+		isTransition_				= NO;
+		
+		self.isRelativeAnchorPoint	= NO;
+		anchorPoint_				= ccp(0.5f, 0.5f);
+		
+		self.openGLViewController	= openGLViewController;
 	}
 	
 	return self;
 }
+
+-(id) init
+{
+	return [self initWithViewController:nil];
+}
+
+- (void) setOpenGLViewController:(CCEAGLViewController *)openGLViewController
+{
+	openGLViewController_ = openGLViewController;
+	
+	if(openGLViewController_)
+		[self setContentSize:[openGLViewController_ winSize]];
+	else
+		[self setContentSize:[[CCDirector sharedDirector] winSize]];
+}
+
 @end

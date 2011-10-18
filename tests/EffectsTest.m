@@ -444,43 +444,41 @@ Class restartAction()
 
 - (void) applicationDidFinishLaunching:(UIApplication*)application
 {
-	// Init the window
 	window_ = [[UIWindow alloc] initWithFrame:[[UIScreen mainScreen] bounds]];
-		
-	// get instance of the shared director
-	CCDirector *director = [CCDirector sharedDirector];
 	
-	// before creating any layer, set the landscape mode
-//	[director setDeviceOrientation:kCCDeviceOrientationLandscapeLeft];
+	EAGLConfiguration *__configuration	= [EAGLConfiguration configuration];
+	__configuration.colorFormat			= kEAGLColorFormatRGBA8;								
+	__configuration.depthFormat			= 0;//GL_DEPTH_COMPONENT24_OES
+	__configuration.retainedBacking		= NO;													
+	__configuration.opaque				= YES;													
+	__configuration.animationFrameInterval= 1;													
+	__configuration.multiSampling		= NO;													
+	__configuration.requestedSamples	= 0;													
 	
-	// display FPS (useful when debugging)
-	[director setDisplayFPS:YES];
+	ES2Renderer *__renderer	= [[[ES2Renderer alloc]												
+								initWithDepthFormat:__configuration.depthFormat					
+								sharegroup:nil													
+								useMultiSampling:__configuration.multiSampling					
+								numberOfSamples:__configuration.requestedSamples] autorelease];	
 	
-	// frames per second
-	[director setAnimationInterval:1.0/60];
+	viewController_ = [[CC_ROOT_VIEW_CONTROLLER_CLASS alloc]									
+					   initWithRenderer:__renderer andConfiguration:__configuration];			
 	
-	// create an OpenGL view
-	EAGLView *glView = [EAGLView viewWithFrame:[window_ bounds]
-								   pixelFormat:kEAGLColorFormatRGBA8
-								   depthFormat:0	// GL_DEPTH_COMPONENT24_OES
-						];
-	[glView setMultipleTouchEnabled:YES];
+	[viewController_ setDisplayFPS:NO];															
+	[viewController_ setAnimationInterval:1.0/60.0];											
 	
-	// connect it to the director
-	[director setOpenGLView:glView];
+	[window_ setRootViewController:viewController_];											
+	[window_ makeKeyAndVisible];																
+	
+	[viewController_.view setMultipleTouchEnabled:YES];
+	
+	/*Enable the CCDirector singleton (for now,,, but I hope to remove the dependency on this)*/
+	CCDirector *director = [CCDirector sharedDirector];										
+	[director setOpenGLViewController:viewController_];
 	
 	// Enables High Res mode (Retina Display) on iPhone 4 and maintains low res on all other devices
 	if( ! [director enableRetinaDisplay:YES] )
 		CCLOG(@"Retina Display Not supported");
-	
-	viewController_ = [[RootViewController alloc] initWithNibName:nil bundle:nil];
-	[viewController_ setView:glView];
-	
-	// glview is a child of the main window
-	[window_ addSubview:viewController_.view];
-	
-	// Make the window visible
-	[window_ makeKeyAndVisible];
 	
 	// Default texture format for PNG/BMP/TIFF/JPEG/GIF images
 	// It can be RGBA8888, RGBA4444, RGB5_A1, RGB565
@@ -540,12 +538,6 @@ Class restartAction()
 - (void)applicationDidReceiveMemoryWarning:(UIApplication *)application
 {
 	[[CCDirector sharedDirector] purgeCachedData];
-}
-
-// next delta time will be zero
--(void) applicationSignificantTimeChange:(UIApplication *)application
-{
-	[[CCDirector sharedDirector] setNextDeltaTimeZero:YES];
 }
 
 @end

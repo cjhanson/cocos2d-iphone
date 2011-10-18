@@ -374,10 +374,5 @@ void removeShape( cpBody *body, cpShape *shape, void *data )
 	[[CCDirector sharedDirector] purgeCachedData];
 }
 
-// next delta time will be zero
--(void) applicationSignificantTimeChange:(UIApplication *)application
-{
-	[[CCDirector sharedDirector] setNextDeltaTimeZero:YES];
-}
 
 @end

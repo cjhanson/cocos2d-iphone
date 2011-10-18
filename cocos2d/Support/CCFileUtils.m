@@ -36,6 +36,8 @@ static NSFileManager *__localFileManager=nil;
 
 #ifdef __IPHONE_OS_VERSION_MAX_ALLOWED
 
+#import <UIKit/UIKit.h>
+
 static NSString *__suffixRetinaDisplay =@"-hd";
 static NSString *__suffixiPad =@"-ipad";
 
@@ -157,13 +159,17 @@ NSInteger ccLoadFileIntoMemory(const char *filename, unsigned char **out)
 	NSString *ret = nil;
 	
 	// Retina Display ?
-	if( CC_CONTENT_SCALE_FACTOR() == 2 ) {
+// CJ had to disable this scheme for loading files because this class has no business knowing what scale files it should load
+// The reason is if we have multiple views at different scales you would have to pass in the scale with the method or pass a 
+// reference to the viewcontroller to read the contentScale
+/*	if( CC_CONTENT_SCALE_FACTOR() == 2 ) {
 		ret = [self getPath:fullpath forSuffix:__suffixRetinaDisplay];
 		*resolutionType = kCCResolutionRetinaDisplay;
 	}
 	
 	// iPad ?
-	else if( UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPad) {
+	else*/ if( UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPad) {
+		
 		ret = [self getPath:fullpath forSuffix:__suffixiPad];
 		*resolutionType = kCCResolutioniPad;
 	}
@@ -225,10 +231,14 @@ NSInteger ccLoadFileIntoMemory(const char *filename, unsigned char **out)
 +(NSString*) removeSuffixFromFile:(NSString*) path
 {
 	NSString *ret = nil;
-	if( CC_CONTENT_SCALE_FACTOR() == 2 )
+	
+// CJ had to disable this scheme for loading files because this class has no business knowing what scale files it should load
+// The reason is if we have multiple views at different scales you would have to pass in the scale with the method or pass a 
+// reference to the viewcontroller to read the contentScale
+/*	if( CC_CONTENT_SCALE_FACTOR() == 2 )
 		ret = [self removeSuffix:__suffixRetinaDisplay fromPath:path];
 	
-	else if( UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPad)
+	else*/ if( UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPad)
 		ret = [self removeSuffix:__suffixiPad fromPath:path];
 	
 	else 

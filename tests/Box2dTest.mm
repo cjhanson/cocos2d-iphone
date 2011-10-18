@@ -421,10 +421,5 @@ enum {
 	[[CCDirector sharedDirector] purgeCachedData];
 }
 
-// next delta time will be zero
--(void) applicationSignificantTimeChange:(UIApplication *)application
-{
-	[[CCDirector sharedDirector] setNextDeltaTimeZero:YES];
-}
 
 @end

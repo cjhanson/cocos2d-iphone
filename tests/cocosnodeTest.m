@@ -984,8 +984,7 @@ Class restartAction()
 		CCLOG(@"Retina Display Not supported");
 	
 	// Set multiple touches on
-	EAGLView *glView = [director openGLView];
-	[glView setMultipleTouchEnabled:YES];
+	[viewController_.view setMultipleTouchEnabled:YES];
 	
 	// Default texture format for PNG/BMP/TIFF/JPEG/GIF images
 	// It can be RGBA8888, RGBA4444, RGB5_A1, RGB565
@@ -1041,7 +1040,7 @@ Class restartAction()
 // next delta time will be zero
 -(void) applicationSignificantTimeChange:(UIApplication *)application
 {
-	[[CCDirector sharedDirector] setNextDeltaTimeZero:YES];
+	
 }
 
 - (void) dealloc

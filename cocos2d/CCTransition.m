@@ -50,12 +50,188 @@
 const NSInteger kSceneFade = 0xFADEFADE;
 
 
+@interface CCTransitionSceneProxy (Private)
+// helper that reorder a child
+-(void) insertChild:(CCNode*)child z:(int)z;
+// used internally to alter the zOrder variable. DON'T call this method manually
+-(void) _setZOrder:(int) z;
+-(void) detachChild:(CCNode *)child cleanup:(BOOL)doCleanup;
+@end
+
+@implementation CCTransitionSceneProxy
+
+@synthesize realScene;
+
+- (void) dealloc
+{
+	[realScene release];
+	[super dealloc];
+}
+
+-(id) initWithScene:(CCScene *)aScene
+{
+	self = [super init];
+	if(self != nil){
+		realScene	= [aScene retain];
+		[self addChild:realScene];
+	}
+	return self;
+}
+
+-(void) onEnter
+{
+	for(CCNode *aNode in children_){
+		if(aNode == realScene){
+			continue;
+		}
+		[aNode onEnter];
+	}
+	
+	[self resumeSchedulerAndActions];
+	isRunning_ = YES;
+}
+
+-(void) onEnterTransitionDidFinish
+{
+	for(CCNode *aNode in children_){
+		if(aNode == realScene){
+			continue;
+		}
+		[aNode onEnterTransitionDidFinish];
+	}
+}
+
+-(void) onExit
+{
+	[self pauseSchedulerAndActions];
+	isRunning_ = NO;
+	
+	for(CCNode *aNode in children_){
+		if(aNode == realScene){
+			continue;
+		}
+		[aNode onExit];
+	}
+}
+
+- (void)cleanup
+{
+	// actions
+	[self stopAllActions];
+	
+	// timers
+	[self unscheduleAllSelectors];
+	
+	for(CCNode *aNode in children_){
+		if(aNode == realScene){
+			continue;
+		}
+		[aNode cleanup];
+	}
+}
+
+- (void) cleanupChildrenAndRelease
+{
+	// children
+	for (CCNode *child in children_) {
+		[child setParent:nil];
+		if(child != realScene)
+			[child cleanup];
+	}
+	
+	[children_ release];
+	children_ = nil;
+}
+
+-(void) addChild: (CCNode*) child z:(int)z tag:(int) aTag
+{	
+	NSAssert( child != nil, @"Argument must be non-nil");
+	if(child.parent != nil){
+		return;
+	}
+	NSAssert( child.parent == nil, @"child already added. It can't be added again");
+	
+	if( ! children_ )
+		[self childrenAlloc];
+	
+	[self insertChild:child z:z];
+	
+	child.tag = aTag;
+	
+	[child setParent: self];
+	
+	if(child != realScene){
+		if(isRunning_){
+			[child onEnter];
+			
+			[child onEnterTransitionDidFinish];
+		}else{
+			NSAssert(isRunning_ == NO, @"CCTransitionProxy: How are we not on display list, but isRunning = YES ?!?!?!?!");
+		}
+	}
+}
+
+-(void) removeAllChildrenWithCleanup:(BOOL)cleanup
+{
+	// not using detachChild improves speed here
+	for (CCNode *c in children_)
+	{
+		if(c == realScene){
+			[c setParent:nil];
+			continue;
+		}
+		// IMPORTANT:
+		//  -1st do onExit
+		//  -2nd cleanup
+		if (isRunning_)
+			[c onExit];
+		
+		if (cleanup)
+			[c cleanup];
+		
+		// set parent nil at the end (issue #476)
+		[c setParent:nil];
+	}
+	
+	[children_ removeAllObjects];
+}
+
+-(void) detachChild:(CCNode *)child cleanup:(BOOL)doCleanup
+{
+	// IMPORTANT:
+	//  -1st do onExit
+	//  -2nd cleanup
+	if (isRunning_ && child != realScene)
+		[child onExit];
+	
+	// If you don't do cleanup, the child's actions will not get removed and the
+	// its scheduledSelectors_ dict will not get released!
+	if (doCleanup && child != realScene)
+		[child cleanup];
+	
+	// set parent nil at the end (issue #476)
+	[child setParent:nil];
+	
+	[child setRootNode:nil];
+	
+	[children_ removeObject:child];
+}
+
+@end
+
+
 @interface CCTransitionScene (Private)
 -(void) sceneOrder;
 - (void)setNewScene:(ccTime)dt;
 @end
 
 @implementation CCTransitionScene
+
+-(void) dealloc
+{
+	[super dealloc];
+}
+
 +(id) transitionWithDuration:(ccTime) t scene:(CCScene*)s
 {
 	return [[[self alloc] initWithDuration:t scene:s] autorelease];
@@ -63,86 +239,64 @@ const NSInteger kSceneFade = 0xFADEFADE;
 
 -(id) initWithDuration:(ccTime) t scene:(CCScene*)s
 {
-	NSAssert( s != nil, @"Argument scene must be non-nil");
+	NSAssert( s != nil, @"CCTransition: in scene must be non-nil");
 	
 	if( (self=[super init]) ) {
-	
-		duration_ = t;
+		isTransition_	= YES;
 		
-		// retain
-		inScene_ = [s retain];
-		outScene_ = [[CCDirector sharedDirector] runningScene];
-		[outScene_ retain];
+		duration_		= t;
 		
-		NSAssert( inScene_ != outScene_, @"Incoming scene must be different from the outgoing scene" );
-
-		// disable events while transitions
-#ifdef __IPHONE_OS_VERSION_MAX_ALLOWED
-		[[CCTouchDispatcher sharedDispatcher] setDispatchEvents: NO];
-#elif defined(__MAC_OS_X_VERSION_MAX_ALLOWED)
-		[[CCEventDispatcher sharedDispatcher] setDispatchEvents: NO];
-#endif
-
 		[self sceneOrder];
+		
+		inScene_		= [[CCTransitionSceneProxy alloc] initWithScene:s];
+		inScene_.tag	= 1;
+		[self addChild:inScene_ z:(inSceneOnTop_)?1:0];
+		[inScene_ release];
+		
+		outScene_		= [[CCTransitionSceneProxy alloc] initWithScene:[[CCDirector sharedDirector].openGLViewController rootNode]];
+		outScene_.tag	= 0;
+		[self addChild:outScene_ z:(inSceneOnTop_)?0:1];
+		[outScene_ release];
 	}
 	return self;
 }
+
+- (id) init
+{
+//	NSAssert(YES==NO, @"CCTransition: init unsupported. Use initWithDuration:scene:");
+	[self release];
+	return nil;
+}
+
+// custom onEnter
+-(void) onEnter
+{
+	// disable events while transitions
+	[[CCTouchDispatcher sharedDispatcher] setDispatchEvents: NO];
+	
+	[super onEnter];
+}
+
+-(void) onEnterTransitionDidFinish
+{
+	[super onEnterTransitionDidFinish];
+}
+
+- (void) onExit
+{
+	[super onExit];
+	// re-enable events after transitions
+	[[CCTouchDispatcher sharedDispatcher] setDispatchEvents: YES];
+}
+
+- (void) cleanup
+{	
+	[super cleanup];
+}
+
 -(void) sceneOrder
 {
 	inSceneOnTop_ = YES;
-}
-
--(void) draw
-{
-	[super draw];
-
-	if( inSceneOnTop_ ) {
-		[outScene_ visit];
-		[inScene_ visit];
-	} else {
-		[inScene_ visit];
-		[outScene_ visit];
-	}
-}
-
--(void) finish
-{
-	/* clean up */	
-	[inScene_ setVisible:YES];
-	[inScene_ setPosition:ccp(0,0)];
-	[inScene_ setScale:1.0f];
-	[inScene_ setRotation:0.0f];
-	[inScene_.camera restore];
-	
-	[outScene_ setVisible:NO];
-	[outScene_ setPosition:ccp(0,0)];
-	[outScene_ setScale:1.0f];
-	[outScene_ setRotation:0.0f];
-	[outScene_.camera restore];
-	
-	[self schedule:@selector(setNewScene:) interval:0];
-}
-
--(void) setNewScene: (ccTime) dt
-{	
-	[self unschedule:_cmd];
-	
-	CCDirector *director = [CCDirector sharedDirector];
-	
-	// Before replacing, save the "send cleanup to scene"
-	sendCleanupToScene_ = [director sendCleanupToScene];
-	
-	[director replaceScene: inScene_];
-
-	// enable events while transitions
-#ifdef __IPHONE_OS_VERSION_MAX_ALLOWED
-	[[CCTouchDispatcher sharedDispatcher] setDispatchEvents: YES];
-#elif defined(__MAC_OS_X_VERSION_MAX_ALLOWED)
-	[[CCEventDispatcher sharedDispatcher] setDispatchEvents: YES];
-#endif
-	
-	// issue #267
-	[outScene_ setVisible:YES];	
 }
 
 -(void) hideOutShowIn
@@ -151,40 +305,26 @@ const NSInteger kSceneFade = 0xFADEFADE;
 	[outScene_ setVisible:NO];
 }
 
-// custom onEnter
--(void) onEnter
+-(void) start
 {
-	[super onEnter];
-	[inScene_ onEnter];
-	// outScene_ should not receive the onEnter callback
+//	[outScene_.realScene onExitTransitionDidStart];
+	[inScene_.realScene onEnter];
+//	[inScene_.realScene pause];
 }
 
-// custom onExit
--(void) onExit
+-(void) finish
 {
-	[super onExit];
-	[outScene_ onExit];
-
-	// inScene_ should not receive the onExit callback
-	// only the onEnterTransitionDidFinish
-	[inScene_ onEnterTransitionDidFinish];
-}
-
-// custom cleanup
--(void) cleanup
-{
-	[super cleanup];
+	[outScene_.realScene onExit];
+	[outScene_ removeChild:outScene_.realScene cleanup:YES];
+	outScene_.realScene = nil;
 	
-	if( sendCleanupToScene_ )
-	   [outScene_ cleanup];
+	CCDirector *director = [CCDirector sharedDirector];
+	[director replaceScene:inScene_.realScene];
+	
+	//Resume first, so we can pause stuff in onEnterTransitionDidFinish
+//	[inScene_.realScene resume];
 }
 
--(void) dealloc
-{
-	[inScene_ release];
-	[outScene_ release];
-	[super dealloc];
-}
 @end
 
 //

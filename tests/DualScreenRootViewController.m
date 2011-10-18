@@ -1,22 +1,14 @@
 //
-//  RootViewController.m
-//  TestCocos2d
+//  DualScreenRootViewController.m
+//  cocos2d-ios
 //
-//  Created by Ricardo Quesada on 6/22/11.
-//  Copyright Sapus Media 2011. All rights reserved.
-//
-
-//
-// RootViewController
-//
-// Use this class to control rotation and integtration with iAd and any other View Controller
+//  Created by CJ Hanson on 10/17/11.
+//  Copyright (c) 2011 Hanson Interactive. All rights reserved.
 //
 
-#import "cocos2d.h"
+#import "DualScreenRootViewController.h"
 
-#import "RootViewController.h"
-
-@implementation RootViewController
+@implementation DualScreenRootViewController
 
 //Override the default initializer or create a new one and call this one on the parent
 - (id) initWithRenderer:renderer andConfiguration:configuration
@@ -36,12 +28,12 @@
 	// return YES for the supported orientations
 	
 	// For landscape only, uncomment the following line
-//	return ( UIInterfaceOrientationIsLandscape( interfaceOrientation ) );
-
-
+	//	return ( UIInterfaceOrientationIsLandscape( interfaceOrientation ) );
+	
+	
 	// For portrait only, uncomment the following line
-//	return ( ! UIInterfaceOrientationIsLandscape( interfaceOrientation ) );
-
+	//	return ( ! UIInterfaceOrientationIsLandscape( interfaceOrientation ) );
+	
 	// To support all oritentatiosn return YES
 	return YES;
 }
@@ -51,6 +43,4 @@
     [super dealloc];
 }
 
-
 @end
-

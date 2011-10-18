@@ -2,13 +2,14 @@
 #import "CCNode.h"
 #import "CCMotionStreak.h"
 
+@class RootViewController;
 @class CCSprite;
 
 //CLASS INTERFACE
 @interface AppController : NSObject <UIApplicationDelegate>
 {
 	UIWindow	*window_;
-	UIViewController *viewController_;
+	RootViewController *viewController_;
 }
 @end
 

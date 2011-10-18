@@ -85,15 +85,6 @@ extern NSString *const kEAGLViewResizedNotification;
 @class EAGLSharegroup;
 @class EAGLConfiguration;
 
-//PROTOCOLS:
-
-@protocol EAGLTouchDelegate <NSObject>
-- (void)touchesBegan:(NSSet *)touches withEvent:(UIEvent *)event;
-- (void)touchesEnded:(NSSet *)touches withEvent:(UIEvent *)event;
-- (void)touchesMoved:(NSSet *)touches withEvent:(UIEvent *)event;
-- (void)touchesCancelled:(NSSet *)touches withEvent:(UIEvent *)event;
-@end
-
 //CLASS INTERFACE:
 
 /** EAGLView Class.
@@ -105,8 +96,6 @@ extern NSString *const kEAGLViewResizedNotification;
 {
     id<ESRenderer>			renderer_;
 	EAGLConfiguration		*configuration_;
-	
-	id<EAGLTouchDelegate>   touchDelegate_;
 }
 
 /** creates and initializes the EAGLView with the frame and creates a default ESRenderer and EAGLConfiguration */
@@ -127,17 +116,17 @@ extern NSString *const kEAGLViewResizedNotification;
 /** Configuration contains properties of the rendering view */
 @property(nonatomic,retain,readonly) EAGLConfiguration *configuration;
 
-/** touch delegate */
-@property(nonatomic,readwrite,assign) id<EAGLTouchDelegate> touchDelegate;
-
 /** returns surface size in pixels */
 @property(nonatomic,readonly) CGSize surfaceSize;
 
 /** EAGLView uses double-buffer. This method swaps the buffers */
 -(void) swapBuffers;
 
+/** Coordinate conversion from UIKit to openGL */
 - (CGPoint) convertPointFromViewToSurface:(CGPoint)point;
 - (CGRect) convertRectFromViewToSurface:(CGRect)rect;
+- (CGPoint) convertPointFromSurfaceToView:(CGPoint)point;
+- (CGRect) convertRectFromSurfaceToView:(CGRect)rect;
 @end
 
 #endif // __IPHONE_OS_VERSION_MAX_ALLOWED

@@ -45,8 +45,7 @@
 #import "kazmath/GL/matrix.h"
 
 #ifdef __IPHONE_OS_VERSION_MAX_ALLOWED
-#import "Platforms/iOS/CCDirectorIOS.h"
-#import "Platforms/iOS/EAGLConfiguration.h"
+#import "Platforms/iOS/CCEAGLViewController.h"
 #endif // __IPHONE_OS_VERSION_MAX_ALLOWED
 
 #pragma mark -
@@ -60,6 +59,7 @@
 @synthesize gridSize = gridSize_;
 @synthesize step = step_;
 @synthesize shaderProgram = shaderProgram_;
+@synthesize openGLViewController = openGLViewController_;
 
 +(id) gridWithSize:(ccGridSize)gridSize texture:(CCTexture2D*)texture flippedTexture:(BOOL)flipped
 {
@@ -98,16 +98,13 @@
 
 -(id)initWithSize:(ccGridSize)gSize
 {
-	CCDirector *director = [CCDirector sharedDirector];
-	CGSize s = [director winSizeInPixels];
+	CGSize s = [openGLViewController_ winSizeInPixels];
 	
-
 	unsigned long POTWide = ccNextPOT(s.width);
 	unsigned long POTHigh = ccNextPOT(s.height);
 	
 #ifdef __IPHONE_OS_VERSION_MAX_ALLOWED
-	EAGLView *glview = [[CCDirector sharedDirector] openGLView];
-	NSString *pixelFormat = glview.configuration.colorFormat;
+	NSString *pixelFormat = openGLViewController_.configuration.colorFormat;
 
 	CCTexture2DPixelFormat format = [pixelFormat isEqualToString: kEAGLColorFormatRGB565] ? kCCTexture2DPixelFormat_RGB565 : kCCTexture2DPixelFormat_RGBA8888;
 #else
@@ -164,9 +161,8 @@
 {
 	active_ = active;
 	if( ! active ) {
-		CCDirector *director = [CCDirector sharedDirector];
-		ccDirectorProjection proj = [director projection];
-		[director setProjection:proj];
+		ccDirectorProjection proj = [openGLViewController_ projection];
+		[openGLViewController_ setProjection:proj];
 	}
 }
 
@@ -185,15 +181,15 @@
 
 -(void)set2DProjection
 {	
-	CGSize	winSize = [[CCDirector sharedDirector] winSizeInPixels];
+	CGSize	winSize = [openGLViewController_ winSizeInPixels];
 	
 	kmGLLoadIdentity();
-	glViewport(0, 0, winSize.width * CC_CONTENT_SCALE_FACTOR(), winSize.height * CC_CONTENT_SCALE_FACTOR() );
+	glViewport(0, 0, winSize.width * openGLViewController_.contentScaleFactor, winSize.height * openGLViewController_.contentScaleFactor );
 	kmGLMatrixMode(KM_GL_PROJECTION);
 	kmGLLoadIdentity();
 
 	kmMat4 orthoMatrix;
-	kmMat4OrthographicProjection(&orthoMatrix, 0, winSize.width * CC_CONTENT_SCALE_FACTOR(), 0, winSize.height * CC_CONTENT_SCALE_FACTOR(), -1024, 1024);
+	kmMat4OrthographicProjection(&orthoMatrix, 0, winSize.width * openGLViewController_.contentScaleFactor, 0, winSize.height * openGLViewController_.contentScaleFactor, -1024, 1024);
 	kmGLMultMatrix( &orthoMatrix );
 
 	kmGLMatrixMode(KM_GL_MODELVIEW);
@@ -203,13 +199,11 @@
 
 -(void)set3DProjection
 {	
-	CCDirector *director = [CCDirector sharedDirector];
+	CGSize	winSize = [openGLViewController_ winSizeInPixels];
+	CGSize	winSizePoints = [openGLViewController_ winSize];
 	
-	CGSize	winSize = [director winSizeInPixels];
-	CGSize	winSizePoints = [director winSize];
-	
-	if( CC_CONTENT_SCALE_FACTOR() != 1 )
-		glViewport(-winSize.width/2, -winSize.height/2, winSize.width * CC_CONTENT_SCALE_FACTOR(), winSize.height * CC_CONTENT_SCALE_FACTOR() );
+	if( openGLViewController_.contentScaleFactor != 1 )
+		glViewport(-winSize.width/2, -winSize.height/2, winSize.width * openGLViewController_.contentScaleFactor, winSize.height * openGLViewController_.contentScaleFactor );
 	else
 		glViewport(0, 0, winSize.width, winSize.height );
 	
@@ -224,7 +218,7 @@
 	kmGLMatrixMode(KM_GL_MODELVIEW);	
 	kmGLLoadIdentity();
 	kmVec3 eye, center, up;
-	kmVec3Fill( &eye, winSizePoints.width/2, winSizePoints.height/2, [director getZEye] );
+	kmVec3Fill( &eye, winSizePoints.width/2, winSizePoints.height/2, [openGLViewController_ getZEye] );
 	kmVec3Fill( &center, winSizePoints.width/2, winSizePoints.height/2, 0 );
 	kmVec3Fill( &up,0,1,0);
 	kmMat4LookAt(&matrixLookup, &eye, &center, &up);

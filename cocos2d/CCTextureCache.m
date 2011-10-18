@@ -34,6 +34,13 @@
 #import "CCConfiguration.h"
 #import "Support/CCFileUtils.h"
 #import "CCDirector.h"
+
+#ifdef __IPHONE_OS_VERSION_MAX_ALLOWED
+#import "CCEAGLViewController.h"
+#elif defined(__MAC_OS_X_VERSION_MAX_ALLOWED)
+#import "CCMacViewController.h"
+#endif
+
 #import "ccConfig.h"
 #import "ccTypes.h"
 
@@ -85,20 +92,20 @@ static CCTextureCache *sharedTextureCache;
 		_dictQueue = dispatch_queue_create("org.cocos2d.texturecachedict", NULL);
 
 #ifdef __IPHONE_OS_VERSION_MAX_ALLOWED
-		CC_GLVIEW *view = [[CCDirector sharedDirector] openGLView];
-		NSAssert(view, @"Do not initialize the TextureCache before the Director");
+		CC_GLVIEWCONTROLLER *viewcontroller = [[CCDirector sharedDirector] openGLViewController];
+		NSAssert(viewcontroller, @"Do not initialize the TextureCache before the Director");
 		_auxGLcontext = [[EAGLContext alloc]
 						 initWithAPI:kEAGLRenderingAPIOpenGLES2
-						 sharegroup:[[view.renderer context] sharegroup]];
+						 sharegroup:[[viewcontroller.renderer context] sharegroup]];
 		
 #elif defined(__MAC_OS_X_VERSION_MAX_ALLOWED)
 		
-		MacGLView *view = [[CCDirector sharedDirector] openGLView];
-		NSAssert(view, @"Do not initialize the TextureCache before the Director");
+		CC_GLVIEWCONTROLLER *viewcontroller = [[CCDirector sharedDirector] openGLViewController];
+		NSAssert(viewcontroller, @"Do not initialize the TextureCache before the Director");
 
 		
-		NSOpenGLPixelFormat *pf = [view pixelFormat];
-		NSOpenGLContext *share = [view openGLContext];
+		NSOpenGLPixelFormat *pf = [viewcontroller pixelFormat];
+		NSOpenGLContext *share = [viewcontroller openGLContext];
 		
 		_auxGLcontext = [[NSOpenGLContext alloc] initWithFormat:pf shareContext:share];
 

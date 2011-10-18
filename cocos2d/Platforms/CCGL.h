@@ -29,42 +29,66 @@
 
 #import <Availability.h>
 
+/** @typedef ccDirectorProjection
+ Possible OpenGL projections used by director
+ */
+typedef enum {
+	/// sets a 2D projection (orthogonal projection).
+	kCCDirectorProjection2D,
+	
+	/// sets a 3D projection with a fovy=60, znear=0.5f and zfar=1500.
+	kCCDirectorProjection3D,
+	
+	/// it calls "updateProjection" on the projection delegate.
+	kCCDirectorProjectionCustom,
+	
+	/// Detault projection is 3D projection
+	kCCDirectorProjectionDefault = kCCDirectorProjection3D,
+	
+	// backward compatibility stuff
+	CCDirectorProjection2D = kCCDirectorProjection2D,
+	CCDirectorProjection3D = kCCDirectorProjection3D,
+	CCDirectorProjectionCustom = kCCDirectorProjectionCustom,
+	
+} ccDirectorProjection;
+
 #ifdef __IPHONE_OS_VERSION_MAX_ALLOWED
 #import <OpenGLES/ES2/gl.h>
 #import <OpenGLES/ES2/glext.h>
 #import <OpenGLES/EAGL.h>
-#import "iOS/EAGLView.h"
+
+@class CCEAGLViewController;
 
 #elif defined(__MAC_OS_X_VERSION_MAX_ALLOWED)
 #import <OpenGL/gl.h>
 #import <OpenGL/glu.h>
 #import <Cocoa/Cocoa.h>	// needed for NSOpenGLView
-#import "Mac/MacGLView.h"
+@class CCMacGLViewController;
 #endif
 
 
 // iOS
 #ifdef __IPHONE_OS_VERSION_MAX_ALLOWED
-#define CC_GLVIEW					EAGLView
+#define CC_GLVIEWCONTROLLER			CCEAGLViewController
 #define	glClearDepth				glClearDepthf
-#define glGenerateMipmap			glGenerateMipmapOES
-#define glGenFramebuffers			glGenFramebuffersOES
-#define glBindFramebuffer			glBindFramebufferOES
-#define glFramebufferTexture2D		glFramebufferTexture2DOES
-#define glDeleteFramebuffers		glDeleteFramebuffersOES
-#define glCheckFramebufferStatus	glCheckFramebufferStatusOES
+#define glGenerateMipmap			glGenerateMipmap
+#define glGenFramebuffers			glGenFramebuffers
+#define glBindFramebuffer			glBindFramebuffer
+#define glFramebufferTexture2D		glFramebufferTexture2D
+#define glDeleteFramebuffers		glDeleteFramebuffers
+#define glCheckFramebufferStatus	glCheckFramebufferStatus
 #define glDeleteVertexArrays		glDeleteVertexArraysOES
 #define glGenVertexArrays			glGenVertexArraysOES
 #define glBindVertexArray			glBindVertexArrayOES
 
-#define CC_GL_FRAMEBUFFER			GL_FRAMEBUFFER_OES
-#define CC_GL_FRAMEBUFFER_BINDING	GL_FRAMEBUFFER_BINDING_OES
-#define CC_GL_COLOR_ATTACHMENT0		GL_COLOR_ATTACHMENT0_OES
-#define CC_GL_FRAMEBUFFER_COMPLETE	GL_FRAMEBUFFER_COMPLETE_OES
+#define CC_GL_FRAMEBUFFER			GL_FRAMEBUFFER
+#define CC_GL_FRAMEBUFFER_BINDING	GL_FRAMEBUFFER_BINDING
+#define CC_GL_COLOR_ATTACHMENT0		GL_COLOR_ATTACHMENT0
+#define CC_GL_FRAMEBUFFER_COMPLETE	GL_FRAMEBUFFER_COMPLETE
 
 // Mac
 #elif defined(__MAC_OS_X_VERSION_MAX_ALLOWED)
-#define CC_GLVIEW					MacGLView
+#define CC_GLVIEWCONTROLLER			CCMacGLViewController
 #define glDeleteVertexArrays		glDeleteVertexArraysAPPLE
 #define glGenVertexArrays			glGenVertexArraysAPPLE
 #define glBindVertexArray			glBindVertexArrayAPPLE

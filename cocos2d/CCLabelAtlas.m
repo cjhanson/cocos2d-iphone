@@ -79,8 +79,9 @@
 	CCTexture2D *texture = [textureAtlas_ texture];
 	float textureWide = [texture pixelsWide];
 	float textureHigh = [texture pixelsHigh];
-    float itemWidthInPixels = itemWidth_ * CC_CONTENT_SCALE_FACTOR();
-    float itemHeightInPixels = itemHeight_ * CC_CONTENT_SCALE_FACTOR();
+	float scaleFactor	= CC_CONTENT_SCALE_FACTOR();
+    float itemWidthInPixels = itemWidth_ * scaleFactor;
+    float itemHeightInPixels = itemHeight_ * scaleFactor;
 
 
 	for( NSUInteger i=0; i<n; i++)

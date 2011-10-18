@@ -127,11 +127,6 @@
 	[[CCTextureCache sharedTextureCache] removeAllTextures];
 }
 
-// next delta time will be zero
--(void) applicationSignificantTimeChange:(UIApplication *)application
-{
-	[[CCDirector sharedDirector] setNextDeltaTimeZero:YES];
-}
 
 - (void) dealloc
 {

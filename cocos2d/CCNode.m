@@ -26,6 +26,7 @@
  */
 
 #import "CCNode.h"
+#import "CCScene.h"
 #import "CCGrid.h"
 #import "CCDirector.h"
 #import "CCActionManager.h"
@@ -69,6 +70,7 @@
 @synthesize children = children_;
 @synthesize visible = visible_;
 @synthesize parent = parent_;
+@synthesize rootNode = rootNode_;
 @synthesize grid = grid_;
 @synthesize zOrder = zOrder_;
 @synthesize tag = tag_;
@@ -130,6 +132,9 @@
 		
 		// userData is always inited as nil
 		userData_ = nil;
+		
+		//initialize root node to nil
+		rootNode_ = nil;
 
 		//initialize parent to nil
 		parent_ = nil;
@@ -166,10 +171,14 @@
 	
 	[shaderProgram_ release];
 	
+	rootNode_ = nil;
+	
 	// children
 	CCNode *child;
-	CCARRAY_FOREACH(children_, child)
+	CCARRAY_FOREACH(children_, child){
+		child.rootNode = nil;
 		child.parent = nil;
+	}
 	
 	[children_ release];
 	
@@ -405,6 +414,8 @@
 	// set parent nil at the end (issue #476)
 	[child setParent:nil];
 	
+	[child setRootNode:nil];
+	
 	[children_ removeObject:child];
 }
 
@@ -448,6 +459,24 @@
 	[self insertChild:child z:z];
 	
 	[child release];
+}
+
+-(CCScene *) rootNode
+{
+	if(rootNode_)
+		return rootNode_;
+	
+	CCNode *parent		= parent_;
+	CCScene *rootNode	= [parent rootNode];
+	while (parent != nil) {
+		rootNode	= [parent rootNode];
+		parent		= [parent parent];
+		if(parent == nil){
+			rootNode_ = rootNode;
+		}
+	}
+	
+	return rootNode_;
 }
 
 #pragma mark CCNode Draw

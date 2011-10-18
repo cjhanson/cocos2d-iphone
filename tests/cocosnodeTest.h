@@ -1,11 +1,12 @@
 
 @class CCSprite;
+@class RootViewController;
 
 //CLASS INTERFACE
 @interface AppController : NSObject <UIApplicationDelegate>
 {
 	UIWindow	*window_;
-	UIViewController *viewController_;
+	RootViewController *viewController_;
 }
 @end
 

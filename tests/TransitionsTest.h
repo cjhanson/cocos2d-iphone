@@ -1,12 +1,13 @@
 #import "cocos2d.h"
 
+@class RootViewController;
 @class CCLabel;
 
 #ifdef __IPHONE_OS_VERSION_MAX_ALLOWED
 @interface AppController : NSObject <UIApplicationDelegate>
 {
 	UIWindow *window_;
-	UIViewController *viewController_;
+	RootViewController *viewController_;
 }
 
 @property (nonatomic, retain) UIWindow *window;
@@ -28,13 +29,13 @@
 @end
 #endif // Mac
 
-@interface TextLayer: CCLayer
+@interface TextLayer: CCScene
 {
 }
 @end
 
 
-@interface TextLayer2: CCLayer
+@interface TextLayer2: CCScene
 {
 }
 @end
