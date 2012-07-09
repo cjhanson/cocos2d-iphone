@@ -260,7 +260,7 @@
 
 	CC_NODE_DRAW_SETUP();
 
-	ccGLEnableVertexAttribs(kCCVertexAttribFlag_PosColorTex );
+	ccGLEnableVertexAttribs(kCCVertexAttribFlag_PosColorTintColorTex );
 	ccGLBlendFunc( blendFunc_.src, blendFunc_.dst );
 
 	ccGLBindTexture2D( [texture_ name] );

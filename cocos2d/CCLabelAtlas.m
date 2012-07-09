@@ -95,7 +95,7 @@
 {
 	NSUInteger n = [string_ length];
 
-	ccV3F_C4B_T2F_Quad quad;
+	ccV3F_C4B_T4B_T2F_Quad quad;
 
 	const unsigned char *s = (unsigned char*) [string_ UTF8String];
 
@@ -152,6 +152,13 @@
 		quad.tr.colors = c;
 		quad.bl.colors = c;
 		quad.br.colors = c;
+		
+		ccColor4B t = ccc4(0, 0, 0, 0);
+		quad.tl.tintColors = t;
+		quad.tr.tintColors = t;
+		quad.bl.tintColors = t;
+		quad.br.tintColors = t;
+		
 		[textureAtlas_ updateQuad:&quad atIndex:i];
 	}
 }

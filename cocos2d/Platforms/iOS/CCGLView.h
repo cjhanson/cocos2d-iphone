@@ -110,6 +110,9 @@ Copyright (C) 2008 Apple Inc. All Rights Reserved.
 	//fsaa addition
 	BOOL					multisampling_;
 	unsigned int			requestedSamples_;
+
+  BOOL resizeOnce_;
+
 }
 
 /** creates an initializes an CCGLView with a frame and 0-bit depth buffer, and a RGB565 color buffer. */

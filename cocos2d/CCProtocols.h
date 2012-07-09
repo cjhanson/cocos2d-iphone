@@ -63,6 +63,24 @@
 @end
 
 #pragma mark -
+#pragma mark CCTintProtocol
+/**
+ Tint is used to pass a 2nd color. The amount to apply is determined by the alpha of the color
+ Values are never premultiplied with alpha
+ */
+@protocol CCTintProtocol <NSObject>
+/** sets tint color
+ @since not yet part of official cocos2d
+ */
+-(void) setTintColor:(ccColor4B)tintColor;
+/** returns the tint color
+ @since not yet part of official cocos2d
+ */
+- (ccColor4B) tintColor;
+
+@end
+
+#pragma mark -
 #pragma mark CCBlendProtocol
 /**
  You can specify the blending fuction.

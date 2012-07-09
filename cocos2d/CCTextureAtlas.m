@@ -192,15 +192,19 @@
 
 		// vertices
 		glEnableVertexAttribArray(kCCVertexAttrib_Position);
-		glVertexAttribPointer(kCCVertexAttrib_Position, 3, GL_FLOAT, GL_FALSE, kQuadSize, (GLvoid*) offsetof( ccV3F_C4B_T2F, vertices));
+		glVertexAttribPointer(kCCVertexAttrib_Position, 3, GL_FLOAT, GL_FALSE, kQuadSize, (GLvoid*) offsetof( ccV3F_C4B_T4B_T2F, vertices));
 
 		// colors
 		glEnableVertexAttribArray(kCCVertexAttrib_Color);
-		glVertexAttribPointer(kCCVertexAttrib_Color, 4, GL_UNSIGNED_BYTE, GL_TRUE, kQuadSize, (GLvoid*) offsetof( ccV3F_C4B_T2F, colors));
+		glVertexAttribPointer(kCCVertexAttrib_Color, 4, GL_UNSIGNED_BYTE, GL_TRUE, kQuadSize, (GLvoid*) offsetof( ccV3F_C4B_T4B_T2F, colors));
+		
+		// tint color
+		glEnableVertexAttribArray(kCCVertexAttrib_TintColor);
+		glVertexAttribPointer(kCCVertexAttrib_TintColor, 4, GL_UNSIGNED_BYTE, GL_TRUE, kQuadSize, (GLvoid*) offsetof( ccV3F_C4B_T4B_T2F, tintColors));
 
 		// tex coords
 		glEnableVertexAttribArray(kCCVertexAttrib_TexCoords);
-		glVertexAttribPointer(kCCVertexAttrib_TexCoords, 2, GL_FLOAT, GL_FALSE, kQuadSize, (GLvoid*) offsetof( ccV3F_C4B_T2F, texCoords));
+		glVertexAttribPointer(kCCVertexAttrib_TexCoords, 2, GL_FLOAT, GL_FALSE, kQuadSize, (GLvoid*) offsetof( ccV3F_C4B_T4B_T2F, texCoords));
 
 		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, buffersVBO_[1]);
 		glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices_[0]) * capacity_ * 6, indices_, GL_STATIC_DRAW);
@@ -243,14 +247,14 @@
 
 #pragma mark TextureAtlas - Update, Insert, Move & Remove
 
--(ccV3F_C4B_T2F_Quad *) quads
+-(ccV3F_C4B_T4B_T2F_Quad *) quads
 {
 	//if someone accesses the quads directly, presume that changes will be made
 	dirty_ = YES;
 	return quads_;
 }
 
--(void) updateQuad:(ccV3F_C4B_T2F_Quad*)quad atIndex:(NSUInteger) n
+-(void) updateQuad:(ccV3F_C4B_T4B_T2F_Quad*)quad atIndex:(NSUInteger) n
 {
 	NSAssert(n < capacity_, @"updateQuadWithTexture: Invalid index");
 
@@ -261,7 +265,7 @@
 	dirty_ = YES;
 }
 
--(void) insertQuad:(ccV3F_C4B_T2F_Quad*)quad atIndex:(NSUInteger)index
+-(void) insertQuad:(ccV3F_C4B_T4B_T2F_Quad*)quad atIndex:(NSUInteger)index
 {
 	NSAssert(index < capacity_, @"insertQuadWithTexture: Invalid index");
 
@@ -281,7 +285,7 @@
 	dirty_ = YES;
 }
 
--(void) insertQuads:(ccV3F_C4B_T2F_Quad*)quads atIndex:(NSUInteger)index amount:(NSUInteger) amount
+-(void) insertQuads:(ccV3F_C4B_T4B_T2F_Quad*)quads atIndex:(NSUInteger)index amount:(NSUInteger) amount
 {
 	NSAssert(index + amount <= capacity_, @"insertQuadWithTexture: Invalid index + amount");
 
@@ -328,7 +332,7 @@
 	}
 
 	// tex coordinates
-	ccV3F_C4B_T2F_Quad quadsBackup = quads_[oldIndex];
+	ccV3F_C4B_T4B_T2F_Quad quadsBackup = quads_[oldIndex];
 	memmove( &quads_[dst],&quads_[src], sizeof(quads_[0]) * howMany );
 	quads_[newIndex] = quadsBackup;
 
@@ -344,8 +348,8 @@
 		return;
 
 	//create buffer
-	size_t quadSize = sizeof(ccV3F_C4B_T2F_Quad);
-	ccV3F_C4B_T2F_Quad *tempQuads = malloc( quadSize * amount);
+	size_t quadSize = sizeof(ccV3F_C4B_T4B_T2F_Quad);
+	ccV3F_C4B_T4B_T2F_Quad *tempQuads = malloc( quadSize * amount);
 	memcpy( tempQuads, &quads_[oldIndex], quadSize * amount );
 
 	if (newIndex < oldIndex)
@@ -447,7 +451,7 @@
 
 -(void) fillWithEmptyQuadsFromIndex:(NSUInteger) index amount:(NSUInteger) amount
 {
-	ccV3F_C4B_T2F_Quad quad;
+	ccV3F_C4B_T4B_T2F_Quad quad;
 	bzero( &quad, sizeof(quad) );
 
 	NSUInteger to = index + amount;
@@ -526,16 +530,19 @@
 		dirty_ = NO;
 	}
 
-	ccGLEnableVertexAttribs( kCCVertexAttribFlag_PosColorTex );
+	ccGLEnableVertexAttribs( kCCVertexAttribFlag_PosColorTintColorTex );
 
 	// vertices
-	glVertexAttribPointer(kCCVertexAttrib_Position, 3, GL_FLOAT, GL_FALSE, kQuadSize, (GLvoid*) offsetof( ccV3F_C4B_T2F, vertices));
+	glVertexAttribPointer(kCCVertexAttrib_Position, 3, GL_FLOAT, GL_FALSE, kQuadSize, (GLvoid*) offsetof( ccV3F_C4B_T4B_T2F, vertices));
 	
 	// colors
-	glVertexAttribPointer(kCCVertexAttrib_Color, 4, GL_UNSIGNED_BYTE, GL_TRUE, kQuadSize, (GLvoid*) offsetof( ccV3F_C4B_T2F, colors));
+	glVertexAttribPointer(kCCVertexAttrib_Color, 4, GL_UNSIGNED_BYTE, GL_TRUE, kQuadSize, (GLvoid*) offsetof( ccV3F_C4B_T4B_T2F, colors));
+	
+	// tint color
+	glVertexAttribPointer(kCCVertexAttrib_TintColor, 4, GL_UNSIGNED_BYTE, GL_TRUE, kQuadSize, (GLvoid*) offsetof( ccV3F_C4B_T4B_T2F, tintColors));
 	
 	// tex coords
-	glVertexAttribPointer(kCCVertexAttrib_TexCoords, 2, GL_FLOAT, GL_FALSE, kQuadSize, (GLvoid*) offsetof( ccV3F_C4B_T2F, texCoords));
+	glVertexAttribPointer(kCCVertexAttrib_TexCoords, 2, GL_FLOAT, GL_FALSE, kQuadSize, (GLvoid*) offsetof( ccV3F_C4B_T4B_T2F, texCoords));
 
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
 

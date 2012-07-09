@@ -122,7 +122,7 @@
 	if( (self = [super init]) )
 	{
 		// shader program
-		self.shaderProgram = [[CCShaderCache sharedShaderCache] programForKey:kCCShader_PositionTextureColor];
+		self.shaderProgram = [[CCShaderCache sharedShaderCache] programForKey:kCCShader_PositionTextureColorTintColor];
 
 		dirty_ = recursiveDirty_ = NO;
 
@@ -153,6 +153,13 @@
 		quad_.br.colors = tmpColor;
 		quad_.tl.colors = tmpColor;
 		quad_.tr.colors = tmpColor;
+		
+		// tint Color
+		tintColor_ = ccc4(0, 0, 0, 0);
+		quad_.bl.tintColors = tintColor_;
+		quad_.br.tintColors = tintColor_;
+		quad_.tl.tintColors = tintColor_;
+		quad_.tr.tintColors = tintColor_;
 
 		[self setTexture:texture];
 		[self setTextureRect:rect rotated:rotated untrimmedSize:rect.size];
@@ -509,23 +516,27 @@
 	// Attributes
 	//
 
-	ccGLEnableVertexAttribs( kCCVertexAttribFlag_PosColorTex );
+	ccGLEnableVertexAttribs( kCCVertexAttribFlag_PosColorTintColorTex );
 
 #define kQuadSize sizeof(quad_.bl)
 	long offset = (long)&quad_;
 
 	// vertex
-	NSInteger diff = offsetof( ccV3F_C4B_T2F, vertices);
+	NSInteger diff = offsetof( ccV3F_C4B_T4B_T2F, vertices);
 	glVertexAttribPointer(kCCVertexAttrib_Position, 3, GL_FLOAT, GL_FALSE, kQuadSize, (void*) (offset + diff));
 
-	// texCoods
-	diff = offsetof( ccV3F_C4B_T2F, texCoords);
-	glVertexAttribPointer(kCCVertexAttrib_TexCoords, 2, GL_FLOAT, GL_FALSE, kQuadSize, (void*)(offset + diff));
-
 	// color
-	diff = offsetof( ccV3F_C4B_T2F, colors);
+	diff = offsetof( ccV3F_C4B_T4B_T2F, colors);
 	glVertexAttribPointer(kCCVertexAttrib_Color, 4, GL_UNSIGNED_BYTE, GL_TRUE, kQuadSize, (void*)(offset + diff));
-
+	
+	// tint color
+	diff = offsetof( ccV3F_C4B_T4B_T2F, tintColors);
+	glVertexAttribPointer(kCCVertexAttrib_TintColor, 4, GL_UNSIGNED_BYTE, GL_TRUE, kQuadSize, (void*)(offset + diff));
+	
+	// texCoods
+	diff = offsetof( ccV3F_C4B_T4B_T2F, texCoords);
+	glVertexAttribPointer(kCCVertexAttrib_TexCoords, 2, GL_FLOAT, GL_FALSE, kQuadSize, (void*)(offset + diff));
+	
 
 	glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
 
@@ -855,6 +866,35 @@
 -(BOOL) doesOpacityModifyRGB
 {
 	return opacityModifyRGB_;
+}
+
+//
+// CCTintProtocol
+//
+
+- (ccColor4B) tintColor
+{
+	return tintColor_;
+}
+
+- (void) setTintColor:(ccColor4B)tintColor
+{
+	tintColor_ = tintColor;
+	
+	quad_.bl.tintColors = tintColor_;
+	quad_.br.tintColors = tintColor_;
+	quad_.tl.tintColors = tintColor_;
+	quad_.tr.tintColors = tintColor_;
+	
+	// renders using batch node
+	if( batchNode_ ) {
+		if( atlasIndex_ != CCSpriteIndexNotInitialized)
+			[textureAtlas_ updateQuad:&quad_ atIndex:atlasIndex_];
+		else
+			// no need to set it recursively
+			// update dirty_, don't update recursiveDirty_
+			dirty_ = YES;
+	}
 }
 
 //

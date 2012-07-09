@@ -185,7 +185,7 @@ const char kCCProgressTextureCoords = 0x4b;
 	if (!sprite_) {
 		return (ccTex2F){0,0};
 	}
-	ccV3F_C4B_T2F_Quad quad = sprite_.quad;
+	ccV3F_C4B_T4B_T2F_Quad quad = sprite_.quad;
 	CGPoint min = (CGPoint){quad.bl.texCoords.u,quad.bl.texCoords.v};
 	CGPoint max = (CGPoint){quad.tr.texCoords.u,quad.tr.texCoords.v};
   //  Fix bug #1303 so that progress timer handles sprite frame texture rotation
@@ -200,7 +200,7 @@ const char kCCProgressTextureCoords = 0x4b;
 	if (!sprite_) {
 		return (ccVertex2F){0.f, 0.f};
 	}
-	ccV3F_C4B_T2F_Quad quad = sprite_.quad;
+	ccV3F_C4B_T4B_T2F_Quad quad = sprite_.quad;
 	CGPoint min = (CGPoint){quad.bl.vertices.x,quad.bl.vertices.y};
 	CGPoint max = (CGPoint){quad.tr.vertices.x,quad.tr.vertices.y};
 	return (ccVertex2F){min.x * (1.f - alpha.x) + max.x * alpha.x, min.y * (1.f - alpha.y) + max.y * alpha.y};

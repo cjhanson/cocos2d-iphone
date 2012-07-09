@@ -117,7 +117,7 @@
         size_t indicesSize = sizeof(indices_[0]) * tp * 6 * 1;
         
         tCCParticle* particlesNew = realloc(particles, particlesSize);
-        ccV3F_C4B_T2F_Quad *quadsNew = realloc(quads_, quadsSize);
+        ccV3F_C4B_T4B_T2F_Quad *quadsNew = realloc(quads_, quadsSize);
         GLushort* indicesNew = realloc(indices_, indicesSize);
         
         if (particlesNew && quadsNew && indicesNew)
@@ -252,7 +252,7 @@
 	// Important. Texture in cocos2d are inverted, so the Y component should be inverted
 	CC_SWAP( top, bottom);
 
-	ccV3F_C4B_T2F_Quad *quads;
+	ccV3F_C4B_T4B_T2F_Quad *quads;
 	NSUInteger start, end;
 	if (batchNode_)
 	{
@@ -326,24 +326,33 @@
 
 -(void) updateQuadWithParticle:(tCCParticle*)p newPosition:(CGPoint)newPos
 {
-	ccV3F_C4B_T2F_Quad *quad;
+	ccV3F_C4B_T4B_T2F_Quad *quad;
 
 	if (batchNode_)
 	{
-		ccV3F_C4B_T2F_Quad *batchQuads = [[batchNode_ textureAtlas] quads];
+		ccV3F_C4B_T4B_T2F_Quad *batchQuads = [[batchNode_ textureAtlas] quads];
 		quad = &(batchQuads[atlasIndex_+p->atlasIndex]);
 	}
 	else
 		quad = &(quads_[particleIdx]);
 
-	ccColor4B color = (opacityModifyRGB_)
-		? (ccColor4B){ p->color.r*p->color.a*255, p->color.g*p->color.a*255, p->color.b*p->color.a*255, p->color.a*255}
-		: (ccColor4B){ p->color.r*255, p->color.g*255, p->color.b*255, p->color.a*255};
+//	ccColor4B color = (opacityModifyRGB_)
+//		? (ccColor4B){ p->color.r*p->color.a*255, p->color.g*p->color.a*255, p->color.b*p->color.a*255, p->color.a*255}
+//		: (ccColor4B){ p->color.r*255, p->color.g*255, p->color.b*255, p->color.a*255};
 
+  ccColor4B color = { p->color.r*255, p->color.g*255, p->color.b*255, p->color.a*255};
+  
 	quad->bl.colors = color;
 	quad->br.colors = color;
 	quad->tl.colors = color;
 	quad->tr.colors = color;
+	
+	ccColor4B tColor = {0, 0, 0, 0};
+	
+	quad->bl.tintColors = tColor;
+	quad->br.tintColors = tColor;
+	quad->tl.tintColors = tColor;
+	quad->tr.tintColors = tColor;
 
 	// vertices
 	GLfloat size_2 = p->size/2;
@@ -454,8 +463,8 @@
 		else if( ! oldBatch )
 		{
 			// copy current state to batch
-			ccV3F_C4B_T2F_Quad *batchQuads = [[batchNode_ textureAtlas] quads];
-			ccV3F_C4B_T2F_Quad *quad = &(batchQuads[atlasIndex_] );
+			ccV3F_C4B_T4B_T2F_Quad *batchQuads = [[batchNode_ textureAtlas] quads];
+			ccV3F_C4B_T4B_T2F_Quad *quad = &(batchQuads[atlasIndex_] );
 			memcpy( quad, quads_, totalParticles * sizeof(quads_[0]) );
 
 			if (quads_)

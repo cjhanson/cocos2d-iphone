@@ -45,7 +45,7 @@
  @since v2.0.0
  */
 #ifndef CC_ENABLE_GL_STATE_CACHE
-#define CC_ENABLE_GL_STATE_CACHE 0
+#define CC_ENABLE_GL_STATE_CACHE 1
 #endif
 
 /** @def CC_ENABLE_DEPRECATED
@@ -82,7 +82,7 @@
  @since v0.99.5
  */
 #ifndef CC_FIX_ARTIFACTS_BY_STRECHING_TEXEL
-#define CC_FIX_ARTIFACTS_BY_STRECHING_TEXEL 0
+#define CC_FIX_ARTIFACTS_BY_STRECHING_TEXEL 1
 #endif
 
 /** @def CC_DIRECTOR_STATS_INTERVAL
@@ -220,7 +220,9 @@
  To enable set it to a value different than 0. Disabled by default.
  */
 #ifndef CC_LABELBMFONT_DEBUG_DRAW
-#define CC_LABELBMFONT_DEBUG_DRAW 0
+#if defined (DEBUG)
+#define CC_LABELBMFONT_DEBUG_DRAW 1
+#endif
 #endif
 
 /** @def CC_LABELATLAS_DEBUG_DRAW

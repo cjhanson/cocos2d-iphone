@@ -401,7 +401,7 @@
 //sets a 0'd quad into the quads array
 -(void) disableParticle:(NSUInteger)particleIndex
 {
-	ccV3F_C4B_T2F_Quad* quad = &((textureAtlas_.quads)[particleIndex]);
+	ccV3F_C4B_T4B_T2F_Quad* quad = &((textureAtlas_.quads)[particleIndex]);
 	quad->br.vertices.x = quad->br.vertices.y = quad->tr.vertices.x = quad->tr.vertices.y = quad->tl.vertices.x = quad->tl.vertices.y = quad->bl.vertices.x = quad->bl.vertices.y = 0.0f;
 }
 

@@ -159,7 +159,7 @@
 
 -(void) updateAtlasValueAt:(ccGridSize)pos withValue:(ccColor3B)value withIndex:(NSUInteger)idx
 {
-	ccV3F_C4B_T2F_Quad quad;
+	ccV3F_C4B_T4B_T2F_Quad quad;
 
 	NSInteger x = pos.x;
 	NSInteger y = pos.y;
@@ -213,6 +213,13 @@
 	quad.tl.colors = color;
 	quad.br.colors = color;
 	quad.bl.colors = color;
+	
+	ccColor4B tColor = {0, 0, 0, 0};
+	quad.tr.tintColors = tColor;
+	quad.tl.tintColors = tColor;
+	quad.br.tintColors = tColor;
+	quad.bl.tintColors = tColor;
+	
 	[textureAtlas_ updateQuad:&quad atIndex:idx];
 }
 

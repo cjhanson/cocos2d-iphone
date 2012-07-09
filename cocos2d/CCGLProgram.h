@@ -34,6 +34,7 @@
 enum {
 	kCCVertexAttrib_Position,
 	kCCVertexAttrib_Color,
+	kCCVertexAttrib_TintColor,
 	kCCVertexAttrib_TexCoords,
 
 	kCCVertexAttrib_MAX,
@@ -42,11 +43,12 @@ enum {
 enum {
 	kCCUniformMVPMatrix,
 	kCCUniformSampler,
-
+  kCCUniformTime,
 	kCCUniform_MAX,
 };
 
 #define kCCShader_PositionTextureColor			@"ShaderPositionTextureColor"
+#define kCCShader_PositionTextureColorTintColor	@"ShaderPositionTextureColorTintColor"
 #define kCCShader_PositionTextureColorAlphaTest	@"ShaderPositionTextureColorAlphaTest"
 #define kCCShader_PositionColor					@"ShaderPositionColor"
 #define kCCShader_PositionTexture				@"ShaderPositionTexture"
@@ -58,9 +60,11 @@ enum {
 #define kCCUniformMVPMatrix_s			"u_MVPMatrix"
 #define kCCUniformSampler_s				"u_texture"
 #define kCCUniformAlphaTestValue		"u_alpha_value"
+#define kCCUniformTime_s				"u_time"
 
 // Attribute names
 #define	kCCAttributeNameColor			@"a_color"
+#define	kCCAttributeNameTintColor		@"a_tintColor"
 #define	kCCAttributeNamePosition		@"a_position"
 #define	kCCAttributeNameTexCoord		@"a_texCoord"
 

@@ -39,6 +39,9 @@ extern const GLchar * ccPositionTextureA8Color_vert;
 extern const GLchar * ccPositionTextureColor_frag;
 extern const GLchar * ccPositionTextureColor_vert;
 
+extern const GLchar * ccPositionTextureColorTintColor_frag;
+extern const GLchar * ccPositionTextureColorTintColor_vert;
+
 extern const GLchar * ccPositionTextureColorAlphaTest_frag;
 
 extern const GLchar * ccPositionTexture_uColor_frag;

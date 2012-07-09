@@ -35,6 +35,7 @@
 static GLuint	_ccCurrentProjectionMatrix = -1;
 static BOOL		_vertexAttribPosition = NO;
 static BOOL		_vertexAttribColor = NO;
+static BOOL		_vertexAttribTintColor = NO;
 static BOOL		_vertexAttribTexCoords = NO;
 
 #if CC_ENABLE_GL_STATE_CACHE
@@ -56,6 +57,7 @@ void ccGLInvalidateStateCache( void )
 	_ccCurrentProjectionMatrix = -1;
 	_vertexAttribPosition = NO;
 	_vertexAttribColor = NO;
+	_vertexAttribTintColor = NO;
 	_vertexAttribTexCoords = NO;
 
 #if CC_ENABLE_GL_STATE_CACHE
@@ -203,6 +205,18 @@ void ccGLEnableVertexAttribs( unsigned int flags )
 			glDisableVertexAttribArray( kCCVertexAttrib_Color );
 
 		_vertexAttribColor = enableColor;
+	}
+	
+	/* Tint Color */
+	BOOL enableTintColor = flags & kCCVertexAttribFlag_TintColor;
+	
+	if( enableTintColor != _vertexAttribTintColor ) {
+		if( enableTintColor )
+			glEnableVertexAttribArray( kCCVertexAttrib_TintColor );
+		else
+			glDisableVertexAttribArray( kCCVertexAttrib_TintColor );
+		
+		_vertexAttribTintColor = enableTintColor;
 	}
 
 	/* Tex Coords */

@@ -704,12 +704,16 @@ static NSUInteger globalOrderOfArrival = 1;
 
 -(void) schedule:(SEL)selector
 {
+  dispatch_async(dispatch_get_main_queue(), ^(void) {
 	[self schedule:selector interval:0 repeat:kCCRepeatForever delay:0];
+  });
 }
 
 -(void) schedule:(SEL)selector interval:(ccTime)interval
-{
-	[self schedule:selector interval:interval repeat:kCCRepeatForever delay:0];
+  {
+  dispatch_async(dispatch_get_main_queue(), ^(void) {
+    [self schedule:selector interval:interval repeat:kCCRepeatForever delay:0];
+  });
 }
 
 -(void) schedule:(SEL)selector interval:(ccTime)interval repeat: (uint) repeat delay:(ccTime) delay

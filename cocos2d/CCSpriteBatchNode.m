@@ -114,7 +114,7 @@ const NSUInteger defaultCapacity = 29;
 		children_ = [[CCArray alloc] initWithCapacity:capacity];
 		descendants_ = [[CCArray alloc] initWithCapacity:capacity];
 
-		self.shaderProgram = [[CCShaderCache sharedShaderCache] programForKey:kCCShader_PositionTextureColor];
+		self.shaderProgram = [[CCShaderCache sharedShaderCache] programForKey:kCCShader_PositionTextureColorTintColor];
 	}
 
 	return self;
@@ -341,10 +341,10 @@ const NSUInteger defaultCapacity = 29;
 - (void) swap:(NSInteger) oldIndex withNewIndex:(NSInteger) newIndex
 {
 	id* x = descendants_->data->arr;
-	ccV3F_C4B_T2F_Quad* quads = textureAtlas_.quads;
+	ccV3F_C4B_T4B_T2F_Quad* quads = textureAtlas_.quads;
 
 	id tempItem = x[oldIndex];
-	ccV3F_C4B_T2F_Quad tempItemQuad=quads[oldIndex];
+	ccV3F_C4B_T4B_T2F_Quad tempItemQuad=quads[oldIndex];
 
 	//update the index of other swapped item
 	((CCSprite*) x[newIndex]).atlasIndex=oldIndex;
@@ -503,7 +503,7 @@ const NSUInteger defaultCapacity = 29;
 	if(textureAtlas_.totalQuads == textureAtlas_.capacity)
 		[self increaseAtlasCapacity];
 
-	ccV3F_C4B_T2F_Quad quad = [sprite quad];
+	ccV3F_C4B_T4B_T2F_Quad quad = [sprite quad];
 	[textureAtlas_ insertQuad:&quad atIndex:index];
 
 	ccArray *descendantsData = descendants_->data;
@@ -543,7 +543,7 @@ const NSUInteger defaultCapacity = 29;
 
 	sprite.atlasIndex=index;
 
-	ccV3F_C4B_T2F_Quad quad = [sprite quad];
+	ccV3F_C4B_T4B_T2F_Quad quad = [sprite quad];
 	[textureAtlas_ insertQuad:&quad atIndex:index];
 
 	// add children recursively
@@ -626,7 +626,7 @@ const NSUInteger defaultCapacity = 29;
 	[sprite setBatchNode:self];
 	[sprite setAtlasIndex:index];
 	
-	ccV3F_C4B_T2F_Quad quad = [sprite quad];
+	ccV3F_C4B_T4B_T2F_Quad quad = [sprite quad];
 	[textureAtlas_ insertQuad:&quad atIndex:index];
 	
 	// XXX: updateTransform will update the textureAtlas too using updateQuad.

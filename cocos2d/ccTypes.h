@@ -264,6 +264,25 @@ typedef struct _ccV3F_C4B_T2F
 	ccTex2F			texCoords;			// 8 byts
 } ccV3F_C4B_T2F;
 
+//! a Point with a vertex point, a tex coord point and a color 4B and a tint color 4B
+typedef struct _ccV3F_C4B_T4B_T2F
+{
+	//! vertices (3F)
+	ccVertex3F		vertices;			// 12 bytes
+	//	char __padding__[4];
+	
+	//! colors (4B)
+	ccColor4B		colors;				// 4 bytes
+	//	char __padding2__[4];
+	
+	//! colors (4B)
+	ccColor4B		tintColors;			// 4 bytes
+	//	char __padding2__[4];
+	
+	// tex coords (2F)
+	ccTex2F			texCoords;			// 8 bytes
+} ccV3F_C4B_T4B_T2F;
+
 //! 4 ccVertex2FTex2FColor4B Quad
 typedef struct _ccV2F_C4B_T2F_Quad
 {
@@ -289,6 +308,19 @@ typedef struct _ccV3F_C4B_T2F_Quad
 	//! bottom right
 	ccV3F_C4B_T2F	br;
 } ccV3F_C4B_T2F_Quad;
+
+//! 4 ccVertex3FTex2FColor4BTint4B
+typedef struct _ccV3F_C4B_T4B_T2F_Quad
+{
+	//! top left
+	ccV3F_C4B_T4B_T2F	tl;
+	//! bottom left
+	ccV3F_C4B_T4B_T2F	bl;
+	//! top right
+	ccV3F_C4B_T4B_T2F	tr;
+	//! bottom right
+	ccV3F_C4B_T4B_T2F	br;
+} ccV3F_C4B_T4B_T2F_Quad;
 
 //! 4 ccVertex2FTex2FColor4F Quad
 typedef struct _ccV2F_C4F_T2F_Quad

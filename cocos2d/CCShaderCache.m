@@ -98,6 +98,23 @@ static CCShaderCache *_sharedShaderCache;
 	[p release];
 
 	CHECK_GL_ERROR_DEBUG();
+	
+	// Position Texture Color Tint shader
+	p = [[CCGLProgram alloc] initWithVertexShaderByteArray:ccPositionTextureColorTintColor_vert
+												fragmentShaderByteArray:ccPositionTextureColorTintColor_frag];
+	
+	[p addAttribute:kCCAttributeNamePosition index:kCCVertexAttrib_Position];
+	[p addAttribute:kCCAttributeNameColor index:kCCVertexAttrib_Color];
+	[p addAttribute:kCCAttributeNameTintColor index:kCCVertexAttrib_TintColor];
+	[p addAttribute:kCCAttributeNameTexCoord index:kCCVertexAttrib_TexCoords];
+	
+	[p link];
+	[p updateUniforms];
+	
+	[programs_ setObject:p forKey:kCCShader_PositionTextureColorTintColor];
+	[p release];
+	
+	CHECK_GL_ERROR_DEBUG();
 
 	// Position Texture Color alpha test
 	p = [[CCGLProgram alloc] initWithVertexShaderByteArray:ccPositionTextureColor_vert

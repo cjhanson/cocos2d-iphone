@@ -60,7 +60,7 @@
  *
  * The default anchorPoint in CCSprite is (0.5, 0.5).
  */
-@interface CCSprite : CCNode <CCRGBAProtocol, CCTextureProtocol>
+@interface CCSprite : CCNode <CCRGBAProtocol, CCTintProtocol, CCTextureProtocol>
 {
 
 	//
@@ -96,13 +96,18 @@
 	CGPoint unflippedOffsetPositionFromCenter_;
 
 	// vertex coords, texture coords and color info
-	ccV3F_C4B_T2F_Quad quad_;
+	//Modified by CJ Hanson to allow passing an additional color used for tinting
+	ccV3F_C4B_T4B_T2F_Quad quad_;
+	
 
 	// opacity and RGB protocol
 	GLubyte		opacity_;
 	ccColor3B	color_;
 	ccColor3B	colorUnmodified_;
 	BOOL		opacityModifyRGB_;
+	
+	// added tint coloring (color paints as opaque over the sprite)
+	ccColor4B	tintColor_;
 
 	// image is flipped
 	BOOL	flipX_;
@@ -112,7 +117,7 @@
 /** whether or not the Sprite needs to be updated in the Atlas */
 @property (nonatomic,readwrite) BOOL dirty;
 /** the quad (tex coords, vertex coords and color) information */
-@property (nonatomic,readonly) ccV3F_C4B_T2F_Quad quad;
+@property (nonatomic,readonly) ccV3F_C4B_T4B_T2F_Quad quad;
 /** The index used on the TextureAtlas. Don't modify this value unless you know what you are doing */
 @property (nonatomic,readwrite) NSUInteger atlasIndex;
 /** returns the texture rect of the CCSprite in points */
@@ -139,6 +144,8 @@
 @property (nonatomic,readwrite) GLubyte opacity;
 /** RGB colors: conforms to CCRGBAProtocol protocol */
 @property (nonatomic,readwrite) ccColor3B color;
+/** RGBA tintColor: conforms to CCTintProtocol protocol */
+@property (nonatomic,readwrite) ccColor4B tintColor;
 /** weak reference of the CCTextureAtlas used when the sprite is rendered using a CCSpriteBatchNode */
 @property (nonatomic,readwrite,assign) CCTextureAtlas *textureAtlas;
 /** weak reference to the CCSpriteBatchNode that renders the CCSprite */
