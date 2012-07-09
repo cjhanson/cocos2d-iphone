@@ -2020,6 +2020,7 @@
 		A0EC4C8D140323C500EC482A /* example_Twist.vsh in Resources */ = {isa = PBXBuildFile; fileRef = A0EC4A231403236C00EC482A /* example_Twist.vsh */; };
 		A0F37B3813C3719A00F724DF /* white-512x512.png in Resources */ = {isa = PBXBuildFile; fileRef = A0F37B3713C3719A00F724DF /* white-512x512.png */; };
 		A0F37B7913C3B39E00F724DF /* grossini_dance_atlas-hd.png in Resources */ = {isa = PBXBuildFile; fileRef = E062F9961247FC5400DE3932 /* grossini_dance_atlas-hd.png */; };
+		A0F59E4515A9FBE800634D2D /* Default-Landscape~ipad.png in Resources */ = {isa = PBXBuildFile; fileRef = A0F59E4415A9FBE800634D2D /* Default-Landscape~ipad.png */; };
 		A0F83FB5151CAE7300EBBFCB /* tuffy_bold_italic-charmap-hd.plist in Resources */ = {isa = PBXBuildFile; fileRef = A0F83FB3151CAE7300EBBFCB /* tuffy_bold_italic-charmap-hd.plist */; };
 		A0F83FB6151CAE7300EBBFCB /* tuffy_bold_italic-charmap.plist in Resources */ = {isa = PBXBuildFile; fileRef = A0F83FB4151CAE7300EBBFCB /* tuffy_bold_italic-charmap.plist */; };
 		A0F8410B151D2C2E00EBBFCB /* larabie-16-hd.plist in Resources */ = {isa = PBXBuildFile; fileRef = A0F84109151D2C2E00EBBFCB /* larabie-16-hd.plist */; };
@@ -2988,13 +2989,6 @@
 			remoteGlobalIDString = 5018F24C0DFDEAC400C013A5;
 			remoteInfo = cocos2d;
 		};
-		501504F311330E2E00A9CA65 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 29B97313FDCFA39411CA2CEA /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = 501504CD11330E1700A9CA65;
-			remoteInfo = ProgressActionsTest;
-		};
 		501945570F964C620059CE7C /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 29B97313FDCFA39411CA2CEA /* Project object */;
@@ -3008,13 +3002,6 @@
 			proxyType = 1;
 			remoteGlobalIDString = 5018F24C0DFDEAC400C013A5;
 			remoteInfo = cocos2d;
-		};
-		502BF54611E39CC30030C477 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 29B97313FDCFA39411CA2CEA /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = 501504CD11330E1700A9CA65;
-			remoteInfo = ProgressActionsTest;
 		};
 		502BF54811E39CC30030C477 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -3240,13 +3227,6 @@
 			remoteGlobalIDString = 5018F24C0DFDEAC400C013A5;
 			remoteInfo = cocos2d;
 		};
-		507C0EE811D609290075E747 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 29B97313FDCFA39411CA2CEA /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = 501504CD11330E1700A9CA65;
-			remoteInfo = ProgressActionsTest;
-		};
 		507C0EEA11D609290075E747 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 29B97313FDCFA39411CA2CEA /* Project object */;
@@ -3274,13 +3254,6 @@
 			proxyType = 1;
 			remoteGlobalIDString = 50B2C5CE0E100EF000AE9530;
 			remoteInfo = ChipmunkAccelTouchTest;
-		};
-		507FF8D0116D16F600B6FAB2 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 29B97313FDCFA39411CA2CEA /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = 501504CD11330E1700A9CA65;
-			remoteInfo = ProgressActionsTest;
 		};
 		507FF8D2116D16F600B6FAB2 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -3562,13 +3535,6 @@
 			remoteGlobalIDString = 5018F24C0DFDEAC400C013A5;
 			remoteInfo = cocos2d;
 		};
-		50CBA46511CBD6FB007B009D /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 29B97313FDCFA39411CA2CEA /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = 501504CD11330E1700A9CA65;
-			remoteInfo = ProgressActionsTest;
-		};
 		50CBA46711CBD6FB007B009D /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 29B97313FDCFA39411CA2CEA /* Project object */;
@@ -3653,26 +3619,12 @@
 			remoteGlobalIDString = 5018F24C0DFDEAC400C013A5;
 			remoteInfo = cocos2d;
 		};
-		E02BC2AB1270E489006E46A2 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 29B97313FDCFA39411CA2CEA /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = 501504CD11330E1700A9CA65;
-			remoteInfo = ProgressActionsTest;
-		};
 		E02BC2AD1270E489006E46A2 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 29B97313FDCFA39411CA2CEA /* Project object */;
 			proxyType = 1;
 			remoteGlobalIDString = 5018F24C0DFDEAC400C013A5;
 			remoteInfo = cocos2d;
-		};
-		E037DA1D1281C7F0003D39D7 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 29B97313FDCFA39411CA2CEA /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = 501504CD11330E1700A9CA65;
-			remoteInfo = ProgressActionsTest;
 		};
 		E037DA1F1281C7F0003D39D7 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -3750,13 +3702,6 @@
 			proxyType = 1;
 			remoteGlobalIDString = E02BC2A91270E489006E46A2;
 			remoteInfo = Bug624;
-		};
-		E0EA5675134B9CA800F212C8 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 29B97313FDCFA39411CA2CEA /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = 501504CD11330E1700A9CA65;
-			remoteInfo = ProgressActionsTest;
 		};
 		E0EA5677134B9CA800F212C8 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -4679,6 +4624,7 @@
 		A0EC4A221403236C00EC482A /* example_Twist.fsh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; path = example_Twist.fsh; sourceTree = "<group>"; };
 		A0EC4A231403236C00EC482A /* example_Twist.vsh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; path = example_Twist.vsh; sourceTree = "<group>"; };
 		A0F37B3713C3719A00F724DF /* white-512x512.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "white-512x512.png"; sourceTree = "<group>"; };
+		A0F59E4415A9FBE800634D2D /* Default-Landscape~ipad.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "Default-Landscape~ipad.png"; path = "bugs/Default-Landscape~ipad.png"; sourceTree = "<group>"; };
 		A0F83FB3151CAE7300EBBFCB /* tuffy_bold_italic-charmap-hd.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "tuffy_bold_italic-charmap-hd.plist"; sourceTree = "<group>"; };
 		A0F83FB4151CAE7300EBBFCB /* tuffy_bold_italic-charmap.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "tuffy_bold_italic-charmap.plist"; sourceTree = "<group>"; };
 		A0F84109151D2C2E00EBBFCB /* larabie-16-hd.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "larabie-16-hd.plist"; sourceTree = "<group>"; };
@@ -6638,6 +6584,7 @@
 		50B2CB260E10EE4A00AE9530 /* Images */ = {
 			isa = PBXGroup;
 			children = (
+				A0F59E4615A9FBEE00634D2D /* Bugs */,
 				E0A4A24A11F899BB003B9D29 /* PVR images */,
 				50E2A52510A4AA1700D894CE /* sprites_test */,
 				508A333A0FBADD6A00D574A2 /* grossini images */,
@@ -7267,6 +7214,14 @@
 			path = Resources/Shaders;
 			sourceTree = "<group>";
 		};
+		A0F59E4615A9FBEE00634D2D /* Bugs */ = {
+			isa = PBXGroup;
+			children = (
+				A0F59E4415A9FBE800634D2D /* Default-Landscape~ipad.png */,
+			);
+			name = Bugs;
+			sourceTree = "<group>";
+		};
 		A0F6EABE14169976008F01A1 /* Profiling */ = {
 			isa = PBXGroup;
 			children = (
@@ -7842,7 +7797,6 @@
 			buildRules = (
 			);
 			dependencies = (
-				502BF54511E39CC30030C477 /* PBXTargetDependency */,
 				502BF54711E39CC30030C477 /* PBXTargetDependency */,
 			);
 			name = Bug914;
@@ -8261,7 +8215,6 @@
 			buildRules = (
 			);
 			dependencies = (
-				507C0EE711D609290075E747 /* PBXTargetDependency */,
 				507C0EE911D609290075E747 /* PBXTargetDependency */,
 			);
 			name = Bug899;
@@ -8280,7 +8233,6 @@
 			buildRules = (
 			);
 			dependencies = (
-				507FF8CF116D16F600B6FAB2 /* PBXTargetDependency */,
 				507FF8D1116D16F600B6FAB2 /* PBXTargetDependency */,
 			);
 			name = Bug350;
@@ -8526,7 +8478,6 @@
 			buildRules = (
 			);
 			dependencies = (
-				50CBA46411CBD6FB007B009D /* PBXTargetDependency */,
 				50CBA46611CBD6FB007B009D /* PBXTargetDependency */,
 			);
 			name = Bug886;
@@ -8652,7 +8603,6 @@
 			buildRules = (
 			);
 			dependencies = (
-				501504F411330E2E00A9CA65 /* PBXTargetDependency */,
 				DA5F0EC20FFE96D400C7C82E /* PBXTargetDependency */,
 			);
 			name = Bug422;
@@ -8689,7 +8639,6 @@
 			buildRules = (
 			);
 			dependencies = (
-				E02BC2AA1270E489006E46A2 /* PBXTargetDependency */,
 				E02BC2AC1270E489006E46A2 /* PBXTargetDependency */,
 			);
 			name = Bug624;
@@ -8708,7 +8657,6 @@
 			buildRules = (
 			);
 			dependencies = (
-				E037DA1C1281C7F0003D39D7 /* PBXTargetDependency */,
 				E037DA1E1281C7F0003D39D7 /* PBXTargetDependency */,
 			);
 			name = Bug458;
@@ -8763,7 +8711,6 @@
 			buildRules = (
 			);
 			dependencies = (
-				E0EA5674134B9CA800F212C8 /* PBXTargetDependency */,
 				E0EA5676134B9CA800F212C8 /* PBXTargetDependency */,
 			);
 			name = Bug1159;
@@ -10208,6 +10155,7 @@
 				A0B0386013EA1FE10073E59A /* r1-ipad.png in Resources */,
 				A0B0389113EA1FE30073E59A /* r2-ipad.png in Resources */,
 				A093FC4C150D0ED40039327A /* fps_images-ipadhd.png in Resources */,
+				A0F59E4515A9FBE800634D2D /* Default-Landscape~ipad.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -12022,11 +11970,6 @@
 			target = 5018F24C0DFDEAC400C013A5 /* cocos2d */;
 			targetProxy = 501504CF11330E1700A9CA65 /* PBXContainerItemProxy */;
 		};
-		501504F411330E2E00A9CA65 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = 501504CD11330E1700A9CA65 /* ActionsProgressTest */;
-			targetProxy = 501504F311330E2E00A9CA65 /* PBXContainerItemProxy */;
-		};
 		501945560F964C620059CE7C /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = 5018F24C0DFDEAC400C013A5 /* cocos2d */;
@@ -12036,11 +11979,6 @@
 			isa = PBXTargetDependency;
 			target = 5018F24C0DFDEAC400C013A5 /* cocos2d */;
 			targetProxy = 501C7C6F0F91EFFF0024A296 /* PBXContainerItemProxy */;
-		};
-		502BF54511E39CC30030C477 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = 501504CD11330E1700A9CA65 /* ActionsProgressTest */;
-			targetProxy = 502BF54611E39CC30030C477 /* PBXContainerItemProxy */;
 		};
 		502BF54711E39CC30030C477 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
@@ -12202,11 +12140,6 @@
 			target = 5018F24C0DFDEAC400C013A5 /* cocos2d */;
 			targetProxy = 5078B5190E3E43540004233A /* PBXContainerItemProxy */;
 		};
-		507C0EE711D609290075E747 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = 501504CD11330E1700A9CA65 /* ActionsProgressTest */;
-			targetProxy = 507C0EE811D609290075E747 /* PBXContainerItemProxy */;
-		};
 		507C0EE911D609290075E747 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = 5018F24C0DFDEAC400C013A5 /* cocos2d */;
@@ -12226,11 +12159,6 @@
 			isa = PBXTargetDependency;
 			target = 50B2C5CE0E100EF000AE9530 /* ChipmunkAccelTouchTest */;
 			targetProxy = 507D3385117F366A00B6684B /* PBXContainerItemProxy */;
-		};
-		507FF8CF116D16F600B6FAB2 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = 501504CD11330E1700A9CA65 /* ActionsProgressTest */;
-			targetProxy = 507FF8D0116D16F600B6FAB2 /* PBXContainerItemProxy */;
 		};
 		507FF8D1116D16F600B6FAB2 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
@@ -12432,11 +12360,6 @@
 			target = 5018F24C0DFDEAC400C013A5 /* cocos2d */;
 			targetProxy = 50C93A970E0BF6E000517B01 /* PBXContainerItemProxy */;
 		};
-		50CBA46411CBD6FB007B009D /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = 501504CD11330E1700A9CA65 /* ActionsProgressTest */;
-			targetProxy = 50CBA46511CBD6FB007B009D /* PBXContainerItemProxy */;
-		};
 		50CBA46611CBD6FB007B009D /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = 5018F24C0DFDEAC400C013A5 /* cocos2d */;
@@ -12497,20 +12420,10 @@
 			target = 5018F24C0DFDEAC400C013A5 /* cocos2d */;
 			targetProxy = DAABAA7F1059A42E00794EB3 /* PBXContainerItemProxy */;
 		};
-		E02BC2AA1270E489006E46A2 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = 501504CD11330E1700A9CA65 /* ActionsProgressTest */;
-			targetProxy = E02BC2AB1270E489006E46A2 /* PBXContainerItemProxy */;
-		};
 		E02BC2AC1270E489006E46A2 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = 5018F24C0DFDEAC400C013A5 /* cocos2d */;
 			targetProxy = E02BC2AD1270E489006E46A2 /* PBXContainerItemProxy */;
-		};
-		E037DA1C1281C7F0003D39D7 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = 501504CD11330E1700A9CA65 /* ActionsProgressTest */;
-			targetProxy = E037DA1D1281C7F0003D39D7 /* PBXContainerItemProxy */;
 		};
 		E037DA1E1281C7F0003D39D7 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
@@ -12566,11 +12479,6 @@
 			isa = PBXTargetDependency;
 			target = E02BC2A91270E489006E46A2 /* Bug624 */;
 			targetProxy = E0D44E1A129198750094708A /* PBXContainerItemProxy */;
-		};
-		E0EA5674134B9CA800F212C8 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = 501504CD11330E1700A9CA65 /* ActionsProgressTest */;
-			targetProxy = E0EA5675134B9CA800F212C8 /* PBXContainerItemProxy */;
 		};
 		E0EA5676134B9CA800F212C8 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
@@ -13754,7 +13662,7 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/UIKit.framework/Headers/UIKit.h";
 				GCC_THUMB_SUPPORT = NO;
-				INFOPLIST_FILE = Resources/Info.plist;
+				INFOPLIST_FILE = Resources/Info350.plist;
 				INSTALL_PATH = "$(HOME)/Applications";
 				PRODUCT_NAME = Bug350;
 			};
@@ -13770,7 +13678,7 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/UIKit.framework/Headers/UIKit.h";
 				GCC_THUMB_SUPPORT = NO;
-				INFOPLIST_FILE = Resources/Info.plist;
+				INFOPLIST_FILE = Resources/Info350.plist;
 				INSTALL_PATH = "$(HOME)/Applications";
 				PRODUCT_NAME = Bug350;
 				ZERO_LINK = NO;

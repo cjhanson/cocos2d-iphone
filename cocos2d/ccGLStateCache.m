@@ -130,6 +130,7 @@ void ccGLActiveTexture( GLenum textureEnum )
 	glActiveTexture( textureEnum );
 #endif
 }
+	
 
 void ccGLBindTexture2D( GLuint textureId )
 {
