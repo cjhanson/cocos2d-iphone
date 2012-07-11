@@ -344,6 +344,8 @@ typedef struct _ccBlendFunc
 	GLenum dst;
 } ccBlendFunc;
 
+static const ccBlendFunc kCCBlendFuncDisable = {GL_ONE, GL_ZERO};
+
 //! ccResolutionType
 typedef enum
 {
@@ -369,7 +371,7 @@ typedef enum
 
 } ccResolutionType;
 
-// XXX: If any of these enums are edited and/or reordered, udpate CCTexture2D.m
+// XXX: If any of these enums are edited and/or reordered, update CCTexture2D.m
 //! Vertical text alignment type
 typedef enum
 {
@@ -378,7 +380,7 @@ typedef enum
     kCCVerticalTextAlignmentBottom,
 } CCVerticalTextAlignment;
 
-// XXX: If any of these enums are edited and/or reordered, udpate CCTexture2D.m
+// XXX: If any of these enums are edited and/or reordered, update CCTexture2D.m
 //! Horizontal text alignment type
 typedef enum
 {
@@ -387,7 +389,7 @@ typedef enum
 	kCCTextAlignmentRight,
 } CCTextAlignment;
 
-// XXX: If any of these enums are edited and/or reordered, udpate CCTexture2D.m
+// XXX: If any of these enums are edited and/or reordered, update CCTexture2D.m
 //! Line break modes
 typedef enum {
 	kCCLineBreakModeWordWrap,

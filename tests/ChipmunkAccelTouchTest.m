@@ -35,8 +35,9 @@ void removeShape( cpBody *body, cpShape *shape, void *data )
 // returns the transform matrix according the Chipmunk Body values
 -(CGAffineTransform) nodeToParentTransform
 {
-	CGFloat x = body_->p.x;
-	CGFloat y = body_->p.y;
+	cpVect pos = cpBodyGetPos( body_);
+	CGFloat x = pos.x;
+	CGFloat y = pos.y;
 
 	if ( ignoreAnchorPointForPosition_ ) {
 		x += anchorPointInPoints_.x;
@@ -44,8 +45,9 @@ void removeShape( cpBody *body, cpShape *shape, void *data )
 	}
 
 	// Make matrix
-	CGFloat c = body_->rot.x;
-	CGFloat s = body_->rot.y;
+	cpVect rot = cpBodyGetRot(body_);
+	CGFloat c = rot.x;
+	CGFloat s = rot.y;
 
 	if( ! CGPointEqualToPoint(anchorPointInPoints_, CGPointZero) ){
 		x += c*-anchorPointInPoints_.x + -s*-anchorPointInPoints_.y;

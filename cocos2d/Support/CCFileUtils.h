@@ -170,7 +170,6 @@
 
 @end
 
-
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -182,7 +181,7 @@ extern "C" {
  @since v0.99.5
  */
 NSInteger ccLoadFileIntoMemory(const char *filename, unsigned char **out);
-
+	
 #ifdef __cplusplus
 }
 #endif

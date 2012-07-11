@@ -124,7 +124,9 @@
 
 @implementation BaseAppController
 
-@synthesize window=window_, glView=glView_, director = director_;
+@synthesize window=window_;
+@synthesize glView=glView_;
+@synthesize director = director_;
 
 - (void)applicationDidFinishLaunching:(NSNotification *)aNotification
 {
@@ -135,7 +137,7 @@
 	[director_ setView:glView_];
 
 	// Center window
-	[self.window center];																		\
+	[self.window center];
 	
 //	[director setProjection:kCCDirectorProjection2D];
 
@@ -145,6 +147,13 @@
 	// EXPERIMENTAL stuff.
 	// 'Effects' don't work correctly when autoscale is turned on.
 	[director_ setResizeMode:kCCDirectorResize_NoScale]; // kCCDirectorResize_AutoScale
+    
+    [window_ makeMainWindow];
+}
+
+- (void)dealloc
+{
+    [super dealloc];
 }
 
 - (BOOL) applicationShouldTerminateAfterLastWindowClosed: (NSApplication *) theApplication
@@ -157,9 +166,6 @@
 	CCDirectorMac *director = (CCDirectorMac*) [CCDirector sharedDirector];
 	[director setFullScreen: ! [director isFullScreen] ];
 }
-
 @end
 
 #endif // __CC_PLATFORM_MAC
-
-
