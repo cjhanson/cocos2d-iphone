@@ -50,6 +50,7 @@
 	if( (self=[super init]) ) {
 		originalTarget_ = target_ = nil;
 		tag_ = kCCActionTagInvalid;
+		isDone_ = NO;
 	}
 	return self;
 }
@@ -84,7 +85,7 @@
 
 -(BOOL) isDone
 {
-	return YES;
+	return isDone_;
 }
 
 -(void) step: (ccTime) dt
@@ -95,6 +96,10 @@
 -(void) update: (ccTime) time
 {
 	CCLOG(@"[Action update]. override me");
+	if(isDone_)
+		return;
+	
+	isDone_ = YES;
 }
 @end
 

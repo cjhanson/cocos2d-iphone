@@ -51,11 +51,6 @@
 	return copy;
 }
 
-- (BOOL) isDone
-{
-	return YES;
-}
-
 -(void) step: (ccTime) dt
 {
 	[self update: 1];
@@ -63,7 +58,9 @@
 
 -(void) update: (ccTime) t
 {
-	// nothing
+	if([self isDone])
+		return;
+	isDone_ = YES;
 }
 
 -(CCFiniteTimeAction*) reverse
@@ -80,6 +77,10 @@
 @implementation CCShow
 -(void) update:(ccTime)time
 {
+	if([self isDone])
+		return;
+	isDone_ = YES;
+	
 	((CCNode *)target_).visible = YES;
 }
 
@@ -97,6 +98,10 @@
 @implementation CCHide
 -(void) update:(ccTime)time
 {
+	if([self isDone])
+		return;
+	isDone_ = YES;
+	
 	((CCNode *)target_).visible = NO;
 }
 
@@ -114,6 +119,10 @@
 @implementation CCToggleVisibility
 -(void) update:(ccTime)time
 {
+	if([self isDone])
+		return;
+	isDone_ = YES;
+	
 	((CCNode *)target_).visible = !((CCNode *)target_).visible;
 }
 @end
@@ -139,6 +148,10 @@
 
 -(void) update:(ccTime)time
 {
+	if([self isDone])
+		return;
+	isDone_ = YES;
+	
 	[(CCSprite*)target_ setFlipX:flipX];
 }
 
@@ -175,6 +188,10 @@
 
 -(void) update:(ccTime)time
 {
+	if([self isDone])
+		return;
+	isDone_ = YES;
+	
 	[(CCSprite*)target_ setFlipY:flipY];
 }
 
@@ -218,6 +235,10 @@
 
 -(void) update:(ccTime)time
 {
+	if([self isDone])
+		return;
+	isDone_ = YES;
+	
 	((CCNode *)target_).position = position;
 }
 
@@ -270,6 +291,10 @@
 
 -(void) update:(ccTime)time
 {
+	if([self isDone])
+		return;
+	isDone_ = YES;
+	
 	[self execute];
 }
 
@@ -403,12 +428,17 @@
 
 -(void) update:(ccTime)time
 {
+	if([self isDone])
+		return;
+	isDone_ = YES;
+	
 	[self execute];
 }
 
 -(void) execute
 {
-	block_();
+	if(block_)
+		block_();
 }
 
 -(void) dealloc
@@ -444,6 +474,10 @@
 
 -(void) update:(ccTime)time
 {
+	if([self isDone])
+		return;
+	isDone_ = YES;
+	
 	[self execute];
 }
 
@@ -489,6 +523,10 @@
 
 -(void) update:(ccTime)time
 {
+	if([self isDone])
+		return;
+	isDone_ = YES;
+	
 	[self execute];
 }
 

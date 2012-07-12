@@ -42,6 +42,7 @@ enum {
 	id			originalTarget_;
 	id			target_;
 	NSInteger	tag_;
+	BOOL		isDone_;
 }
 
 /** The "target". The action will modify the target properties.
