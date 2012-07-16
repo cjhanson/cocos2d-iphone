@@ -203,6 +203,8 @@
 #endif
 	
 	[[ScriptingCore sharedInstance] runScript:@"javascript-spidermonkey/main.js"];
+//	[[ScriptingCore sharedInstance] runScript:@"javascript-spidermonkey/playground.js"];
+
 }
 @end
 

@@ -57,7 +57,6 @@ var loadScene = function (sceneIdx)
 }
 
 
-
 //
 // Base Layer
 //
@@ -122,79 +121,66 @@ var BaseLayer = cc.LayerGradient.extend({
             labelbg.setPosition( cc.p( winSize.width/2 +1, winSize.height-120 -1) );
             this.addChild( labelbg,9);
         }
+
+        // Menu
+        var item1 = cc.MenuItemImage.create("b1.png", "b2.png", this, this.backCallback);
+        var item2 = cc.MenuItemImage.create("r1.png", "r2.png", this, this.restartCallback);
+        var item3 = cc.MenuItemImage.create("f1.png", "f2.png", this, this.nextCallback);
+        var item4 = cc.MenuItemFont.create("back", this, function() { require("javascript-spidermonkey/main.js"); } );
+        item4.setFontSize( 22 );
+
+        var menu = cc.Menu.create(item1, item2, item3, item4 );
+
+        menu.setPosition( cc.p(0,0) );
+        item1.setPosition( cc.p(winSize.width / 2 - 100, 30));
+        item2.setPosition( cc.p(winSize.width / 2, 30));
+        item3.setPosition( cc.p(winSize.width / 2 + 100, 30));
+        item4.setPosition( cc.p(winSize.width - 60, winSize.height - 30 ) );
+
+        this.addChild(menu, 1);
     }
 });
 
-
 //------------------------------------------------------------------
 //
-// MainTest
+// Playground 
 //
 //------------------------------------------------------------------
-var MainTest = BaseLayer.extend({
-
-    _menu : null,
-
+var Playground = BaseLayer.extend({
     onEnter:function () {
         this._super();
-  
-        cc.MenuItemFont.setFontSize(24);
-        var item1 = cc.MenuItemFont.create("Actions: Basic Tests", this, function() { require("javascript-spidermonkey/test-actions.js"); } );
-        var item2 = cc.MenuItemFont.create("Actions: Ease Tests", this, function() { require("javascript-spidermonkey/test-easeactions.js"); } );
-        var item3 = cc.MenuItemFont.create("Actions: Progress Tests", this, function() { require("javascript-spidermonkey/test-actionsprogress.js"); } );
-        var item4 = cc.MenuItemFont.create("Chipmunk Tests", this, function() { require("javascript-spidermonkey/test-chipmunk.js"); } );
-        var item5 = cc.MenuItemFont.create("Effects Tests", this, function() { require("javascript-spidermonkey/test-effects.js"); } );
-        var item6 = cc.MenuItemFont.create("Label Tests", this, function() { require("javascript-spidermonkey/test-label.js"); } );
-        var item7 = cc.MenuItemFont.create("Menu Tests", this, function() { require("javascript-spidermonkey/test-menu.js"); } );
-        var item8 = cc.MenuItemFont.create("Parallax Tests", this, function() { require("javascript-spidermonkey/test-parallax.js"); } );
-        var item9 = cc.MenuItemFont.create("Particle Tests", this, function() { require("javascript-spidermonkey/test-particles.js"); } );
-        var item10 = cc.MenuItemFont.create("RenderTexture Tests", this, function() { require("javascript-spidermonkey/test-rendertexture.js"); } );
-        var item11 = cc.MenuItemFont.create("Sprite Tests", this, function() { require("javascript-spidermonkey/test-sprite.js"); } );
-        var item12 = cc.MenuItemFont.create("Tilemap Tests", this, function() { require("javascript-spidermonkey/test-tilemap.js"); } );
-        var item13 = cc.MenuItemFont.create("CocosDenshion Tests", this, function() { require("javascript-spidermonkey/test-cocosdenshion.js"); } );
-        var item14 = cc.MenuItemFont.create("cocos2d presentation", this, function() { require("javascript-spidermonkey/test-cocos2djs.js"); } );
-
-
-        this._menu = cc.Menu.create( item1, item2, item3, item4, item5, item6, item7, item8, item9, item10, item11, item12, item13, item14 );
-        this._menu.alignItemsVertically();
-
-        this._menu.setPosition( cc.p( winSize.width/2, winSize.height/2) );
-
-        this.addChild( this._menu );
 
         var platform = __getPlatform();
-        if( platform.substring(0,7) == 'desktop' )
-            this.setMouseEnabled( true );
-        else if( platform.substring(0,6) == 'mobile' )
-            this.setTouchEnabled( true );
+         if( platform.substring(0,6) == 'mobile' ) {
+            var accel = cc.Accelerometer.getInstance();
+            accel.setCallback( this, this.onAccelerometer );
+
+            // 2 times per second
+            accel.setUpdateInterval( 1/2 );
+        }
     },
 
-    onTouchesMoved:function (touches, event) {
-        var delta = touches[0].getDelta();
-        var current = this._menu.getPosition();
-        this._menu.setPosition( cc.p( current[0], current[1] + delta[1] ) );
-        return true;
+    onAccelerometer:function(x,y,z,timestamp) {
+        cc.log('Accel: '+ x + ' ' + y + ' ' + z );
     },
-
-    onMouseDragged : function( event ) {
-        var delta = event.getDelta();
-        var current = this._menu.getPosition();
-        this._menu.setPosition( cc.p( current[0], current[1] + delta[1] ) );
-        return true;
-    },
-
+    
     title:function () {
-        return "Javascript tests";
+        return "Testing Accelerometer";
     },
 
+    subtitle:function () {
+        return "See console on device";
+    },
+    code:function () {
+        return "";
+    }
 });
-
 
 //
 // Order of tests
 //
 
-scenes.push( MainTest);
+scenes.push( Playground );
 
 //------------------------------------------------------------------
 //
@@ -211,10 +197,9 @@ function run()
     if( runningScene == null )
         director.runWithScene( scene );
     else
-        director.replaceScene( cc.TransitionSplitCols.create(1, scene ) );
-
-    director.setDisplayStats(true);
+        director.replaceScene( cc.TransitionFade.create(0.5, scene ) );
 }
 
 run();
+
 
