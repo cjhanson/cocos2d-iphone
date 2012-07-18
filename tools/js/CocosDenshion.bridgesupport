@@ -1,104 +1,104 @@
 <?xml version='1.0'?>
 <signatures version='1.0'>
-<struct type='{_bufferInfo=&quot;bufferId&quot;I&quot;bufferState&quot;i&quot;bufferData&quot;^v&quot;format&quot;i&quot;sizeInBytes&quot;i&quot;frequencyInHertz&quot;i}' name='bufferInfo'>
-<field type='I' declared_type='ALuint' name='bufferId'/>
-<field type='i' declared_type='int' name='bufferState'/>
-<field type='^v' declared_type='void*' name='bufferData'/>
-<field type='i' declared_type='ALenum' name='format'/>
-<field type='i' declared_type='ALsizei' name='sizeInBytes'/>
-<field type='i' declared_type='ALsizei' name='frequencyInHertz'/>
+<struct name='bufferInfo' type='{_bufferInfo=&quot;bufferId&quot;I&quot;bufferState&quot;i&quot;bufferData&quot;^v&quot;format&quot;i&quot;sizeInBytes&quot;i&quot;frequencyInHertz&quot;i}'>
+<field name='bufferId' type='I' declared_type='ALuint'/>
+<field name='bufferState' type='i' declared_type='int'/>
+<field name='bufferData' type='^v' declared_type='void*'/>
+<field name='format' type='i' declared_type='ALenum'/>
+<field name='sizeInBytes' type='i' declared_type='ALsizei'/>
+<field name='frequencyInHertz' type='i' declared_type='ALsizei'/>
 </struct>
-<struct type='{_sourceGroup=&quot;startIndex&quot;i&quot;currentIndex&quot;i&quot;totalSources&quot;i&quot;enabled&quot;B&quot;nonInterruptible&quot;B&quot;sourceStatuses&quot;^i}' name='sourceGroup'>
-<field type='i' declared_type='int' name='startIndex'/>
-<field type='i' declared_type='int' name='currentIndex'/>
-<field type='i' declared_type='int' name='totalSources'/>
-<field type='B' declared_type='_Bool' name='enabled'/>
-<field type='B' declared_type='_Bool' name='nonInterruptible'/>
-<field type='^i' declared_type='int*' name='sourceStatuses'/>
+<struct name='sourceGroup' type='{_sourceGroup=&quot;startIndex&quot;i&quot;currentIndex&quot;i&quot;totalSources&quot;i&quot;enabled&quot;B&quot;nonInterruptible&quot;B&quot;sourceStatuses&quot;^i}'>
+<field name='startIndex' type='i' declared_type='int'/>
+<field name='currentIndex' type='i' declared_type='int'/>
+<field name='totalSources' type='i' declared_type='int'/>
+<field name='enabled' type='B' declared_type='_Bool'/>
+<field name='nonInterruptible' type='B' declared_type='_Bool'/>
+<field name='sourceStatuses' type='^i' declared_type='int*'/>
 </struct>
-<struct type='{_sourceInfo=&quot;usable&quot;B&quot;sourceId&quot;I&quot;attachedBufferId&quot;I}' name='sourceInfo'>
-<field type='B' declared_type='_Bool' name='usable'/>
-<field type='I' declared_type='ALuint' name='sourceId'/>
-<field type='I' declared_type='ALuint' name='attachedBufferId'/>
+<struct name='sourceInfo' type='{_sourceInfo=&quot;usable&quot;B&quot;sourceId&quot;I&quot;attachedBufferId&quot;I}'>
+<field name='usable' type='B' declared_type='_Bool'/>
+<field name='sourceId' type='I' declared_type='ALuint'/>
+<field name='attachedBufferId' type='I' declared_type='ALuint'/>
 </struct>
-<constant const='true' type='@' declared_type='NSString*' name='kCDN_AsynchLoadComplete'/>
-<constant const='true' type='@' declared_type='NSString*' name='kCDN_AudioManagerInitialised'/>
-<constant const='true' type='@' declared_type='NSString*' name='kCDN_BadAlContext'/>
-<constant const='true' type='i' declared_type='int' name='kCDNoBuffer'/>
-<constant const='true' type='f' declared_type='float' name='kCD_GainDefault'/>
-<constant const='true' type='f' declared_type='float' name='kCD_PanDefault'/>
-<constant const='true' type='f' declared_type='float' name='kCD_PanFullLeft'/>
-<constant const='true' type='f' declared_type='float' name='kCD_PanFullRight'/>
-<constant const='true' type='f' declared_type='float' name='kCD_PitchDefault'/>
-<constant const='true' type='f' declared_type='float' name='kCD_PitchHigherOneOctave'/>
-<constant const='true' type='f' declared_type='float' name='kCD_PitchLowerOneOctave'/>
-<string_constant value='Aphex.rc' name='COCOSDENSHION_VERSION'/>
-<enum value='0' name='CD_BS_EMPTY'/>
-<enum value='2' name='CD_BS_FAILED'/>
-<enum value='1' name='CD_BS_LOADED'/>
-<enum value='16' name='CD_BUFFERS_INCREMENT'/>
-<enum value='64' name='CD_BUFFERS_START'/>
-<enum value='200211438' name='CD_IGNORE_AUDIO_SESSION'/>
-<enum value='267312043' name='CD_MUTE'/>
-<enum value='267313068' name='CD_NO_SOURCE'/>
-<enum value='8000' name='CD_SAMPLE_RATE_BASIC'/>
-<enum value='44100' name='CD_SAMPLE_RATE_DEFAULT'/>
-<enum value='44100' name='CD_SAMPLE_RATE_HIGH'/>
-<enum value='16000' name='CD_SAMPLE_RATE_LOW'/>
-<enum value='22050' name='CD_SAMPLE_RATE_MID'/>
-<enum value='32' name='CD_SOURCE_LIMIT'/>
-<enum value='0' name='kAMM_FxOnly'/>
-<enum value='1' name='kAMM_FxPlusMusic'/>
-<enum value='2' name='kAMM_FxPlusMusicIfNoOtherAudio'/>
-<enum value='3' name='kAMM_MediaPlayback'/>
-<enum value='4' name='kAMM_PlayAndRecord'/>
-<enum value='0' name='kAMRBDoNothing'/>
-<enum value='2' name='kAMRBStop'/>
-<enum value='1' name='kAMRBStopPlay'/>
-<enum value='2' name='kAMStateInitialised'/>
-<enum value='1' name='kAMStateInitialising'/>
-<enum value='0' name='kAMStateUninitialised'/>
-<enum value='0' name='kASC_Left'/>
-<enum value='1' name='kASC_Right'/>
-<enum value='2' name='kIT_Exponential'/>
-<enum value='0' name='kIT_Linear'/>
-<enum value='1' name='kIT_SCurve'/>
-<enum value='0' name='kLAS_Init'/>
-<enum value='1' name='kLAS_Loaded'/>
-<enum value='3' name='kLAS_Paused'/>
-<enum value='2' name='kLAS_Playing'/>
-<enum value='4' name='kLAS_Stopped'/>
+<constant name='kCDN_AsynchLoadComplete' type='@' declared_type='NSString*' const='true'/>
+<constant name='kCDN_AudioManagerInitialised' type='@' declared_type='NSString*' const='true'/>
+<constant name='kCDN_BadAlContext' type='@' declared_type='NSString*' const='true'/>
+<constant name='kCDNoBuffer' type='i' declared_type='int' const='true'/>
+<constant name='kCD_GainDefault' type='f' declared_type='float' const='true'/>
+<constant name='kCD_PanDefault' type='f' declared_type='float' const='true'/>
+<constant name='kCD_PanFullLeft' type='f' declared_type='float' const='true'/>
+<constant name='kCD_PanFullRight' type='f' declared_type='float' const='true'/>
+<constant name='kCD_PitchDefault' type='f' declared_type='float' const='true'/>
+<constant name='kCD_PitchHigherOneOctave' type='f' declared_type='float' const='true'/>
+<constant name='kCD_PitchLowerOneOctave' type='f' declared_type='float' const='true'/>
+<string_constant name='COCOSDENSHION_VERSION' value='Aphex.rc'/>
+<enum name='CD_BS_EMPTY' value='0'/>
+<enum name='CD_BS_FAILED' value='2'/>
+<enum name='CD_BS_LOADED' value='1'/>
+<enum name='CD_BUFFERS_INCREMENT' value='16'/>
+<enum name='CD_BUFFERS_START' value='64'/>
+<enum name='CD_IGNORE_AUDIO_SESSION' value='200211438'/>
+<enum name='CD_MUTE' value='267312043'/>
+<enum name='CD_NO_SOURCE' value='267313068'/>
+<enum name='CD_SAMPLE_RATE_BASIC' value='8000'/>
+<enum name='CD_SAMPLE_RATE_DEFAULT' value='44100'/>
+<enum name='CD_SAMPLE_RATE_HIGH' value='44100'/>
+<enum name='CD_SAMPLE_RATE_LOW' value='16000'/>
+<enum name='CD_SAMPLE_RATE_MID' value='22050'/>
+<enum name='CD_SOURCE_LIMIT' value='32'/>
+<enum name='kAMM_FxOnly' value='0'/>
+<enum name='kAMM_FxPlusMusic' value='1'/>
+<enum name='kAMM_FxPlusMusicIfNoOtherAudio' value='2'/>
+<enum name='kAMM_MediaPlayback' value='3'/>
+<enum name='kAMM_PlayAndRecord' value='4'/>
+<enum name='kAMRBDoNothing' value='0'/>
+<enum name='kAMRBStop' value='2'/>
+<enum name='kAMRBStopPlay' value='1'/>
+<enum name='kAMStateInitialised' value='2'/>
+<enum name='kAMStateInitialising' value='1'/>
+<enum name='kAMStateUninitialised' value='0'/>
+<enum name='kASC_Left' value='0'/>
+<enum name='kASC_Right' value='1'/>
+<enum name='kIT_Exponential' value='2'/>
+<enum name='kIT_Linear' value='0'/>
+<enum name='kIT_SCurve' value='1'/>
+<enum name='kLAS_Init' value='0'/>
+<enum name='kLAS_Loaded' value='1'/>
+<enum name='kLAS_Paused' value='3'/>
+<enum name='kLAS_Playing' value='2'/>
+<enum name='kLAS_Stopped' value='4'/>
 <function name='CDGetOpenALAudioData'>
-<arg type='^{__CFURL=}' declared_type='CFURLRef' name='inFileURL'/>
-<arg type='^i' declared_type='ALsizei*' name='outDataSize'/>
-<arg type='^i' declared_type='ALenum*' name='outDataFormat'/>
-<arg type='^i' declared_type='ALsizei*' name='outSampleRate'/>
+<arg name='inFileURL' type='^{__CFURL=}' declared_type='CFURLRef'/>
+<arg name='outDataSize' type='^i' declared_type='ALsizei*'/>
+<arg name='outDataFormat' type='^i' declared_type='ALenum*'/>
+<arg name='outSampleRate' type='^i' declared_type='ALsizei*'/>
 <retval type='^v' declared_type='void*'/>
 </function>
 <function name='CDloadCafAudioData'>
-<arg type='^{__CFURL=}' declared_type='CFURLRef' name='inFileURL'/>
-<arg type='^i' declared_type='ALsizei*' name='outDataSize'/>
-<arg type='^i' declared_type='ALenum*' name='outDataFormat'/>
-<arg type='^i' declared_type='ALsizei*' name='outSampleRate'/>
+<arg name='inFileURL' type='^{__CFURL=}' declared_type='CFURLRef'/>
+<arg name='outDataSize' type='^i' declared_type='ALsizei*'/>
+<arg name='outDataFormat' type='^i' declared_type='ALenum*'/>
+<arg name='outSampleRate' type='^i' declared_type='ALsizei*'/>
 <retval type='^v' declared_type='void*'/>
 </function>
 <function name='CDloadWaveAudioData'>
-<arg type='^{__CFURL=}' declared_type='CFURLRef' name='inFileURL'/>
-<arg type='^i' declared_type='ALsizei*' name='outDataSize'/>
-<arg type='^i' declared_type='ALenum*' name='outDataFormat'/>
-<arg type='^i' declared_type='ALsizei*' name='outSampleRate'/>
+<arg name='inFileURL' type='^{__CFURL=}' declared_type='CFURLRef'/>
+<arg name='outDataSize' type='^i' declared_type='ALsizei*'/>
+<arg name='outDataFormat' type='^i' declared_type='ALenum*'/>
+<arg name='outSampleRate' type='^i' declared_type='ALsizei*'/>
 <retval type='^v' declared_type='void*'/>
 </function>
 <class name='CDAsynchBufferLoader'>
 <method selector='init:soundEngine:'>
-<arg type='@' index='0' declared_type='NSArray*' name='loadRequests'/>
-<arg type='@' index='1' declared_type='CDSoundEngine*' name='theSoundEngine'/>
+<arg name='loadRequests' type='@' declared_type='NSArray*' index='0'/>
+<arg name='theSoundEngine' type='@' declared_type='CDSoundEngine*' index='1'/>
 <retval type='@' declared_type='id'/>
 </method>
 </class>
 <class name='CDAudioInterruptTargetGroup'>
 <method selector='addAudioInterruptTarget:'>
-<arg type='@' index='0' declared_type='NSObject*' name='interruptibleTarget'/>
+<arg name='interruptibleTarget' type='@' declared_type='NSObject*' index='0'/>
 <retval type='v' declared_type='void'/>
 </method>
 </class>
@@ -116,30 +116,30 @@
 <retval type='v' declared_type='void'/>
 </method>
 <method selector='audioSourceForChannel:'>
-<arg type='i' index='0' declared_type='tAudioSourceChannel' name='channel'/>
+<arg name='channel' type='i' declared_type='tAudioSourceChannel' index='0'/>
 <retval type='@' declared_type='CDLongAudioSource*'/>
 </method>
 <method selector='audioSourceLoad:channel:'>
-<arg type='@' index='0' declared_type='NSString*' name='filePath'/>
-<arg type='i' index='1' declared_type='tAudioSourceChannel' name='channel'/>
+<arg name='filePath' type='@' declared_type='NSString*' index='0'/>
+<arg name='channel' type='i' declared_type='tAudioSourceChannel' index='1'/>
 <retval type='@' declared_type='CDLongAudioSource*'/>
 </method>
 <method selector='backgroundMusic'>
 <retval type='@' declared_type='CDLongAudioSource*'/>
 </method>
 <method class_method='true' selector='configure:'>
-<arg type='i' index='0' declared_type='tAudioManagerMode' name='mode'/>
+<arg name='mode' type='i' declared_type='tAudioManagerMode' index='0'/>
 <retval type='v' declared_type='void'/>
 </method>
 <method class_method='true' selector='end'>
 <retval type='v' declared_type='void'/>
 </method>
 <method selector='init:'>
-<arg type='i' index='0' declared_type='tAudioManagerMode' name='mode'/>
+<arg name='mode' type='i' declared_type='tAudioManagerMode' index='0'/>
 <retval type='@' declared_type='id'/>
 </method>
 <method class_method='true' selector='initAsynchronously:'>
-<arg type='i' index='0' declared_type='tAudioManagerMode' name='mode'/>
+<arg name='mode' type='i' declared_type='tAudioManagerMode' index='0'/>
 <retval type='v' declared_type='void'/>
 </method>
 <method selector='isBackgroundMusicPlaying'>
@@ -155,12 +155,12 @@
 <retval type='v' declared_type='void'/>
 </method>
 <method selector='playBackgroundMusic:loop:'>
-<arg type='@' index='0' declared_type='NSString*' name='filePath'/>
-<arg type='B' index='1' declared_type='BOOL' name='loop'/>
+<arg name='filePath' type='@' declared_type='NSString*' index='0'/>
+<arg name='loop' type='B' declared_type='BOOL' index='1'/>
 <retval type='v' declared_type='void'/>
 </method>
 <method selector='preloadBackgroundMusic:'>
-<arg type='@' index='0' declared_type='NSString*' name='filePath'/>
+<arg name='filePath' type='@' declared_type='NSString*' index='0'/>
 <retval type='v' declared_type='void'/>
 </method>
 <method selector='resumeBackgroundMusic'>
@@ -170,17 +170,17 @@
 <retval type='v' declared_type='void'/>
 </method>
 <method selector='setBackgroundMusicCompletionListener:selector:'>
-<arg type='@' index='0' declared_type='id' name='listener'/>
-<arg type=':' index='1' declared_type='SEL' name='selector'/>
+<arg name='listener' type='@' declared_type='id' index='0'/>
+<arg name='selector' type=':' declared_type='SEL' index='1'/>
 <retval type='v' declared_type='void'/>
 </method>
 <method selector='setMode:'>
-<arg type='i' index='0' declared_type='tAudioManagerMode' name='mode'/>
+<arg name='mode' type='i' declared_type='tAudioManagerMode' index='0'/>
 <retval type='v' declared_type='void'/>
 </method>
 <method selector='setResignBehavior:autoHandle:'>
-<arg type='i' index='0' declared_type='tAudioManagerResignBehavior' name='resignBehavior'/>
-<arg type='B' index='1' declared_type='BOOL' name='autoHandle'/>
+<arg name='resignBehavior' type='i' declared_type='tAudioManagerResignBehavior' index='0'/>
+<arg name='autoHandle' type='B' declared_type='BOOL' index='1'/>
 <retval type='v' declared_type='void'/>
 </method>
 <method class_method='true' selector='sharedManager'>
@@ -204,8 +204,8 @@
 <retval type='@' declared_type='NSString*'/>
 </method>
 <method selector='init:filePath:'>
-<arg type='i' index='0' declared_type='int' name='theSoundId'/>
-<arg const='true' type='@' index='1' declared_type='NSString*' name='theFilePath'/>
+<arg name='theSoundId' type='i' declared_type='int' index='0'/>
+<arg name='theFilePath' type='@' declared_type='NSString*' const='true' index='1'/>
 <retval type='@' declared_type='id'/>
 </method>
 <method selector='soundId'>
@@ -214,16 +214,16 @@
 </class>
 <class name='CDBufferManager'>
 <method selector='bufferForFile:create:'>
-<arg type='@' index='0' declared_type='NSString*' name='filePath'/>
-<arg type='B' index='1' declared_type='BOOL' name='create'/>
+<arg name='filePath' type='@' declared_type='NSString*' index='0'/>
+<arg name='create' type='B' declared_type='BOOL' index='1'/>
 <retval type='i' declared_type='int'/>
 </method>
 <method selector='initWithEngine:'>
-<arg type='@' index='0' declared_type='CDSoundEngine*' name='theSoundEngine'/>
+<arg name='theSoundEngine' type='@' declared_type='CDSoundEngine*' index='0'/>
 <retval type='@' declared_type='id'/>
 </method>
 <method selector='releaseBufferForFile:'>
-<arg type='@' index='0' declared_type='NSString*' name='filePath'/>
+<arg name='filePath' type='@' declared_type='NSString*' index='0'/>
 <retval type='v' declared_type='void'/>
 </method>
 </class>
@@ -232,28 +232,28 @@
 <retval type='f' declared_type='float'/>
 </method>
 <method selector='init:startVal:endVal:'>
-<arg type='i' index='0' declared_type='tCDInterpolationType' name='type'/>
-<arg type='f' index='1' declared_type='float' name='startVal'/>
-<arg type='f' index='2' declared_type='float' name='endVal'/>
+<arg name='type' type='i' declared_type='tCDInterpolationType' index='0'/>
+<arg name='startVal' type='f' declared_type='float' index='1'/>
+<arg name='endVal' type='f' declared_type='float' index='2'/>
 <retval type='@' declared_type='id'/>
 </method>
 <method selector='interpolate:'>
-<arg type='f' index='0' declared_type='float' name='t'/>
+<arg name='t' type='f' declared_type='float' index='0'/>
 <retval type='f' declared_type='float'/>
 </method>
 <method selector='interpolationType'>
 <retval type='i' declared_type='tCDInterpolationType'/>
 </method>
 <method selector='setEnd:'>
-<arg type='f' index='0' declared_type='float' name='end'/>
+<arg name='end' type='f' declared_type='float' index='0'/>
 <retval type='v' declared_type='void'/>
 </method>
 <method selector='setInterpolationType:'>
-<arg type='i' index='0' declared_type='tCDInterpolationType' name='interpolationType'/>
+<arg name='interpolationType' type='i' declared_type='tCDInterpolationType' index='0'/>
 <retval type='v' declared_type='void'/>
 </method>
 <method selector='setStart:'>
-<arg type='f' index='0' declared_type='float' name='start'/>
+<arg name='start' type='f' declared_type='float' index='0'/>
 <retval type='v' declared_type='void'/>
 </method>
 <method selector='start'>
@@ -277,11 +277,11 @@
 <retval type='B' declared_type='BOOL'/>
 </method>
 <method selector='load:'>
-<arg type='@' index='0' declared_type='NSString*' name='filePath'/>
+<arg name='filePath' type='@' declared_type='NSString*' index='0'/>
 <retval type='v' declared_type='void'/>
 </method>
 <method selector='numberOfLoops'>
-<retval type64='q' type='i' declared_type='NSInteger'/>
+<retval type='i' declared_type='NSInteger'/>
 </method>
 <method selector='pause'>
 <retval type='v' declared_type='void'/>
@@ -296,19 +296,19 @@
 <retval type='v' declared_type='void'/>
 </method>
 <method selector='setBackgroundMusic:'>
-<arg type='B' index='0' declared_type='BOOL' name='backgroundMusic'/>
+<arg name='backgroundMusic' type='B' declared_type='BOOL' index='0'/>
 <retval type='v' declared_type='void'/>
 </method>
 <method selector='setDelegate:'>
-<arg type='@' index='0' declared_type='id' name='delegate'/>
+<arg name='delegate' type='@' declared_type='id' index='0'/>
 <retval type='v' declared_type='void'/>
 </method>
 <method selector='setNumberOfLoops:'>
-<arg type64='q' type='i' index='0' declared_type='NSInteger' name='numberOfLoops'/>
+<arg name='numberOfLoops' type='i' declared_type='NSInteger' index='0'/>
 <retval type='v' declared_type='void'/>
 </method>
 <method selector='setVolume:'>
-<arg type='f' index='0' declared_type='float' name='volume'/>
+<arg name='volume' type='f' declared_type='float' index='0'/>
 <retval type='v' declared_type='void'/>
 </method>
 <method selector='stop'>
@@ -326,7 +326,7 @@
 <retval type='f' declared_type='float'/>
 </method>
 <method selector='_setTargetProperty:'>
-<arg type='f' index='0' declared_type='float' name='newVal'/>
+<arg name='newVal' type='f' declared_type='float' index='0'/>
 <retval type='v' declared_type='void'/>
 </method>
 <method selector='_stopTarget'>
@@ -336,33 +336,33 @@
 <retval type='f' declared_type='float'/>
 </method>
 <method selector='init:interpolationType:startVal:endVal:'>
-<arg type='@' index='0' declared_type='id' name='theTarget'/>
-<arg type='i' index='1' declared_type='tCDInterpolationType' name='type'/>
-<arg type='f' index='2' declared_type='float' name='startVal'/>
-<arg type='f' index='3' declared_type='float' name='endVal'/>
+<arg name='theTarget' type='@' declared_type='id' index='0'/>
+<arg name='type' type='i' declared_type='tCDInterpolationType' index='1'/>
+<arg name='startVal' type='f' declared_type='float' index='2'/>
+<arg name='endVal' type='f' declared_type='float' index='3'/>
 <retval type='@' declared_type='id'/>
 </method>
 <method selector='interpolationType'>
 <retval type='i' declared_type='tCDInterpolationType'/>
 </method>
 <method selector='modify:'>
-<arg type='f' index='0' declared_type='float' name='t'/>
+<arg name='t' type='f' declared_type='float' index='0'/>
 <retval type='v' declared_type='void'/>
 </method>
 <method selector='setEndValue:'>
-<arg type='f' index='0' declared_type='float' name='endValue'/>
+<arg name='endValue' type='f' declared_type='float' index='0'/>
 <retval type='v' declared_type='void'/>
 </method>
 <method selector='setInterpolationType:'>
-<arg type='i' index='0' declared_type='tCDInterpolationType' name='interpolationType'/>
+<arg name='interpolationType' type='i' declared_type='tCDInterpolationType' index='0'/>
 <retval type='v' declared_type='void'/>
 </method>
 <method selector='setStartValue:'>
-<arg type='f' index='0' declared_type='float' name='startValue'/>
+<arg name='startValue' type='f' declared_type='float' index='0'/>
 <retval type='v' declared_type='void'/>
 </method>
 <method selector='setStopTargetWhenComplete:'>
-<arg type='B' index='0' declared_type='BOOL' name='stopTargetWhenComplete'/>
+<arg name='stopTargetWhenComplete' type='B' declared_type='BOOL' index='0'/>
 <retval type='v' declared_type='void'/>
 </method>
 <method selector='startValue'>
@@ -374,31 +374,31 @@
 </class>
 <class name='CDSoundEngine'>
 <method selector='_soundSourcePreRelease:'>
-<arg type='@' index='0' declared_type='CDSoundSource*' name='soundSource'/>
+<arg name='soundSource' type='@' declared_type='CDSoundSource*' index='0'/>
 <retval type='v' declared_type='void'/>
 </method>
 <method selector='asynchLoadProgress'>
 <retval type='f' declared_type='float'/>
 </method>
 <method selector='bufferDurationInSeconds:'>
-<arg type='i' index='0' declared_type='int' name='soundId'/>
+<arg name='soundId' type='i' declared_type='int' index='0'/>
 <retval type='f' declared_type='float'/>
 </method>
 <method selector='bufferFrequencyInHertz:'>
-<arg type='i' index='0' declared_type='int' name='soundId'/>
+<arg name='soundId' type='i' declared_type='int' index='0'/>
 <retval type='i' declared_type='ALsizei'/>
 </method>
 <method selector='bufferSizeInBytes:'>
-<arg type='i' index='0' declared_type='int' name='soundId'/>
+<arg name='soundId' type='i' declared_type='int' index='0'/>
 <retval type='i' declared_type='ALsizei'/>
 </method>
 <method selector='defineSourceGroups:'>
-<arg type='@' index='0' declared_type='NSArray*' name='sourceGroupDefinitions'/>
+<arg name='sourceGroupDefinitions' type='@' declared_type='NSArray*' index='0'/>
 <retval type='v' declared_type='void'/>
 </method>
 <method selector='defineSourceGroups:total:'>
-<arg type='^i' index='0' declared_type='int*' name='sourceGroupDefinitions'/>
-<arg type64='Q' type='I' index='1' declared_type='NSUInteger' name='total'/>
+<arg name='sourceGroupDefinitions' type='^i' declared_type='int*' index='0'/>
+<arg name='total' type='I' declared_type='NSUInteger' index='1'/>
 <retval type='v' declared_type='void'/>
 </method>
 <method selector='functioning'>
@@ -414,20 +414,20 @@
 <retval type='i' declared_type='ALenum'/>
 </method>
 <method selector='loadBuffer:filePath:'>
-<arg type='i' index='0' declared_type='int' name='soundId'/>
-<arg type='@' index='1' declared_type='NSString*' name='filePath'/>
+<arg name='soundId' type='i' declared_type='int' index='0'/>
+<arg name='filePath' type='@' declared_type='NSString*' index='1'/>
 <retval type='B' declared_type='BOOL'/>
 </method>
 <method selector='loadBufferFromData:soundData:format:size:freq:'>
-<arg type='i' index='0' declared_type='int' name='soundId'/>
-<arg type='^v' index='1' declared_type='ALvoid*' name='soundData'/>
-<arg type='i' index='2' declared_type='ALenum' name='format'/>
-<arg type='i' index='3' declared_type='ALsizei' name='size'/>
-<arg type='i' index='4' declared_type='ALsizei' name='freq'/>
+<arg name='soundId' type='i' declared_type='int' index='0'/>
+<arg name='soundData' type='^v' declared_type='ALvoid*' index='1'/>
+<arg name='format' type='i' declared_type='ALenum' index='2'/>
+<arg name='size' type='i' declared_type='ALsizei' index='3'/>
+<arg name='freq' type='i' declared_type='ALsizei' index='4'/>
 <retval type='B' declared_type='BOOL'/>
 </method>
 <method selector='loadBuffersAsynchronously:'>
-<arg type='@' index='0' declared_type='NSArray*' name='loadRequests'/>
+<arg name='loadRequests' type='@' declared_type='NSArray*' index='0'/>
 <retval type='v' declared_type='void'/>
 </method>
 <method selector='masterGain'>
@@ -437,47 +437,47 @@
 <retval type='^{ALCcontext_struct=}' declared_type='ALCcontext*'/>
 </method>
 <method selector='playSound:sourceGroupId:pitch:pan:gain:loop:'>
-<arg type='i' index='0' declared_type='int' name='soundId'/>
-<arg type='i' index='1' declared_type='int' name='sourceGroupId'/>
-<arg type='f' index='2' declared_type='float' name='pitch'/>
-<arg type='f' index='3' declared_type='float' name='pan'/>
-<arg type='f' index='4' declared_type='float' name='gain'/>
-<arg type='B' index='5' declared_type='BOOL' name='loop'/>
+<arg name='soundId' type='i' declared_type='int' index='0'/>
+<arg name='sourceGroupId' type='i' declared_type='int' index='1'/>
+<arg name='pitch' type='f' declared_type='float' index='2'/>
+<arg name='pan' type='f' declared_type='float' index='3'/>
+<arg name='gain' type='f' declared_type='float' index='4'/>
+<arg name='loop' type='B' declared_type='BOOL' index='5'/>
 <retval type='I' declared_type='ALuint'/>
 </method>
 <method selector='setAsynchLoadProgress:'>
-<arg type='f' index='0' declared_type='float' name='asynchLoadProgress'/>
+<arg name='asynchLoadProgress' type='f' declared_type='float' index='0'/>
 <retval type='v' declared_type='void'/>
 </method>
 <method selector='setMasterGain:'>
-<arg type='f' index='0' declared_type='ALfloat' name='masterGain'/>
+<arg name='masterGain' type='f' declared_type='ALfloat' index='0'/>
 <retval type='v' declared_type='void'/>
 </method>
 <method class_method='true' selector='setMixerSampleRate:'>
-<arg type='f' index='0' declared_type='Float32' name='sampleRate'/>
+<arg name='sampleRate' type='f' declared_type='Float32' index='0'/>
 <retval type='v' declared_type='void'/>
 </method>
 <method selector='setSourceGroupEnabled:enabled:'>
-<arg type='i' index='0' declared_type='int' name='sourceGroupId'/>
-<arg type='B' index='1' declared_type='BOOL' name='enabled'/>
+<arg name='sourceGroupId' type='i' declared_type='int' index='0'/>
+<arg name='enabled' type='B' declared_type='BOOL' index='1'/>
 <retval type='v' declared_type='void'/>
 </method>
 <method selector='setSourceGroupNonInterruptible:isNonInterruptible:'>
-<arg type='i' index='0' declared_type='int' name='sourceGroupId'/>
-<arg type='B' index='1' declared_type='BOOL' name='isNonInterruptible'/>
+<arg name='sourceGroupId' type='i' declared_type='int' index='0'/>
+<arg name='isNonInterruptible' type='B' declared_type='BOOL' index='1'/>
 <retval type='v' declared_type='void'/>
 </method>
 <method selector='soundSourceForSound:sourceGroupId:'>
-<arg type='i' index='0' declared_type='int' name='soundId'/>
-<arg type='i' index='1' declared_type='int' name='sourceGroupId'/>
+<arg name='soundId' type='i' declared_type='int' index='0'/>
+<arg name='sourceGroupId' type='i' declared_type='int' index='1'/>
 <retval type='@' declared_type='CDSoundSource*'/>
 </method>
 <method selector='sourceGroupEnabled:'>
-<arg type='i' index='0' declared_type='int' name='sourceGroupId'/>
+<arg name='sourceGroupId' type='i' declared_type='int' index='0'/>
 <retval type='B' declared_type='BOOL'/>
 </method>
 <method selector='sourceGroupTotal'>
-<retval type64='Q' type='I' declared_type='NSUInteger'/>
+<retval type='I' declared_type='NSUInteger'/>
 </method>
 <method selector='sourceTotal'>
 <retval type='i' declared_type='int'/>
@@ -486,15 +486,15 @@
 <retval type='v' declared_type='void'/>
 </method>
 <method selector='stopSound:'>
-<arg type='I' index='0' declared_type='ALuint' name='sourceId'/>
+<arg name='sourceId' type='I' declared_type='ALuint' index='0'/>
 <retval type='v' declared_type='void'/>
 </method>
 <method selector='stopSourceGroup:'>
-<arg type='i' index='0' declared_type='int' name='sourceGroupId'/>
+<arg name='sourceGroupId' type='i' declared_type='int' index='0'/>
 <retval type='v' declared_type='void'/>
 </method>
 <method selector='unloadBuffer:'>
-<arg type='i' index='0' declared_type='int' name='soundId'/>
+<arg name='soundId' type='i' declared_type='int' index='0'/>
 <retval type='B' declared_type='BOOL'/>
 </method>
 </class>
@@ -506,9 +506,9 @@
 <retval type='f' declared_type='float'/>
 </method>
 <method selector='init:sourceIndex:soundEngine:'>
-<arg type='I' index='0' declared_type='ALuint' name='theSourceId'/>
-<arg type='i' index='1' declared_type='int' name='index'/>
-<arg type='@' index='2' declared_type='CDSoundEngine*' name='engine'/>
+<arg name='theSourceId' type='I' declared_type='ALuint' index='0'/>
+<arg name='index' type='i' declared_type='int' index='1'/>
+<arg name='engine' type='@' declared_type='CDSoundEngine*' index='2'/>
 <retval type='@' declared_type='id'/>
 </method>
 <method selector='isPlaying'>
@@ -527,23 +527,23 @@
 <retval type='f' declared_type='float'/>
 </method>
 <method selector='setGain:'>
-<arg type='f' index='0' declared_type='float' name='gain'/>
+<arg name='gain' type='f' declared_type='float' index='0'/>
 <retval type='v' declared_type='void'/>
 </method>
 <method selector='setLooping:'>
-<arg type='B' index='0' declared_type='BOOL' name='looping'/>
+<arg name='looping' type='B' declared_type='BOOL' index='0'/>
 <retval type='v' declared_type='void'/>
 </method>
 <method selector='setPan:'>
-<arg type='f' index='0' declared_type='float' name='pan'/>
+<arg name='pan' type='f' declared_type='float' index='0'/>
 <retval type='v' declared_type='void'/>
 </method>
 <method selector='setPitch:'>
-<arg type='f' index='0' declared_type='float' name='pitch'/>
+<arg name='pitch' type='f' declared_type='float' index='0'/>
 <retval type='v' declared_type='void'/>
 </method>
 <method selector='setSoundId:'>
-<arg type='i' index='0' declared_type='int' name='soundId'/>
+<arg name='soundId' type='i' declared_type='int' index='0'/>
 <retval type='v' declared_type='void'/>
 </method>
 <method selector='soundId'>
@@ -552,17 +552,17 @@
 </class>
 <class name='CDUtilities'>
 <method class_method='true' selector='fullPathFromRelativePath:'>
-<arg type='@' index='0' declared_type='NSString*' name='relPath'/>
+<arg name='relPath' type='@' declared_type='NSString*' index='0'/>
 <retval type='@' declared_type='NSString*'/>
 </method>
 </class>
 <class name='NSObject'>
 <method selector='cdAudioSourceDidFinishPlaying:'>
-<arg type='@' index='0' declared_type='CDLongAudioSource*' name='audioSource'/>
+<arg name='audioSource' type='@' declared_type='CDLongAudioSource*' index='0'/>
 <retval type='v' declared_type='void'/>
 </method>
 <method selector='cdAudioSourceFileDidChange:'>
-<arg type='@' index='0' declared_type='CDLongAudioSource*' name='audioSource'/>
+<arg name='audioSource' type='@' declared_type='CDLongAudioSource*' index='0'/>
 <retval type='v' declared_type='void'/>
 </method>
 <method selector='enabled'>
@@ -581,11 +581,11 @@
 <retval type='B' declared_type='BOOL'/>
 </method>
 <method selector='setEnabled:'>
-<arg type='B' index='0' declared_type='BOOL' name='enabledValue'/>
+<arg name='enabledValue' type='B' declared_type='BOOL' index='0'/>
 <retval type='v' declared_type='void'/>
 </method>
 <method selector='setMute:'>
-<arg type='B' index='0' declared_type='BOOL' name='muteValue'/>
+<arg name='muteValue' type='B' declared_type='BOOL' index='0'/>
 <retval type='v' declared_type='void'/>
 </method>
 <method selector='stop'>
@@ -609,31 +609,31 @@
 <retval type='v' declared_type='void'/>
 </method>
 <method selector='playBackgroundMusic:'>
-<arg type='@' index='0' declared_type='NSString*' name='filePath'/>
+<arg name='filePath' type='@' declared_type='NSString*' index='0'/>
 <retval type='v' declared_type='void'/>
 </method>
 <method selector='playBackgroundMusic:loop:'>
-<arg type='@' index='0' declared_type='NSString*' name='filePath'/>
-<arg type='B' index='1' declared_type='BOOL' name='loop'/>
+<arg name='filePath' type='@' declared_type='NSString*' index='0'/>
+<arg name='loop' type='B' declared_type='BOOL' index='1'/>
 <retval type='v' declared_type='void'/>
 </method>
 <method selector='playEffect:'>
-<arg type='@' index='0' declared_type='NSString*' name='filePath'/>
+<arg name='filePath' type='@' declared_type='NSString*' index='0'/>
 <retval type='I' declared_type='ALuint'/>
 </method>
 <method selector='playEffect:pitch:pan:gain:'>
-<arg type='@' index='0' declared_type='NSString*' name='filePath'/>
-<arg type='f' index='1' declared_type='Float32' name='pitch'/>
-<arg type='f' index='2' declared_type='Float32' name='pan'/>
-<arg type='f' index='3' declared_type='Float32' name='gain'/>
+<arg name='filePath' type='@' declared_type='NSString*' index='0'/>
+<arg name='pitch' type='f' declared_type='Float32' index='1'/>
+<arg name='pan' type='f' declared_type='Float32' index='2'/>
+<arg name='gain' type='f' declared_type='Float32' index='3'/>
 <retval type='I' declared_type='ALuint'/>
 </method>
 <method selector='preloadBackgroundMusic:'>
-<arg type='@' index='0' declared_type='NSString*' name='filePath'/>
+<arg name='filePath' type='@' declared_type='NSString*' index='0'/>
 <retval type='v' declared_type='void'/>
 </method>
 <method selector='preloadEffect:'>
-<arg type='@' index='0' declared_type='NSString*' name='filePath'/>
+<arg name='filePath' type='@' declared_type='NSString*' index='0'/>
 <retval type='v' declared_type='void'/>
 </method>
 <method selector='resumeBackgroundMusic'>
@@ -643,29 +643,29 @@
 <retval type='v' declared_type='void'/>
 </method>
 <method selector='setBackgroundMusicVolume:'>
-<arg type='f' index='0' declared_type='float' name='backgroundMusicVolume'/>
+<arg name='backgroundMusicVolume' type='f' declared_type='float' index='0'/>
 <retval type='v' declared_type='void'/>
 </method>
 <method selector='setEffectsVolume:'>
-<arg type='f' index='0' declared_type='float' name='effectsVolume'/>
+<arg name='effectsVolume' type='f' declared_type='float' index='0'/>
 <retval type='v' declared_type='void'/>
 </method>
 <method class_method='true' selector='sharedEngine'>
 <retval type='@' declared_type='SimpleAudioEngine*'/>
 </method>
 <method selector='soundSourceForFile:'>
-<arg type='@' index='0' declared_type='NSString*' name='filePath'/>
+<arg name='filePath' type='@' declared_type='NSString*' index='0'/>
 <retval type='@' declared_type='CDSoundSource*'/>
 </method>
 <method selector='stopBackgroundMusic'>
 <retval type='v' declared_type='void'/>
 </method>
 <method selector='stopEffect:'>
-<arg type='I' index='0' declared_type='ALuint' name='soundId'/>
+<arg name='soundId' type='I' declared_type='ALuint' index='0'/>
 <retval type='v' declared_type='void'/>
 </method>
 <method selector='unloadEffect:'>
-<arg type='@' index='0' declared_type='NSString*' name='filePath'/>
+<arg name='filePath' type='@' declared_type='NSString*' index='0'/>
 <retval type='v' declared_type='void'/>
 </method>
 <method selector='willPlayBackgroundMusic'>
@@ -673,42 +673,42 @@
 </method>
 </class>
 <informal_protocol name='CDAudioInterruptProtocol'>
-<method type64='B16@0:8' type='B8@0:4' selector='enabled'>
+<method type='B8@0:4' selector='enabled'>
 <retval type='B' declared_type='BOOL'/>
 </method>
-<method type64='B16@0:8' type='B8@0:4' selector='mute'>
+<method type='B8@0:4' selector='mute'>
 <retval type='B' declared_type='BOOL'/>
 </method>
-<method type64='v20@0:8B16' type='v12@0:4B8' selector='setEnabled:'>
-<arg type='B' index='0' declared_type='BOOL' name='enabledValue'/>
+<method type='v12@0:4B8' selector='setEnabled:'>
+<arg name='enabledValue' type='B' declared_type='BOOL' index='0'/>
 <retval type='v' declared_type='void'/>
 </method>
-<method type64='v20@0:8B16' type='v12@0:4B8' selector='setMute:'>
-<arg type='B' index='0' declared_type='BOOL' name='muteValue'/>
+<method type='v12@0:4B8' selector='setMute:'>
+<arg name='muteValue' type='B' declared_type='BOOL' index='0'/>
 <retval type='v' declared_type='void'/>
 </method>
 </informal_protocol>
 <informal_protocol name='CDAudioTransportProtocol'>
-<method type64='B16@0:8' type='B8@0:4' selector='pause'>
+<method type='B8@0:4' selector='pause'>
 <retval type='B' declared_type='BOOL'/>
 </method>
-<method type64='B16@0:8' type='B8@0:4' selector='play'>
+<method type='B8@0:4' selector='play'>
 <retval type='B' declared_type='BOOL'/>
 </method>
-<method type64='B16@0:8' type='B8@0:4' selector='rewind'>
+<method type='B8@0:4' selector='rewind'>
 <retval type='B' declared_type='BOOL'/>
 </method>
-<method type64='B16@0:8' type='B8@0:4' selector='stop'>
+<method type='B8@0:4' selector='stop'>
 <retval type='B' declared_type='BOOL'/>
 </method>
 </informal_protocol>
 <informal_protocol name='CDLongAudioSourceDelegate'>
-<method type64='v24@0:8@16' type='v12@0:4@8' selector='cdAudioSourceDidFinishPlaying:'>
-<arg type='@' index='0' declared_type='CDLongAudioSource*' name='audioSource'/>
+<method type='v12@0:4@8' selector='cdAudioSourceDidFinishPlaying:'>
+<arg name='audioSource' type='@' declared_type='CDLongAudioSource*' index='0'/>
 <retval type='v' declared_type='void'/>
 </method>
-<method type64='v24@0:8@16' type='v12@0:4@8' selector='cdAudioSourceFileDidChange:'>
-<arg type='@' index='0' declared_type='CDLongAudioSource*' name='audioSource'/>
+<method type='v12@0:4@8' selector='cdAudioSourceFileDidChange:'>
+<arg name='audioSource' type='@' declared_type='CDLongAudioSource*' index='0'/>
 <retval type='v' declared_type='void'/>
 </method>
 </informal_protocol>
