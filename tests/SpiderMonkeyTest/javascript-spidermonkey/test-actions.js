@@ -596,10 +596,10 @@ var ActionAnimate = BaseLayer.extend({
         // File animation
         //
         // With 2 loops and reverse
-        var animCache = cc.AnimationCache.sharedAnimationCache();
+        var animCache = cc.AnimationCache.getInstance();
 
         animCache.addAnimationsWithFile("animations/animations-2.plist");
-        var animation2 = animCache.animationByName("dance_1");
+        var animation2 = animCache.getAnimationByName("dance_1");
 
         var action2 = cc.Animate.create(animation2);
         this._tamara.runAction(cc.Sequence.create(action2, action2.reverse()));

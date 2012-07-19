@@ -13,41 +13,51 @@
 
 require("javascript-spidermonkey/helper.js");
 
-var director = cc.Director.getInstance();
-var _winSize = director.winSize();
-var winSize = {width:_winSize[0], height:_winSize[1]};
-var centerPos = cc.p( winSize.width/2, winSize.height/2 );
+audioEngine = cc.AudioEngine.getInstance();
+director = cc.Director.getInstance();
+_winSize = director.winSize();
+winSize = {width:_winSize[0], height:_winSize[1]};
+centerPos = cc.p( winSize.width/2, winSize.height/2 );
 
 //
 // Physics constants
 //
 
+INFINITY = 1e50;
+
+COLLISION_TYPE_CAR = 1;
+COLLISION_TYPE_COIN = 2;
+
 // Create some collision rules for fancy layer based filtering.
 // There is more information about how this works in the Chipmunk docs.
-var COLLISION_RULE_TERRAIN_BUGGY = 1 << 0;
-var COLLISION_RULE_BUGGY_ONLY = 1 << 1;
+COLLISION_RULE_TERRAIN_BUGGY = 1 << 0;
+COLLISION_RULE_BUGGY_ONLY = 1 << 1;
 
 // Bitwise or the rules together to get the layers for a certain shape type.
-var COLLISION_LAYERS_TERRAIN = COLLISION_RULE_TERRAIN_BUGGY;
-var COLLISION_LAYERS_BUGGY = (COLLISION_RULE_TERRAIN_BUGGY | COLLISION_RULE_BUGGY_ONLY);
+COLLISION_LAYERS_TERRAIN = COLLISION_RULE_TERRAIN_BUGGY;
+COLLISION_LAYERS_BUGGY = (COLLISION_RULE_TERRAIN_BUGGY | COLLISION_RULE_BUGGY_ONLY);
 
 // Some constants for controlling the car and world:
-var GRAVITY =  1200.0;
-var WHEEL_MASS = 0.25;
-var CHASSIS_MASS = 1.0;
-var FRONT_SPRING = 150.0;
-var FRONT_DAMPING = 3.0;
-var COG_ADJUSTMENT = cp.v(5.0, -10.0);
-var REAR_SPRING = 100.0;
-var REAR_DAMPING = 3.0;
-var ROLLING_FRICTION = 5e2;
-var ENGINE_MAX_TORQUE = 6.0e4;
-var ENGINE_MAX_W = 60;
-var BRAKING_TORQUE = 3.0e4;
-var DIFFERENTIAL_TORQUE = 0.5;
+GRAVITY =  1200.0;
+WHEEL_MASS = 0.25;
+CHASSIS_MASS = 1.0;
+FRONT_SPRING = 150.0;
+FRONT_DAMPING = 3.0;
+COG_ADJUSTMENT = cp.v(5.0, -10.0);
+REAR_SPRING = 100.0;
+REAR_DAMPING = 3.0;
+ROLLING_FRICTION = 5e2;
+ENGINE_MAX_TORQUE = 6.0e4;
+ENGINE_MAX_W = 60;
+BRAKING_TORQUE = 3.0e4;
+DIFFERENTIAL_TORQUE = 0.5;
 
 // Groups
-var GROUP_BUGGY = 1;
+GROUP_BUGGY = 1;
+GROUP_COIN = 2;
+
+// Node Tags (used by CocosBuilder)
+SCORE_LABEL_TAG = 10;
 
 //
 // Game Layer
@@ -60,6 +70,10 @@ var GameLayer = cc.LayerGradient.extend({
     _rearBrake:null,
     _rearWheel:null,
     _chassis:null,
+    _batch:null,
+    _shapesToRemove:[],
+    _score:0,
+    _scoreLabel:null,
 
     ctor:function () {
                                 
@@ -82,12 +96,46 @@ var GameLayer = cc.LayerGradient.extend({
         var menu = cc.Menu.create( menuItem );
         this.addChild( menu );
         menu.setPosition( cc._p( 40,60)  );
+    
+        var animCache = cc.AnimationCache.getInstance();
+        animCache.addAnimationsWithFile("coins_animation.plist");
+
+        // coin only needed to obtain the texture for the Batch Node
+        var coin = cc.Sprite.createWithSpriteFrameName("coin01.png");
+        this._batch = cc.SpriteBatchNode.createWithTexture( coin.getTexture(), 100 );
+        this.addChild( this._batch );
+
+        this._shapesToRemove = [];
+
+        this.initHUD();
+
+        this._score = 0;
+    },
+
+    // HUD stuff
+    initHUD:function() {
+        var hud = cc.Reader.nodeGraphFromFile("HUD.ccbi", this);
+        this.addChild( hud );
+        this._scoreLabel = hud.getChildByTag( SCORE_LABEL_TAG );
     },
 
     reset:function() {
         run();
     },
 
+    addScore:function(value) {
+        this._score += value;
+        this._scoreLabel.setString( this._score );
+        this._scoreLabel.stopAllActions();
+
+        var scaleUpTo = cc.ScaleTo.create(0.05, 1.2);
+        var scaleDownTo = cc.ScaleTo.create(0.05, 1.0);
+        var seq = cc.Sequence.create( scaleUpTo, scaleDownTo );
+        this._scoreLabel.runAction( seq );
+
+    },
+
+    // Events
     onMouseDown:function(event) {
         this.setThrottle(1);
         return true;
@@ -105,14 +153,87 @@ var GameLayer = cc.LayerGradient.extend({
         return true;
     },
 
-    // Events
+    onEnter:function () {
+        // DO NOT CALL this._super()
+//        this._super();
 
+        this.initPhysics();
+        this.setupLevel("level0.txt");
+    },
+
+    onExit:function() {
+        // XXX: Leak... all Shapes and Bodies should be freed
+        cp.spaceFree( this._space );
+    },
+
+	onCollisionBegin : function ( arbiter, space ) {
+
+		var bodies = cp.arbiterGetBodies( arbiter );
+		var shapes = cp.arbiterGetShapes( arbiter );
+		var collTypeA = cp.shapeGetCollisionType( shapes[0] );
+		var collTypeB = cp.shapeGetCollisionType( shapes[1] );
+
+        var shapeCoin =  (collTypeA == COLLISION_TYPE_COIN) ? shapes[0] : shapes[1];
+
+        // XXX: hack to prevent double deletion... argh...
+        // Since shapeCoin in 64bits is a typedArray and in 32-bits is an integer
+        // a ad-hoc solution needs to be implemented
+        if( this._shapesToRemove.length == 0 ) {
+            // since Coin is a sensor, it can't be removed at PostStep.
+            // PostStep is not called for Sensors
+            this._shapesToRemove.push( shapeCoin );
+            audioEngine.playEffect("pickup_coin.wav");
+
+            cc.log("Adding shape: " + shapeCoin[0] + " : " + shapeCoin[1] );
+            this.addScore(1);
+        }
+        return true;
+	},
+
+    update:function(dt) {
+        cp.spaceStep( this._space, dt);
+
+        var l = this._shapesToRemove.length;
+
+        for( var i=0; i < l; i++ ) {
+            var shape = this._shapesToRemove[i];
+
+            cc.log("removing shape: " + shape[0] + " : " + shape[1] );
+
+            cp.spaceRemoveStaticShape( this._space, shape );
+            cp.shapeFree( shape );
+
+            var body = cp.shapeGetBody( shape );
+
+            var sprite = cp.bodyGetUserData( body );
+            sprite.removeFromParentAndCleanup(true);
+
+            cp.bodyFree( body );
+
+        }
+
+        if( l > 0 )
+            this._shapesToRemove = [];
+    },
+
+    //
+    // Level Setup
+    //
+    setupLevel : function(levelname) {
+        for( var i=1; i < 15; i++ ) {
+            this.createCoin( cc._p(winSize.width/2 + i*35, 60 + i*3) );
+        }
+    },
+
+    //
+    // Physics
+    //
 	initPhysics :  function() {
 		this._space =  cp.spaceNew();
 		var staticBody = cp.spaceGetStaticBody( this._space );
 
 		// Walls
-		var walls = [cp.segmentShapeNew( staticBody, cp.v(0,0), cp.v(winSize.width,50), 0 ),				        // bottom
+		var walls = [cp.segmentShapeNew( staticBody, cp.v(0,0), cp.v(winSize.width,50), 0 ),				    // bottom
 				cp.segmentShapeNew( staticBody, cp.v(0,winSize.height), cp.v(winSize.width,winSize.height), 0),	// top
 				cp.segmentShapeNew( staticBody, cp.v(0,0), cp.v(0,winSize.height), 0),				            // left
 				cp.segmentShapeNew( staticBody, cp.v(winSize.width,0), cp.v(winSize.width,winSize.height), 0)	// right
@@ -127,12 +248,11 @@ var GameLayer = cc.LayerGradient.extend({
 		// Gravity
 		cp.spaceSetGravity( this._space, cp.v(0, -GRAVITY) );
 
+        // create Car
+        this.createCar();
 
-        var pos = cp.v(winSize.width/2, 100);
-        var front = this.createWheel( cp.vadd(pos, cp._v(47,-20) ) );
-        this._chassis = this.createChassis( cp.vadd( pos, COG_ADJUSTMENT ) );
-        this._rearWheel = this.createWheel( cp.vadd( pos, cp._v(-41, -20) ) );
-        this.createFrontJoint( this._chassis, front, this._rearWheel );
+        // collision handler
+		cp.spaceAddCollisionHandler( this._space, COLLISION_TYPE_CAR, COLLISION_TYPE_COIN, this, this.onCollisionBegin, null, null, null );
 	},
 
     setThrottle : function( throttle ) {
@@ -162,6 +282,16 @@ var GameLayer = cc.LayerGradient.extend({
             cp.constraintSetMaxForce( this._frontBrake, ROLLING_FRICTION );
             cp.constraintSetMaxForce( this._rearBrake, ROLLING_FRICTION );
         }
+    },
+
+    createCar : function() {
+        var pos = cp.v(winSize.width*0.20, 100);
+        var front = this.createWheel( cp.vadd(pos, cp._v(47,-20) ) );
+        this._chassis = this.createChassis( cp.vadd( pos, COG_ADJUSTMENT ) );
+        this._rearWheel = this.createWheel( cp.vadd( pos, cp._v(-41, -20) ) );
+        this.createFrontJoint( this._chassis, front, this._rearWheel );
+
+        this.setThrottle( 0 );
     },
 
     createFrontJoint : function( chassis, front, rear ) {
@@ -224,7 +354,7 @@ var GameLayer = cc.LayerGradient.extend({
     },
 
     createWheel : function( pos ) {
-        var sprite = cc.ChipmunkSprite.create("Wheel.png");  
+        var sprite = cc.ChipmunkSprite.createWithSpriteFrameName("Wheel.png");  
         var radius = 0.95 * sprite.getContentSize()[0] / 2;
 
 		var body = cp.bodyNew(WHEEL_MASS, cp.momentForCircle(WHEEL_MASS, 0, radius, cp.vzero ) );
@@ -235,16 +365,17 @@ var GameLayer = cc.LayerGradient.extend({
         cp.shapeSetFriction( shape, 1 );
         cp.shapeSetGroup( shape, GROUP_BUGGY );
         cp.shapeSetLayers( shape, COLLISION_LAYERS_BUGGY );
+        cp.shapeSetCollisionType( shape, COLLISION_TYPE_CAR );
 
         cp.spaceAddBody( this._space, body );
         cp.spaceAddShape( this._space, shape );
-        this.addChild( sprite, 10 );
+        this._batch.addChild( sprite, 10 );
 
         return body;
     },
 
     createChassis : function(pos) {
-        var sprite = cc.ChipmunkSprite.create("Chassis.png"); 
+        var sprite = cc.ChipmunkSprite.createWithSpriteFrameName("Chassis.png"); 
 //        var anchor = cp.vadd( sprite.getAnchorPointInPoints, COG_ADJUSTMENT );
         var cs = sprite.getContentSize();
 //        sprite.setAnchorPoint( anchor[0] / cs[0], anchor[1]/cs[1] );
@@ -260,29 +391,47 @@ var GameLayer = cc.LayerGradient.extend({
 		cp.shapeSetFriction(shape, 0.3);
 		cp.shapeSetGroup( shape, GROUP_BUGGY );
 		cp.shapeSetLayers( shape, COLLISION_LAYERS_BUGGY );
+        cp.shapeSetCollisionType( shape, COLLISION_TYPE_CAR );
 
         cp.spaceAddBody( this._space, body );
         cp.spaceAddShape( this._space, shape );
-        this.addChild( sprite );
+        this._batch.addChild( sprite );
 
         return body;
     },
 
-    onEnter:function () {
-        // DO NOT CALL this._super()
-//        this._super();
+    createCoin: function( pos ) {
+        // coins are static bodies and sensors
+        var sprite = cc.ChipmunkSprite.createWithSpriteFrameName("coin01.png");  
+        var radius = 0.95 * sprite.getContentSize()[0] / 2;
 
-        this.initPhysics();
-        this.setThrottle( 0 );
+        var body = cp.bodyNew(1, 1);
+        cp.bodyInitStatic(body);
+//		var body = cp.spaceGetStaticBody( this._space );
+		cp.bodySetPos( body, pos );
+        sprite.setBody( body );
+
+        var shape = cp.circleShapeNew( body, radius, cp.vzero );
+        cp.shapeSetFriction( shape, 1 );
+        cp.shapeSetGroup( shape, GROUP_COIN );
+        cp.shapeSetCollisionType( shape, COLLISION_TYPE_COIN );
+        cp.shapeSetSensor( shape, true );
+
+//        cp.spaceAddBody( this._space, body );
+        cp.spaceAddStaticShape( this._space, shape );
+        this._batch.addChild( sprite, 10 );
+
+        var animation = cc.AnimationCache.getInstance().getAnimationByName("coin");
+        var animate = cc.Animate.create(animation); 
+        var repeat = cc.RepeatForever.create( animate );
+        sprite.runAction( repeat );
+
+        // Needed for deletion
+        cp.bodySetUserData( body, sprite );
+
+        return body;
     },
 
-    onExit:function() {
-        cp.spaceFree( this._space );
-    },
-
-    update:function(dt) {
-        cp.spaceStep( this._space, dt);
-    },
 });
 
 //
@@ -303,10 +452,7 @@ var MainMenu = cc.Layer.extend({
     },
 
     buttonA:function( sender) {
-        var scene = cc.Scene.create();
-        var layer = new GameLayer();
-        scene.addChild( layer );
-        director.replaceScene( scene );
+        run();
     },
 
     buttonB:function( sender) {
