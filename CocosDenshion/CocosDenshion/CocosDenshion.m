@@ -84,6 +84,11 @@ float const kCD_GainDefault = 1.0f;
 
 +(NSString*) fullPathFromRelativePath:(NSString*) relPath
 {
+	if(!relPath || [relPath length] == 0){
+		NSLog(@"CDUtilities: WARNING: attempt to load nil or empty path.");
+		return nil;
+	}
+	
 	// do not convert an absolute path (starting with '/')
 	if(([relPath length] > 0) && ([relPath characterAtIndex:0] == '/'))
 	{
