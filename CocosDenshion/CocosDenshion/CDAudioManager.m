@@ -59,6 +59,10 @@ NSString * const kCDN_AudioManagerInitialised = @"kCDN_AudioManagerInitialised";
 }
 
 -(void) load:(NSString*) filePath {
+	NSString *path = [CDUtilities fullPathFromRelativePath:audioSourceFilePath];
+	if(!path){
+		return;
+	}
 	//We have alread loaded a file previously,  check if we are being asked to load the same file
 	if (state == kLAS_Init || ![filePath isEqualToString:audioSourceFilePath]) {
 		CDLOGINFO(@"Denshion::CDLongAudioSource - Loading new audio source %@",filePath);
@@ -69,8 +73,8 @@ NSString * const kCDN_AudioManagerInitialised = @"kCDN_AudioManagerInitialised";
 		}
 		audioSourceFilePath = [filePath copy];
 		NSError *error = nil;
-		NSString *path = [CDUtilities fullPathFromRelativePath:audioSourceFilePath];
 		audioSourcePlayer = [(AVAudioPlayer*)[AVAudioPlayer alloc] initWithContentsOfURL:[NSURL fileURLWithPath:path] error:&error];
+		
 		if (error == nil) {
 			[audioSourcePlayer prepareToPlay];
 			audioSourcePlayer.delegate = self;
