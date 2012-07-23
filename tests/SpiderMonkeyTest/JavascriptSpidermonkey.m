@@ -120,6 +120,14 @@
 	
 	glDisable( GL_DEPTH_TEST );
 	
+	// Mac... Use iPad resources by default
+	CCFileUtils *sharedFileUtils = [CCFileUtils sharedFileUtils];
+	[sharedFileUtils setMacRetinaDisplaySuffix:@"-ipadhd"];
+	[sharedFileUtils setMacSuffix:@"-ipad"];
+	[sharedFileUtils setEnableFallbackSuffixes:YES];		// Default: NO. No fallback suffixes are going to be used
+	
+	[director_ setResizeMode:kCCDirectorResize_AutoScale];
+
 	[self run];
 }
 

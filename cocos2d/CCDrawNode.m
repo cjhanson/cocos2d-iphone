@@ -19,12 +19,22 @@
  * SOFTWARE.
  */
 
-#import "HMVectorNode.h"
+/*
+ * Code copied & pasted from SpacePatrol game https://github.com/slembcke/SpacePatrol
+ *
+ * Renamed and added some changes for cocos2d
+ *
+ */
 
-// Cocos2D seems to have made analoges of all of my functions which is handy.
+#import "CCDrawNode.h"
+#import "CCShaderCache.h"
+#import "CCGLProgram.h"
+#import "Support/CGPointExtension.h"
 
-// using 32-bit functions
-static ccVertex2F cpvzero = (ccVertex2F){0,0};
+
+// ccVertex2F == CGPoint in 32-bits, but not in 64-bits (OS X)
+// that's why the "v2f" functions are needed
+static ccVertex2F v2fzero = (ccVertex2F){0,0};
 
 static inline ccVertex2F v2f( float x, float y )
 {
@@ -46,19 +56,19 @@ static inline ccVertex2F v2fmult( ccVertex2F v, float s )
 	return v2f( v.x * s, v.y * s );
 }
 
-static inline ccVertex2F v2fperp( ccVertex2F _p0_ )
+static inline ccVertex2F v2fperp( ccVertex2F p0 )
 {
-	return v2f( -_p0_.y, _p0_.x );
+	return v2f( -p0.y, p0.x );
 }
 
-static inline ccVertex2F v2fneg( ccVertex2F _p0_ )
+static inline ccVertex2F v2fneg( ccVertex2F p0 )
 {
-	return v2f( -_p0_.x, -_p0_.y );
+	return v2f( -p0.x, - p0.y );
 }
 
-static inline float v2fdot(ccVertex2F _p0_, ccVertex2F _p1_)
+static inline float v2fdot(ccVertex2F p0, ccVertex2F p1)
 {
-	return  _p0_.x * _p1_.x + _p0_.y * _p1_.y;
+	return  p0.x * p1.x + p0.y * p1.y;
 }
 
 static inline ccVertex2F v2fforangle( float _a_)
@@ -72,9 +82,13 @@ static inline ccVertex2F v2fnormalize( ccVertex2F p )
 	return v2f( r.x, r.y);
 }
 
-static inline ccVertex2F __v2f(cpVect v )
+static inline ccVertex2F __v2f(CGPoint v )
 {
+#ifdef __LP64__
 	return v2f(v.x, v.y);
+#else
+	return * ((ccVertex2F*) &v);
+#endif
 }
 
 
@@ -82,10 +96,10 @@ static inline ccVertex2F __v2f(cpVect v )
 //#define PRINT_GL_ERRORS() for(GLenum err = glGetError(); err; err = glGetError()) NSLog(@"GLError(%s:%d) 0x%04X", __FILE__, __LINE__, err);
 #define PRINT_GL_ERRORS() 
 
-typedef struct Vertex {ccVertex2F vertex, texcoord; Color color;} Vertex;
+typedef struct Vertex {ccVertex2F vertex, texcoord; ccColor4F color;} Vertex;
 typedef struct Triangle {Vertex a, b, c;} Triangle;
 
-@interface HMVectorNode(){
+@interface CCDrawNode(){
 	GLuint _vao;
 	GLuint _vbo;
 	
@@ -96,7 +110,7 @@ typedef struct Triangle {Vertex a, b, c;} Triangle;
 @end
 
 
-@implementation HMVectorNode
+@implementation CCDrawNode
 
 @synthesize blendFunc = _blendFunc;
 
@@ -117,20 +131,7 @@ typedef struct Triangle {Vertex a, b, c;} Triangle;
 	if((self = [super init])){
 		self.blendFunc = (ccBlendFunc){GL_ONE, GL_ONE_MINUS_SRC_ALPHA};
 		
-		CCGLProgram *shader = [[CCGLProgram alloc]
-			initWithVertexShaderFilename:@"HMVectorNode.vsh"
-			fragmentShaderFilename:@"HMVectorNode.fsh"
-		];
-
-		[shader addAttribute:@"position" index:kCCVertexAttrib_Position];
-		[shader addAttribute:@"texcoord" index:kCCVertexAttrib_TexCoords];
-		[shader addAttribute:@"color" index:kCCVertexAttrib_Color];
-
-		[shader link];
-		[shader updateUniforms];
-		self.shaderProgram = shader;
-
-		[shader release];
+		self.shaderProgram = [[CCShaderCache sharedShaderCache] programForKey:kCCShader_PositionLengthTexureColor];
 		
 		glGenVertexArrays(1, &_vao);
 		glBindVertexArray(_vao);
@@ -200,7 +201,7 @@ typedef struct Triangle {Vertex a, b, c;} Triangle;
 
 //MARK: Immediate Mode
 
--(void)drawDot:(cpVect)pos radius:(cpFloat)radius color:(Color)color;
+-(void)drawDot:(CGPoint)pos radius:(CGFloat)radius color:(ccColor4F)color;
 {
 	NSUInteger vertex_count = 2*3;
 	[self ensureCapacity:vertex_count];
@@ -217,7 +218,7 @@ typedef struct Triangle {Vertex a, b, c;} Triangle;
 	_bufferCount += vertex_count;
 }
 
--(void)drawSegmentFrom:(cpVect)_a to:(cpVect)_b radius:(cpFloat)radius color:(Color)color;
+-(void)drawSegmentFrom:(CGPoint)_a to:(CGPoint)_b radius:(CGFloat)radius color:(ccColor4F)color;
 {
 	NSUInteger vertex_count = 6*3;
 	[self ensureCapacity:vertex_count];
@@ -252,11 +253,11 @@ typedef struct Triangle {Vertex a, b, c;} Triangle;
 	_bufferCount += vertex_count;
 }
 
--(void)drawPolyWithVerts:(cpVect *)verts count:(NSUInteger)count width:(cpFloat)width fill:(Color)fill line:(Color)line;
+-(void)drawPolyWithVerts:(CGPoint *)verts count:(NSUInteger)count fillColor:(ccColor4F)fill  borderWidth:(CGFloat)width borderColor:(ccColor4F)line;
 {
 	struct ExtrudeVerts {ccVertex2F offset, n;};
 	struct ExtrudeVerts extrude[count];
-	bzero(extrude, sizeof(struct ExtrudeVerts)*count);
+	bzero(extrude, sizeof(extrude) );
 	
 	for(int i=0; i<count; i++){
 		ccVertex2F v0 = __v2f( verts[(i-1+count)%count] );
@@ -279,13 +280,13 @@ typedef struct Triangle {Vertex a, b, c;} Triangle;
 	Triangle *triangles = (Triangle *)(_buffer + _bufferCount);
 	Triangle *cursor = triangles;
 	
-	cpFloat inset = (outline == 0.0 ? 0.5 : 0.0);
+	CGFloat inset = (outline == 0.0 ? 0.5 : 0.0);
 	for(int i=0; i<count-2; i++){
 		ccVertex2F v0 = v2fsub( __v2f(verts[0  ]), v2fmult(extrude[0  ].offset, inset));
 		ccVertex2F v1 = v2fsub( __v2f(verts[i+1]), v2fmult(extrude[i+1].offset, inset));
 		ccVertex2F v2 = v2fsub( __v2f(verts[i+2]), v2fmult(extrude[i+2].offset, inset));
 		
-		*cursor++ = (Triangle){{v0, cpvzero, fill}, {v1, cpvzero, fill}, {v2, cpvzero, fill},};
+		*cursor++ = (Triangle){{v0, v2fzero, fill}, {v1, v2fzero, fill}, {v2, v2fzero, fill},};
 	}
 	
 	for(int i=0; i<count; i++){
@@ -312,8 +313,8 @@ typedef struct Triangle {Vertex a, b, c;} Triangle;
 			ccVertex2F outer0 = v2fadd(v0, v2fmult(offset0, 0.5));
 			ccVertex2F outer1 = v2fadd(v1, v2fmult(offset1, 0.5));
 			
-			*cursor++ = (Triangle){{inner0, cpvzero, fill}, {inner1, cpvzero, fill}, {outer1, n0, fill}};
-			*cursor++ = (Triangle){{inner0, cpvzero, fill}, {outer0, n0, fill}, {outer1, n0, fill}};
+			*cursor++ = (Triangle){{inner0, v2fzero, fill}, {inner1, v2fzero, fill}, {outer1, n0, fill}};
+			*cursor++ = (Triangle){{inner0, v2fzero, fill}, {outer0, n0, fill}, {outer1, n0, fill}};
 		}
 	}
 	

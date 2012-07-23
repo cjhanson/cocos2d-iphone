@@ -48,16 +48,26 @@ cc.WHITE = cc.c3(255,255,255);
 
 cc.POINT_ZERO = cc.p(0,0);
 
-cc._reuse_point = cc.p(0,0);
+cc._reuse_p0 = cc.p(0,0);
+cc._reuse_p1 = cc.p(0,0);
+cc._reuse_p_index = 0;
 cc._reuse_color3b = cc.c3(255, 255, 255 );
 cc._reuse_color4b = cc.c4(255, 255, 255, 255 );
 cc._reuse_grid = cc.g(0,0);
 
 cc._p = function( x, y )
 {
-    cc._reuse_point[0] = x;
-    cc._reuse_point[1] = y;
-    return cc._reuse_point;
+    if( cc._reuse_p_index == 0 ) {
+        cc._reuse_p0[0] = x;
+        cc._reuse_p0[1] = y;
+        cc._reuse_p_index = 1;
+        return cc._reuse_p0;
+    } else {
+        cc._reuse_p1[0] = x;
+        cc._reuse_p1[1] = y;
+        cc._reuse_p_index = 0;
+        return cc._reuse_p1;
+    }
 }
 
 cc._g = function( x, y )
@@ -86,7 +96,12 @@ cc._c4 = function( r, g, b, a )
 
 cc.rect = function(x,y,w,h)
 {
-	var rect = new Float32Array(4)
+    var platform = __getPlatform();
+    if( platform.substring(0,7) == 'desktop' )
+        var rect = new Float64Array(4)
+    else
+        var rect = new Float32Array(4)
+
 	rect[0] = x;
 	rect[1] = y;
 	rect[2] = w;
@@ -96,7 +111,11 @@ cc.rect = function(x,y,w,h)
 
 cc.size = function(w,h)
 {
-	var size = new Float32Array(2)
+    var platform = __getPlatform();
+    if( platform.substring(0,7) == 'desktop' )
+        var size = new Float64Array(2)
+    else
+        var size = new Float32Array(2)
 	size[0] = w;
 	size[1] = h;
 	return size;
@@ -232,21 +251,14 @@ cc.LayerGradient.extend = cc.Layer.extend;
 //var cp = cp || {};
 
 cp.vzero  = cp.v(0,0);
-cp._reuse_v0= cp.v(0,0);
-cp._reuse_v1= cp.v(0,0);
-cp._reuse_v_index = 0;
+cp._v = cc._p
 
-cp._v = function( x, y )
-{
-    if( cp._reuse_v_index == 0 ) {
-        cp._reuse_v0[0] = x;
-        cp._reuse_v0[1] = y;
-        cp._reuse_v_index = 1;
-        return cp._reuse_v0;
-    } else {
-        cp._reuse_v1[0] = x;
-        cp._reuse_v1[1] = y;
-        cp._reuse_v_index = 0;
-        return cp._reuse_v1;
-    }
-}
+
+var gl = gl || {};
+gl.NEAREST = 0x2600;
+gl.LINEAR = 0x2601;
+gl.REPEAT = 0x2901;
+gl.CLAMP_TO_EDGE = 0x812F;
+gl.CLAMP_TO_BORDER = 0x812D;
+gl.LINEAR_MIPMAP_NEAREST = 0x2701;
+gl.GL_NEAREST_MIPMAP_NEAREST = 0x2700;
