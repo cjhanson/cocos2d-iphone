@@ -45,10 +45,18 @@
 // Globals
 char * JSPROXY_association_proxy_key = NULL;
 
+static void
+its_finalize(JSFreeOp *fop, JSObject *obj)
+{
+	CCLOGINFO(@"Finalizing global class");
+}
+
 static JSClass global_class = {
 	"global", JSCLASS_GLOBAL_FLAGS,
-	JS_PropertyStub, JS_PropertyStub, JS_PropertyStub, JS_StrictPropertyStub,
-	JS_EnumerateStub, JS_ResolveStub, JS_ConvertStub, JS_FinalizeStub,
+	JS_PropertyStub, JS_PropertyStub,
+	JS_PropertyStub, JS_StrictPropertyStub,
+	JS_EnumerateStub, JS_ResolveStub,
+	JS_ConvertStub, its_finalize,
 	JSCLASS_NO_OPTIONAL_MEMBERS
 };
 
@@ -80,16 +88,15 @@ JSBool ScriptingCore_log(JSContext *cx, uint32_t argc, jsval *vp)
 
 JSBool ScriptingCore_executeScript(JSContext *cx, uint32_t argc, jsval *vp)
 {
+	JSBool ok = JS_FALSE;
 	if (argc == 1) {
 		JSString *string;
 		if (JS_ConvertArguments(cx, argc, JS_ARGV(cx, vp), "S", &string) == JS_TRUE) {
-			[[ScriptingCore sharedInstance]	runScript: [NSString stringWithCString:JS_EncodeString(cx, string) encoding:NSUTF8StringEncoding] ];
+			ok = [[ScriptingCore sharedInstance] runScript: [NSString stringWithCString:JS_EncodeString(cx, string) encoding:NSUTF8StringEncoding] ];
 		}
-		
-		return JS_TRUE;
 	}
 	
-	return JS_FALSE;
+	return ok;
 };
 
 JSBool ScriptingCore_associateObjectWithNative(JSContext *cx, uint32_t argc, jsval *vp)
@@ -221,16 +228,7 @@ JSBool ScriptingCore_removeRootJS(JSContext *cx, uint32_t argc, jsval *vp)
 };
 
 /*
- * Force a cycle of GC
- */
-JSBool ScriptingCore_forceGC(JSContext *cx, uint32_t argc, jsval *vp)
-{
-	JS_GC(cx);
-	return JS_TRUE;
-};
-
-/*
- * Force a cycle of GC
+ * Dumps GC
  */
 static void dumpNamedRoot(const char *name, void *addr,  JSGCRootType type, void *data)
 {
@@ -238,10 +236,23 @@ static void dumpNamedRoot(const char *name, void *addr,  JSGCRootType type, void
 }
 JSBool ScriptingCore_dumpRoot(JSContext *cx, uint32_t argc, jsval *vp)
 {
-//	JSRuntime *rt = [[ScriptingCore sharedInstance] runtime];
-//	JS_DumpNamedRoots(rt, dumpNamedRoot, NULL);
+#ifdef __CC_PLATFORM_MAC
+	JSRuntime *rt = [[ScriptingCore sharedInstance] runtime];
+	JS_DumpNamedRoots(rt, dumpNamedRoot, NULL);
+#endif
 	return JS_TRUE;
 };
+
+/*
+ * Force a cycle of GC
+ */
+JSBool ScriptingCore_forceGC(JSContext *cx, uint32_t argc, jsval *vp)
+{
+//	ScriptingCore_dumpRoot(cx, 0, vp);
+	JS_GC( [[ScriptingCore sharedInstance] runtime] );
+	return JS_TRUE;
+};
+
 
 
 @implementation ScriptingCore
@@ -405,7 +416,7 @@ JSBool ScriptingCore_dumpRoot(JSContext *cx, uint32_t argc, jsval *vp)
 		outVal = &rval;
 	}
 	const char *cstr = [string UTF8String];
-	ok = JS_EvaluateScript( _cx, _object, cstr, strlen(cstr), filename, lineno, outVal);
+	ok = JS_EvaluateScript( _cx, _object, cstr, (unsigned)strlen(cstr), filename, lineno, outVal);
 	if (ok == JS_FALSE) {
 		CCLOGWARN(@"error evaluating script:%@", string);
 	}
@@ -413,8 +424,10 @@ JSBool ScriptingCore_dumpRoot(JSContext *cx, uint32_t argc, jsval *vp)
 	return ok;
 }
 
--(BOOL) runScript2:(NSString*)filename
+-(JSBool) runScript2:(NSString*)filename
 {
+	JSBool ok = JS_FALSE;
+
 	CCFileUtils *fileUtils = [CCFileUtils sharedFileUtils];
 #ifdef DEBUG
 	/**
@@ -434,24 +447,25 @@ JSBool ScriptingCore_dumpRoot(JSContext *cx, uint32_t argc, jsval *vp)
 	unsigned char *content = NULL;
 	size_t contentSize = ccLoadFileIntoMemory([fullpath UTF8String], &content);
 	if (content && contentSize) {
-		JSBool ok;
 		jsval rval;
-		ok = JS_EvaluateScript( _cx, _object, (char *)content, contentSize, [filename UTF8String], 1, &rval);
-		if (ok == JS_FALSE) {
-			CCLOGWARN(@"error evaluating script: %@", filename);
-		}
+		ok = JS_EvaluateScript( _cx, _object, (char *)content, (unsigned)contentSize, [filename UTF8String], 1, &rval);
 		free(content);
+		
+		if (ok == JS_FALSE)
+			CCLOGWARN(@"error evaluating script: %@", filename);
 	}
 	
-	return YES;
+	return ok;
 }
 
 /*
  * Compile a script and execute it. It roots the script
  */
--(BOOL) runScript:(NSString*)filename
+-(JSBool) runScript:(NSString*)filename
 {
-    JSScript *script;
+	JSBool ok = JS_FALSE;
+
+	static JSScript *script;
 	
 	CCFileUtils *fileUtils = [CCFileUtils sharedFileUtils];
 	NSString *fullpath = [fileUtils fullPathFromRelativePath:filename];
@@ -459,19 +473,26 @@ JSBool ScriptingCore_dumpRoot(JSContext *cx, uint32_t argc, jsval *vp)
 	script = JS_CompileUTF8File(_cx, _object, [fullpath UTF8String] );
 
     if (script == NULL)
-        return NO;   /* compilation error */
+        return JS_FALSE;   /* compilation error */
 		
-    if (!JS_AddNamedScriptRoot(_cx, &script, "compiled script"))
-        return NO;
+	const char * name = [[NSString stringWithFormat:@"script %@", filename] UTF8String];
+	char *static_name = (char*) malloc(strlen(name)+1);
+	strcpy(static_name, name );
+
+    if (!JS_AddNamedScriptRoot(_cx, &script, static_name ) )
+        return JS_FALSE;
 	
 	jsval result;	
-	if (!JS_ExecuteScript(_cx, _object, script, &result)) {
+	ok = JS_ExecuteScript(_cx, _object, script, &result);
+	
+	if( ! ok )
 		NSLog(@"Failed to execute script");
-    }
 	
 //    JS_RemoveScriptRoot(_cx, &script);  /* scriptObj becomes unreachable
 //										   and will eventually be collected. */
-    return YES;
+//	free( static_name);
+
+    return ok;
 }
 
 -(void) dealloc
@@ -510,7 +531,7 @@ void set_proxy_for_jsobject(JSPROXY_NSObject *proxy, JSObject *obj)
 	
 //	printf("Setting proxy for: %p - %p (%s)\n", obj, proxy, [[proxy description] UTF8String] );
 	
-	tHashJSObject *element = malloc( sizeof( *element ) );
+	tHashJSObject *element = (tHashJSObject*) malloc( sizeof( *element ) );
 
 	// XXX: Do not retain it here.
 //	[proxy retain];

@@ -7,7 +7,7 @@
 #import "cocos2d.h"
 
 // local import
-#import "JavascriptSpidermonkey.h"
+#import "AppController.h"
 #import "ScriptingCore.h"
 #import "js_manual_conversions.h"
 
@@ -72,8 +72,8 @@
 	navController_.navigationBarHidden = YES;
 
 	// set the Navigation Controller as the root view controller
-//	[window_ setRootViewController:rootViewController_];
-	[window_ addSubview:navController_.view];
+	[window_ setRootViewController:navController_];
+//	[window_ addSubview:navController_.view];
 
 	// make main window visible
 	[window_ makeKeyAndVisible];
@@ -170,12 +170,12 @@
 			}
 			else if(JSVAL_IS_DOUBLE(out))
 			{
-				string = [NSString stringWithFormat:@"Result(double): %d.\n", JSVAL_TO_DOUBLE(out)];
+				string = [NSString stringWithFormat:@"Result(double): %f.\n", JSVAL_TO_DOUBLE(out)];
 			}
 			else if(JSVAL_IS_STRING(out)) {
 				NSString *tmp;
 				jsval_to_nsstring( [[ScriptingCore sharedInstance] globalContext], out, &tmp );
-				string = [NSString stringWithFormat:@"Result(string): %d.\n", tmp];
+				string = [NSString stringWithFormat:@"Result(string): %@.\n", tmp];
 			}
 			else if (JSVAL_IS_VOID(out) )
 				string = @"Result(void):\n";
@@ -210,9 +210,12 @@
 	[self initThoMoServer];
 #endif
 	
-//	[[ScriptingCore sharedInstance] runScript:@"javascript-spidermonkey/main.js"];
+	[[ScriptingCore sharedInstance] runScript:@"javascript-spidermonkey/main.js"];
 //	[[ScriptingCore sharedInstance] runScript:@"javascript-spidermonkey/playground.js"];
-	[[ScriptingCore sharedInstance] runScript:@"javascript-spidermonkey/game-main.js"];
+//	[[ScriptingCore sharedInstance] runScript:@"javascript-spidermonkey/game-main.js"];
+//	[[ScriptingCore sharedInstance] runScript:@"javascript-spidermonkey/playground_gc2.js"];
+//	[[ScriptingCore sharedInstance] runScript:@"javascript-spidermonkey/test-sprite.js"];
+//	[[ScriptingCore sharedInstance] runScript:@"javascript-spidermonkey/test-actions.js"];
 
 }
 @end
