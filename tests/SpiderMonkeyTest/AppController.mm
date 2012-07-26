@@ -65,15 +65,15 @@
 	[director_ setProjection:kCCDirectorProjection3D];
 
 	// Enables High Res mode (Retina Display) on iPhone 4 and maintains low res on all other devices
-	if( ! [director_ enableRetinaDisplay:YES] )
-		CCLOG(@"Retina Display Not supported");
+//	if( ! [director_ enableRetinaDisplay:YES] )
+//		CCLOG(@"Retina Display Not supported");
 
 	navController_ = [[UINavigationController alloc] initWithRootViewController:director_];
 	navController_.navigationBarHidden = YES;
 
 	// set the Navigation Controller as the root view controller
-	[window_ setRootViewController:navController_];
-//	[window_ addSubview:navController_.view];
+//	[window_ setRootViewController:navController_];
+	[window_ addSubview:navController_.view];
 
 	// make main window visible
 	[window_ makeKeyAndVisible];
@@ -120,6 +120,9 @@
 	
 	glDisable( GL_DEPTH_TEST );
 	
+	// Assume that PVR images have premultiplied alpha
+	[CCTexture2D PVRImagesHavePremultipliedAlpha:YES];
+
 	// Mac... Use iPad resources by default
 	CCFileUtils *sharedFileUtils = [CCFileUtils sharedFileUtils];
 	[sharedFileUtils setMacRetinaDisplaySuffix:@"-ipadhd"];
@@ -210,9 +213,9 @@
 	[self initThoMoServer];
 #endif
 	
-	[[ScriptingCore sharedInstance] runScript:@"javascript-spidermonkey/main.js"];
+//	[[ScriptingCore sharedInstance] runScript:@"javascript-spidermonkey/main.js"];
 //	[[ScriptingCore sharedInstance] runScript:@"javascript-spidermonkey/playground.js"];
-//	[[ScriptingCore sharedInstance] runScript:@"javascript-spidermonkey/game-main.js"];
+	[[ScriptingCore sharedInstance] runScript:@"javascript-spidermonkey/game-main.js"];
 //	[[ScriptingCore sharedInstance] runScript:@"javascript-spidermonkey/playground_gc2.js"];
 //	[[ScriptingCore sharedInstance] runScript:@"javascript-spidermonkey/test-sprite.js"];
 //	[[ScriptingCore sharedInstance] runScript:@"javascript-spidermonkey/test-actions.js"];
