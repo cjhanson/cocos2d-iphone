@@ -139,7 +139,6 @@ var BaseLayer = cc.LayerGradient.extend({
     },
 
     onEnter:function () {
-        // DO NOT CALL this._super()
 //        this._super();
 
         // add title and subtitle
@@ -599,7 +598,7 @@ var ActionAnimate = BaseLayer.extend({
         // With 2 loops and reverse
         var animCache = cc.AnimationCache.getInstance();
 
-        animCache.addAnimationsWithFile("animations/animations-2.plist");
+        animCache.addAnimations("animations/animations-2.plist");
         var animation2 = animCache.getAnimationByName("dance_1");
 
         var action2 = cc.Animate.create(animation2);
