@@ -2,19 +2,32 @@ var Explosion = cc.Sprite.extend({
     tmpWidth:0,
     tmpHeight:0,
     ctor:function () {
-        this._super();
-        this.tmpWidth = this.getContentSize().width;
-        this.tmpHeight = this.getContentSize().height;
+        var parent = new cc.Sprite();
+        __associateObjWithNative(this, parent);
 
-        var pFrame = cc.SpriteFrameCache.getInstance().spriteFrameByName("explosion_01.png");
+        // XXX riq XXX
+        // spriteFrameByName() -> getSpriteFrame()
+        var pFrame = cc.SpriteFrameCache.getInstance().getSpriteFrame("explosion_01.png");
         this.initWithSpriteFrame(pFrame);
 
-        var animation = cc.AnimationCache.getInstance().animationByName("Explosion");
+        // XXX riq XXX.
+        // super doesn't work here
+//        this._super();
+        var _cs = this.getContentSize();
+        var cs = cc._from_size(_cs);
+        this.tmpWidth = cs.width;
+        this.tmpHeight = cs.height;
+
+
+        var animation = cc.AnimationCache.getInstance().getAnimation("Explosion");
         this.runAction(cc.Sequence.create(
-            cc.Animate.create(animation, false),
+            // XXX riq XXX
+            // Animate only accepts one argument
+//            cc.Animate.create(animation, false),
+            cc.Animate.create(animation),
             cc.CallFunc.create(this, this.destroy)
         ));
-        this.setBlendFunc(new cc.BlendFunc(cc.GL_SRC_ALPHA, cc.GL_ONE));
+        this.setBlendFunc(gl.SRC_ALPHA, gl.ONE );
     },
     destroy:function () {
         this.getParent().removeChild(this,true);
@@ -27,7 +40,9 @@ Explosion.sharedExplosion = function () {
     var str = "";
     for (var i = 1; i < 35; i++) {
         str = "explosion_" + (i < 10 ? ("0" + i) : i) + ".png";
-        var frame = cc.SpriteFrameCache.getInstance().spriteFrameByName(str);
+        // XXX riq XXX
+        // spriteFrameByName() -> getSpriteFrame()
+        var frame = cc.SpriteFrameCache.getInstance().getSpriteFrame(str);
         animFrames.push(frame);
     }
     var animation = cc.Animation.create(animFrames, 0.04);
