@@ -1143,13 +1143,13 @@ static inline CGFloat bezierat( float a, float b, float c, float d, ccTime t )
 @end
 
 //
-// TintTo
+// ColorTo
 //
-#pragma mark - CCTintTo
-@implementation CCTintTo
+#pragma mark - CCColorTo
+@implementation CCColorTo
 +(id) actionWithDuration:(ccTime)t red:(GLubyte)r green:(GLubyte)g blue:(GLubyte)b
 {
-	return [[(CCTintTo*)[ self alloc] initWithDuration:t red:r green:g blue:b] autorelease];
+	return [[(CCColorTo*)[ self alloc] initWithDuration:t red:r green:g blue:b] autorelease];
 }
 
 -(id) initWithDuration: (ccTime) t red:(GLubyte)r green:(GLubyte)g blue:(GLubyte)b
@@ -1162,7 +1162,7 @@ static inline CGFloat bezierat( float a, float b, float c, float d, ccTime t )
 
 -(id) copyWithZone: (NSZone*) zone
 {
-	CCAction *copy = [(CCTintTo*)[[self class] allocWithZone: zone] initWithDuration:[self duration] red:to_.r green:to_.g blue:to_.b];
+	CCAction *copy = [(CCColorTo*)[[self class] allocWithZone: zone] initWithDuration:[self duration] red:to_.r green:to_.g blue:to_.b];
 	return copy;
 }
 
@@ -1182,13 +1182,13 @@ static inline CGFloat bezierat( float a, float b, float c, float d, ccTime t )
 @end
 
 //
-// TintBy
+// ColorBy
 //
-#pragma mark - CCTintBy
-@implementation CCTintBy
+#pragma mark - CCColorBy
+@implementation CCColorBy
 +(id) actionWithDuration:(ccTime)t red:(GLshort)r green:(GLshort)g blue:(GLshort)b
 {
-	return [[(CCTintBy*)[ self alloc] initWithDuration:t red:r green:g blue:b] autorelease];
+	return [[(CCColorBy*)[ self alloc] initWithDuration:t red:r green:g blue:b] autorelease];
 }
 
 -(id) initWithDuration:(ccTime)t red:(GLshort)r green:(GLshort)g blue:(GLshort)b
@@ -1203,7 +1203,7 @@ static inline CGFloat bezierat( float a, float b, float c, float d, ccTime t )
 
 -(id) copyWithZone: (NSZone*) zone
 {
-	return[(CCTintBy*)[[self class] allocWithZone: zone] initWithDuration: [self duration] red:deltaR_ green:deltaG_ blue:deltaB_];
+	return[(CCColorBy*)[[self class] allocWithZone: zone] initWithDuration: [self duration] red:deltaR_ green:deltaG_ blue:deltaB_];
 }
 
 -(void) startWithTarget:(id)aTarget
@@ -1225,7 +1225,96 @@ static inline CGFloat bezierat( float a, float b, float c, float d, ccTime t )
 
 - (CCActionInterval*) reverse
 {
-	return [CCTintBy actionWithDuration:duration_ red:-deltaR_ green:-deltaG_ blue:-deltaB_];
+	return [CCColorBy actionWithDuration:duration_ red:-deltaR_ green:-deltaG_ blue:-deltaB_];
+}
+@end
+
+//
+// TintTo
+//
+#pragma mark - CCTintTo
+@implementation CCTintTo
++(id) actionWithDuration:(ccTime)t red:(GLubyte)r green:(GLubyte)g blue:(GLubyte)b alpha:(GLubyte)a
+{
+	return [[(CCTintTo*)[ self alloc] initWithDuration:t red:r green:g blue:b alpha:a] autorelease];
+}
+
+-(id) initWithDuration: (ccTime) t red:(GLubyte)r green:(GLubyte)g blue:(GLubyte)b alpha:(GLubyte)a
+{
+	if( (self=[super initWithDuration:t] ) )
+		to_ = ccc4(r,g,b,a);
+  
+	return self;
+}
+
+-(id) copyWithZone: (NSZone*) zone
+{
+	CCAction *copy = [(CCTintTo*)[[self class] allocWithZone: zone] initWithDuration:[self duration] red:to_.r green:to_.g blue:to_.b alpha:to_.a];
+	return copy;
+}
+
+-(void) startWithTarget:(id)aTarget
+{
+	[super startWithTarget:aTarget];
+  
+	id<CCTintProtocol> tn = (id<CCTintProtocol>) target_;
+	from_ = [tn tintColor];
+}
+
+-(void) update: (ccTime) t
+{
+	id<CCTintProtocol> tn = (id<CCTintProtocol>) target_;
+	[tn setTintColor:ccc4(from_.r + (to_.r - from_.r) * t, from_.g + (to_.g - from_.g) * t, from_.b + (to_.b - from_.b) * t, from_.a + (to_.a - from_.a) * t)];
+}
+@end
+
+//
+// TintBy
+//
+#pragma mark - CCTintBy
+@implementation CCTintBy
++(id) actionWithDuration:(ccTime)t red:(GLshort)r green:(GLshort)g blue:(GLshort)b alpha:(GLubyte)a
+{
+	return [[(CCTintBy*)[ self alloc] initWithDuration:t red:r green:g blue:b alpha:a] autorelease];
+}
+
+-(id) initWithDuration:(ccTime)t red:(GLshort)r green:(GLshort)g blue:(GLshort)b alpha:(GLubyte)a
+{
+	if( (self=[super initWithDuration: t] ) ) {
+		deltaR_ = r;
+		deltaG_ = g;
+		deltaB_ = b;
+    deltaA_ = a;
+	}
+	return self;
+}
+
+-(id) copyWithZone: (NSZone*) zone
+{
+	return[(CCTintBy*)[[self class] allocWithZone: zone] initWithDuration: [self duration] red:deltaR_ green:deltaG_ blue:deltaB_ alpha:deltaA_];
+}
+
+-(void) startWithTarget:(id)aTarget
+{
+	[super startWithTarget:aTarget];
+  
+	id<CCTintProtocol> tn = (id<CCTintProtocol>) target_;
+	ccColor4B color = [tn tintColor];
+	fromR_ = color.r;
+	fromG_ = color.g;
+	fromB_ = color.b;
+  fromA_ = color.a;
+}
+
+-(void) update: (ccTime) t
+{
+	id<CCTintProtocol> tn = (id<CCTintProtocol>) target_;
+	[tn setTintColor:ccc4( fromR_ + deltaR_ * t, fromG_ + deltaG_ * t, fromB_ + deltaB_ * t, fromA_ + deltaA_ * t)];
+}
+
+- (CCActionInterval*) reverse
+{
+	return [CCTintBy actionWithDuration:duration_ red:-deltaR_ green:-deltaG_ blue:-deltaB_ alpha:-deltaA_];
 }
 @end
 

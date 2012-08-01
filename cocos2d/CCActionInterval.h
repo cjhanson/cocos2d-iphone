@@ -367,11 +367,11 @@ typedef struct _ccBezierConfig {
 -(id) initWithDuration:(ccTime)duration opacity:(GLubyte)opacity;
 @end
 
-/** Tints a CCNode that implements the CCNodeRGB protocol from current tint to a custom one.
+/** Colors a CCNode that implements the CCNodeRGB protocol from current color to a custom one.
  @warning This action doesn't support "reverse"
  @since v0.7.2
-*/
-@interface CCTintTo : CCActionInterval <NSCopying>
+ */
+@interface CCColorTo : CCActionInterval <NSCopying>
 {
 	ccColor3B to_;
 	ccColor3B from_;
@@ -382,10 +382,10 @@ typedef struct _ccBezierConfig {
 -(id) initWithDuration:(ccTime)duration red:(GLubyte)red green:(GLubyte)green blue:(GLubyte)blue;
 @end
 
-/** Tints a CCNode that implements the CCNodeRGB protocol from current tint to a custom one.
+/** Colors a CCNode that implements the CCNodeRGB protocol from current color to a custom one.
  @since v0.7.2
  */
-@interface CCTintBy : CCActionInterval <NSCopying>
+@interface CCColorBy : CCActionInterval <NSCopying>
 {
 	GLshort deltaR_, deltaG_, deltaB_;
 	GLshort fromR_, fromG_, fromB_;
@@ -394,6 +394,36 @@ typedef struct _ccBezierConfig {
 +(id) actionWithDuration:(ccTime)duration red:(GLshort)deltaRed green:(GLshort)deltaGreen blue:(GLshort)deltaBlue;
 /** initializes the action with duration and color */
 -(id) initWithDuration:(ccTime)duration red:(GLshort)deltaRed green:(GLshort)deltaGreen blue:(GLshort)deltaBlue;
+@end
+
+
+/** Tints a CCNode that implements the CCNodeRGB protocol from current tint to a custom one.
+ @warning This action doesn't support "reverse"
+ @since v2.0 colorTint branch
+*/
+@interface CCTintTo : CCActionInterval <NSCopying>
+{
+	ccColor4B to_;
+	ccColor4B from_;
+}
+/** creates an action with duration and color */
++(id) actionWithDuration:(ccTime)duration red:(GLubyte)red green:(GLubyte)green blue:(GLubyte)blue alpha:(GLubyte)alpha;
+/** initializes the action with duration and color */
+-(id) initWithDuration:(ccTime)duration red:(GLubyte)red green:(GLubyte)green blue:(GLubyte)blue alpha:(GLubyte)alpha;
+@end
+
+/** Tints a CCNode that implements the CCNodeRGB protocol from current tint to a custom one.
+ @since v2.0 colorTint branch
+ */
+@interface CCTintBy : CCActionInterval <NSCopying>
+{
+	GLshort deltaR_, deltaG_, deltaB_, deltaA_;
+	GLshort fromR_, fromG_, fromB_, fromA_;
+}
+/** creates an action with duration and color */
++(id) actionWithDuration:(ccTime)duration red:(GLshort)deltaRed green:(GLshort)deltaGreen blue:(GLshort)deltaBlue alpha:(GLubyte)deltaAlpha;
+/** initializes the action with duration and color */
+-(id) initWithDuration:(ccTime)duration red:(GLshort)deltaRed green:(GLshort)deltaGreen blue:(GLshort)deltaBlue alpha:(GLubyte)deltaAlpha;
 @end
 
 /** Delays the action a certain amount of seconds

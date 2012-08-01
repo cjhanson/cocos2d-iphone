@@ -36,6 +36,8 @@ typedef enum {
 	kCCProgressTimerTypeBar,
 } CCProgressTimerType;
 
+#define kProgressTextureCoordsCount 4
+
 /**
  CCProgresstimer is a subclass of CCNode.
  It renders the inner sprite according to the percentage.
