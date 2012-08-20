@@ -87,7 +87,7 @@ const char kCCProgressTextureCoords = 0x4b;
 		self.sprite = sprite;
     
 		// shader program
-		self.shaderProgram = [[CCShaderCache sharedShaderCache] programForKey:kCCShader_PositionTextureColor];
+		self.shaderProgram = [[CCShaderCache sharedShaderCache] programForKey:kCCShader_PositionTextureColorTintColor];
 	}
 	return self;
 }
@@ -175,6 +175,17 @@ const char kCCProgressTextureCoords = 0x4b;
 	return sprite_.opacity;
 }
 
+-(void)setTintColor:(ccColor4B)tintColor
+{
+  sprite_.tintColor = tintColor;
+  [self updateColor];
+}
+
+-(ccColor4B)tintColor
+{
+  return sprite_.tintColor;
+}
+
 #pragma mark ProgressTimer Internal
 
 ///
@@ -195,15 +206,15 @@ const char kCCProgressTextureCoords = 0x4b;
 	return (ccTex2F){min.x * (1.f - alpha.x) + max.x * alpha.x, min.y * (1.f - alpha.y) + max.y * alpha.y};
 }
 
--(ccVertex2F)vertexFromAlphaPoint:(CGPoint) alpha
+-(ccVertex3F)vertexFromAlphaPoint:(CGPoint) alpha
 {
 	if (!sprite_) {
-		return (ccVertex2F){0.f, 0.f};
+		return (ccVertex3F){0.f, 0.f, 0.f};
 	}
 	ccV3F_C4B_T4B_T2F_Quad quad = sprite_.quad;
 	CGPoint min = (CGPoint){quad.bl.vertices.x,quad.bl.vertices.y};
 	CGPoint max = (CGPoint){quad.tr.vertices.x,quad.tr.vertices.y};
-	return (ccVertex2F){min.x * (1.f - alpha.x) + max.x * alpha.x, min.y * (1.f - alpha.y) + max.y * alpha.y};
+	return (ccVertex3F){min.x * (1.f - alpha.x) + max.x * alpha.x, min.y * (1.f - alpha.y) + max.y * alpha.y, quad.tl.vertices.z};
 }
 
 -(void)updateColor
@@ -213,8 +224,10 @@ const char kCCProgressTextureCoords = 0x4b;
 	}
 	if(vertexData_){
 		ccColor4B sc = sprite_.quad.tl.colors;
+    ccColor4B tc = sprite_.quad.tl.tintColors;
 		for (int i=0; i < vertexDataCount_; ++i) {
 			vertexData_[i].colors = sc;
+      vertexData_[i].tintColors = tc;
 		}
 	}
 }
@@ -356,7 +369,7 @@ const char kCCProgressTextureCoords = 0x4b;
   
 	if(!vertexData_) {
 		vertexDataCount_ = index + 3;
-		vertexData_ = malloc(vertexDataCount_ * sizeof(ccV2F_C4B_T2F));
+		vertexData_ = malloc(vertexDataCount_ * sizeof(ccV3F_C4B_T4B_T2F));
 		NSAssert( vertexData_, @"CCProgressTimer. Not enough memory");
 	}
 	[self updateColor];
@@ -426,7 +439,7 @@ const char kCCProgressTextureCoords = 0x4b;
 	if (!reverseDirection_) {
 		if(!vertexData_) {
 			vertexDataCount_ = 4;
-			vertexData_ = malloc(vertexDataCount_ * sizeof(ccV2F_C4B_T2F));
+			vertexData_ = malloc(vertexDataCount_ * sizeof(ccV3F_C4B_T4B_T2F));
 			NSAssert( vertexData_, @"CCProgressTimer. Not enough memory");
 		}
 		//	TOPLEFT
@@ -447,7 +460,7 @@ const char kCCProgressTextureCoords = 0x4b;
 	} else {
 		if(!vertexData_) {
 			vertexDataCount_ = 8;
-			vertexData_ = malloc(vertexDataCount_ * sizeof(ccV2F_C4B_T2F));
+			vertexData_ = malloc(vertexDataCount_ * sizeof(ccV3F_C4B_T4B_T2F));
 			NSAssert( vertexData_, @"CCProgressTimer. Not enough memory");
 			//	TOPLEFT 1
 			vertexData_[0].texCoords = [self textureCoordFromAlphaPoint:ccp(0,1)];
@@ -506,13 +519,15 @@ const char kCCProgressTextureCoords = 0x4b;
   
 	ccGLBlendFunc( sprite_.blendFunc.src, sprite_.blendFunc.dst );
   
-	ccGLEnableVertexAttribs(kCCVertexAttribFlag_PosColorTex );
+	ccGLEnableVertexAttribs(kCCVertexAttribFlag_PosColorTintColorTex );
   
 	ccGLBindTexture2D( sprite_.texture.name );
   
   glVertexAttribPointer( kCCVertexAttrib_Position, 2, GL_FLOAT, GL_FALSE, sizeof(vertexData_[0]) , &vertexData_[0].vertices);
   glVertexAttribPointer( kCCVertexAttrib_TexCoords, 2, GL_FLOAT, GL_FALSE, sizeof(vertexData_[0]), &vertexData_[0].texCoords);
   glVertexAttribPointer( kCCVertexAttrib_Color, 4, GL_UNSIGNED_BYTE, GL_TRUE, sizeof(vertexData_[0]), &vertexData_[0].colors);
+  glVertexAttribPointer(kCCVertexAttrib_TintColor, 4, GL_UNSIGNED_BYTE, GL_TRUE, sizeof(vertexData_[0]), &vertexData_[0].tintColors);
+	
   
 	if(type_ == kCCProgressTimerTypeRadial)
 	{
