@@ -271,6 +271,8 @@ var GameLayer = cc.LayerGradient.extend({
         this._state = STATE_PAUSE;
         this._level = level;
 
+        __jsc__.dumpRoot();
+        __jsc__.garbageCollect();
     },
 
     // HUD stuff
@@ -571,7 +573,7 @@ var GameLayer = cc.LayerGradient.extend({
         this.enableCollisionEvents( true );
 
         // debug only
-        this._debugNode = cc.ChipmunkDebugNode.create( this._space );
+        this._debugNode = cc.PhysicsDebugNode.create( this._space );
         this._debugNode.setVisible( false );
         // Parallax ratio and offset
         this._scrollNode.addChild( this._debugNode, Z_DEBUG_PHYSICS, cc._p(1,1), cc.POINT_ZERO );
@@ -675,7 +677,7 @@ var GameLayer = cc.LayerGradient.extend({
     },
 
     createWheel : function( pos ) {
-        var sprite = cc.ChipmunkSprite.createWithSpriteFrameName("Wheel.png");
+        var sprite = cc.PhysicsSprite.createWithSpriteFrameName("Wheel.png");
         var radius = 0.95 * sprite.getContentSize().width / 2;
 
 		var body = cp.bodyNew(WHEEL_MASS, cp.momentForCircle(WHEEL_MASS, 0, radius, cp.vzero ) );
@@ -696,7 +698,7 @@ var GameLayer = cc.LayerGradient.extend({
     },
 
     createChassis : function(pos) {
-        var sprite = cc.ChipmunkSprite.createWithSpriteFrameName("Chassis.png");
+        var sprite = cc.PhysicsSprite.createWithSpriteFrameName("Chassis.png");
         var anchor = cp.vadd( sprite.getAnchorPointInPoints(), COG_ADJUSTMENT );
         var cs = sprite.getContentSize();
         sprite.setAnchorPoint( cc.p(anchor.x / cs.width, anchor.y/cs.height) );
@@ -743,7 +745,7 @@ var GameLayer = cc.LayerGradient.extend({
     createCarFruits : function(pos) {
         // create some fruits
         for(var i=0; i < 4;i++) {
-            var sprite = cc.ChipmunkSprite.createWithSpriteFrameName("watermelon.png");
+            var sprite = cc.PhysicsSprite.createWithSpriteFrameName("watermelon.png");
             var radius = 0.95 * sprite.getContentSize().width / 2;
 
             var body = cp.bodyNew(WATERMELON_MASS, cp.momentForCircle(WATERMELON_MASS, 0, radius, cp.vzero) );
@@ -762,7 +764,7 @@ var GameLayer = cc.LayerGradient.extend({
 
     createCoin: function( pos ) {
         // coins are static bodies and sensors
-        var sprite = cc.ChipmunkSprite.createWithSpriteFrameName("coin01.png");
+        var sprite = cc.PhysicsSprite.createWithSpriteFrameName("coin01.png");
         var radius = 0.95 * sprite.getContentSize().width / 2;
         
         var body = cp.bodyNew(1, 1);
@@ -791,7 +793,7 @@ var GameLayer = cc.LayerGradient.extend({
     },
 
     createFinish:function( pos ) {
-        var sprite = cc.ChipmunkSprite.createWithSpriteFrameName("farmers-market.png");
+        var sprite = cc.PhysicsSprite.createWithSpriteFrameName("farmers-market.png");
         var cs = sprite.getContentSize();
         var body = cp.bodyNew( 1, 1);
         cp.bodyInitStatic( body );
@@ -955,6 +957,9 @@ var BootLayer = cc.Layer.extend({
 
 		var cache = cc.SpriteFrameCache.getInstance();
 		cache.addSpriteFrames( "coins.plist" );
+
+        __jsc__.dumpRoot();
+        __jsc__.garbageCollect();
     },
     
     onEnter:function() {
@@ -989,6 +994,8 @@ var MenuLayer = cc.Layer.extend({
         var a_seq = cc.Sequence.create( a_delay, a_tint, a_delay.copy(), a_rep );
         o.runAction( a_seq );
 
+        __jsc__.dumpRoot();
+        __jsc__.garbageCollect();
     },
 
     onPlay:function( sender) {
@@ -1033,6 +1040,8 @@ var AboutLayer = cc.Layer.extend({
         menu.alignItemsVertically();
         menu.setPosition( cc._p( winSize.width - 50, 50) );
 
+        __jsc__.dumpRoot();
+        __jsc__.garbageCollect();
     },
 
     onBack:function( sender) {
@@ -1065,6 +1074,9 @@ var OptionsLayer = cc.LayerGradient.extend({
         this.addChild( menu );
         menu.alignItemsVertically();
         menu.setPosition( centerPos );
+
+        __jsc__.dumpRoot();
+        __jsc__.garbageCollect();
     },
 
     onBack:function( sender) {

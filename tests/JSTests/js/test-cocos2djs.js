@@ -10,7 +10,7 @@ director = cc.Director.getInstance();
 winSize = director.getWinSize();
 centerPos = cc.p( winSize.width/2, winSize.height/2 );
 
-var scenes = []
+var scenes = [];
 var currentScene = 0;
 var withTransition = false;
 
@@ -52,19 +52,19 @@ var loadScene = function (sceneIdx)
 				cc.TransitionFade, cc.TransitionCrossFade,
 				cc.TransitionFlipX, cc.TransitionFlipY,
 				cc.TransitionProgressRadialCCW, cc.TransitionProgressRadialCW, cc.TransitionProgressVertical, cc.TransitionProgressHorizontal,
-				cc.TransitionShrinkGrow,
+				cc.TransitionShrinkGrow
 				];
 	var idx = Math.floor(  Math.random() * transitions.length );
 	var transition = transitions[ idx ];
 
-	if( withTransition == true )
+	if( withTransition === true )
 		director.replaceScene( transition.create( 0.9, scene ) );
 	else
 		director.replaceScene( scene );
 
 	withTransition = false;
 //    __jsc__.garbageCollect();
-}
+};
 
 //------------------------------------------------------------------
 //
@@ -87,7 +87,7 @@ var BaseLayer = function() {
 	this.subtitle = "No Subtitle";
 	this.isMainTitle = false;
 
-}
+};
 goog.inherits(BaseLayer, cc.LayerGradient );
 
 //
@@ -108,13 +108,13 @@ BaseLayer.prototype.onEnter = function() {
 
 	var isMain = this.isMainTitle;
 
-	if( isMain == true )
+	if( isMain === true )
 		this.label.setPosition( centerPos );
 	else
 		this.label.setPosition( cc.p(winSize.width / 2, winSize.height*11/12) );
 
 	var subStr = this.subtitle;
-	if (subStr != "") {
+	if (subStr !== "") {
 		tl = this.subtitle.length;
 		var subfontSize = (winSize.width / tl) * 1.3;
 		if( subfontSize > fontSize *0.6 ) {
@@ -151,13 +151,13 @@ BaseLayer.prototype.onEnter = function() {
     item4.setPosition( cc.p(winSize.width - 60, winSize.height - 30 ) );
 
 	this.addChild(menu, 80);
-}
+};
 
 BaseLayer.prototype.createBulletList = function () {
 	var str = "";
 	for(var i=0; i<arguments.length; i++)
 	{
-		if(i != 0)
+		if(i !== 0)
 			str += "\n";
 		str += '- ' + arguments[i];
 	}
@@ -208,7 +208,7 @@ var IntroPage = function() {
 	// Not working setZOrder() ??
 //	sprite.setZOrder( -200 );
 
-	this.title = 'cocos2d + JS'
+	this.title = 'cocos2d + JS';
 	this.subtitle = 'Javascript bindings for cocos2d';
 	this.isMainTitle = true;
 
@@ -226,8 +226,8 @@ var IntroPage = function() {
 
 		var seq2 = cc.Sequence.create( delay2, fade_in2, fade_out2 );
 		this.background2.runAction( cc.RepeatForever.create( seq2 ) );
-	}
-}
+	};
+};
 goog.inherits( IntroPage, BaseLayer );
 
 //------------------------------------------------------------------
@@ -248,7 +248,7 @@ var AboutPage = function() {
 				'Works on iOS and Mac',
 				'Faster development',
 				'Great prototyping tool');
-}
+};
 goog.inherits( AboutPage, BaseLayer );
 
 
@@ -262,7 +262,7 @@ var SpritesPage = function() {
 	goog.base(this);
 
 	this.title = 'Sprites';
-	this.subtitle = ''
+	this.subtitle = '';
 
 	var fontSize = winSize.height * 0.05;
 
@@ -282,7 +282,7 @@ var SpritesPage = function() {
 	this.addChild( sprite1 );
 	this.addChild( sprite2 );
 	this.addChild( sprite3 );
-}
+};
 goog.inherits( SpritesPage, BaseLayer );
 
 
@@ -298,7 +298,7 @@ var LabelsPage = function() {
 	goog.base(this);
 
 	this.title = 'Labels';
-	this.subtitle = ''
+	this.subtitle = '';
 
 	var fontSize = winSize.height * 0.03;
 
@@ -319,7 +319,7 @@ var LabelsPage = function() {
 //	labelAtlas.setPosition( cc.p( winSize.width*3/5, winSize.height/2) );
 //	this.addChild( labelAtlas );
 
-}
+};
 goog.inherits( LabelsPage, BaseLayer );
 
 
@@ -333,7 +333,7 @@ var ActionsPage = function() {
 	goog.base(this);
 
 	this.title = 'Actions';
-	this.subtitle = ''
+	this.subtitle = '';
 
 	var fontSize = winSize.height * 0.05;
 
@@ -348,8 +348,8 @@ var ActionsPage = function() {
 	this.onEnterTransitionDidFinish = function() {
 		var action = cc.RotateBy.create(8, 360);
 		this.sprite.runAction( action );
-	}
-}
+	};
+};
 goog.inherits( ActionsPage, BaseLayer );
 
 //------------------------------------------------------------------
@@ -362,7 +362,7 @@ var ActionsComplexPage = function() {
 	goog.base(this);
 
 	this.title = 'Complex Actions';
-	this.subtitle = ''
+	this.subtitle = '';
 
 	var fontSize = winSize.height * 0.05;
 
@@ -385,8 +385,8 @@ var ActionsComplexPage = function() {
 		var seq = cc.Sequence.create( rot, scale, rot_back, scale_back );
 
 		this.sprite.runAction( cc.RepeatForever.create( seq ) );
-	}
-}
+	};
+};
 goog.inherits( ActionsComplexPage, BaseLayer );
 
 //------------------------------------------------------------------
@@ -399,7 +399,7 @@ var ActionsEasePage = function() {
 	goog.base(this);
 
 	this.title = 'Ease Actions';
-	this.subtitle = ''
+	this.subtitle = '';
 
 	var fontSize = winSize.height * 0.05;
 
@@ -438,8 +438,8 @@ var ActionsEasePage = function() {
 		this.sprite1.runAction( cc.RepeatForever.create( seq1 ) );
 		this.sprite2.runAction( cc.RepeatForever.create( seq2 ) );
 		this.sprite3.runAction( cc.RepeatForever.create( seq3 ) );
-	}
-}
+	};
+};
 goog.inherits( ActionsEasePage, BaseLayer );
 
 //------------------------------------------------------------------
@@ -452,7 +452,7 @@ var ParticlesPage = function() {
 	goog.base(this);
 
 	this.title = 'Particles';
-	this.subtitle = ''
+	this.subtitle = '';
 
 	var fontSize = winSize.height * 0.05;
 
@@ -472,24 +472,24 @@ var ParticlesPage = function() {
 
 	this.onMouseDown = function( event ) {
 		this.particle.setPosition( event.getLocation() );
-	}
+	};
 
 	this.onMouseDragged = function( event ) {
 		return this.onMouseDown( event );
-	}
+	};
 
 	this.onTouchesEnded = function( touches, event ) {
 		var l = touches.length;
 		for( var i=0; i < l; i++) {
 			this.particle.setPosition( touches[i].getLocation() );
 		}
-	}
+	};
 
 	this.onTouchesMoved = function( touches, event ) {
 		return this.onTouchesEnded( touches, event );
-	}
+	};
 
-}
+};
 goog.inherits( ParticlesPage, BaseLayer );
 
 
@@ -509,13 +509,13 @@ var ChipmunkPage = function() {
 	this.addSprite = function( pos ) {
 		var sprite =  this.createPhysicsSprite( pos );
 		this.batch.addChild( sprite );
-	}
+	};
 
 	this.title = 'Physics Integration';
 	this.subtitle = 'Integration with Chipmunk Physics Engine';
 
 	this.initPhysics();
-}
+};
 goog.inherits( ChipmunkPage, BaseLayer );
 
 //
@@ -543,7 +543,7 @@ ChipmunkPage.prototype.initPhysics = function() {
 
 	// Gravity
 	cp.spaceSetGravity( this.space, cp.v(0, -100) );
-}
+};
 
 ChipmunkPage.prototype.createPhysicsSprite = function( pos ) {
 	var body = cp.bodyNew(1, cp.momentForBox(1, 48, 108) );
@@ -554,10 +554,10 @@ ChipmunkPage.prototype.createPhysicsSprite = function( pos ) {
 	cp.shapeSetFriction( shape, 0.5 );
 	cp.spaceAddShape( this.space, shape );
 
-	var sprite = cc.ChipmunkSprite.create("grossini.png");
+	var sprite = cc.PhysicsSprite.create("grossini.png");
 	sprite.setBody( body );
 	return sprite;
-}
+};
 
 ChipmunkPage.prototype.onEnter = function () {
 
@@ -574,27 +574,27 @@ ChipmunkPage.prototype.onEnter = function () {
         this.setMouseEnabled( true );
     else if( platform.substring(0,6) == 'mobile' )
         this.setTouchEnabled( true );
-}
+};
 
 ChipmunkPage.prototype.onEnterTransitionDidFinish = function () {
 	this.scheduleUpdate();
-}
+};
 
 
 ChipmunkPage.prototype.update = function( delta ) {
 	cp.spaceStep( this.space, delta );
-}
+};
 
 ChipmunkPage.prototype.onMouseDown = function( event ) {
 	this.addSprite( event.getLocation() );
-}
+};
 
 ChipmunkPage.prototype.onTouchesEnded = function( touches, event ) {
 	var l = touches.length;
 	for( var i=0; i < l; i++) {
 		this.addSprite( touches[i].getLocation() );
 	}
-}
+};
 
 
 //------------------------------------------------------------------
@@ -610,7 +610,7 @@ var BehindTheScenesPage = function() {
 	this.subtitle = '';
 	this.isMainTitle = true;
 
-}
+};
 goog.inherits( BehindTheScenesPage, BaseLayer );
 
 //------------------------------------------------------------------
@@ -631,7 +631,7 @@ var ParserFeaturesPage = function() {
 				'No need to modify parsed library',
 				'Easy to maintain and extend',
 				'Powerful config file' );
-}
+};
 goog.inherits( ParserFeaturesPage, BaseLayer );
 
 //------------------------------------------------------------------
@@ -655,8 +655,8 @@ var InternalsPage = function() {
 		spr.setScale( 0.1 );
 		var scaleAction = cc.ScaleTo.create( 0.7, 1);
 		spr.runAction( scaleAction );
-	}
-}
+	};
+};
 goog.inherits( InternalsPage, BaseLayer );
 
 //------------------------------------------------------------------
@@ -671,7 +671,7 @@ var DemoPage = function() {
 	this.title = 'Demo';
 	this.subtitle = '';
 	this.isMainTitle = true;
-}
+};
 goog.inherits( DemoPage, BaseLayer );
 
 //------------------------------------------------------------------
@@ -686,7 +686,7 @@ var OneMoreThingPage = function() {
 	this.title = 'One More Thing';
 	this.subtitle = '';
 	this.isMainTitle = true;
-}
+};
 goog.inherits( OneMoreThingPage, BaseLayer );
 
 //------------------------------------------------------------------
@@ -701,7 +701,7 @@ var ThanksPage = function() {
 	this.title = 'Thanks';
 	this.subtitle = '';
 	this.isMainTitle = true;
-}
+};
 goog.inherits( ThanksPage, BaseLayer );
 
 
@@ -739,7 +739,7 @@ function run()
 	director.setDisplayStats( false );
 
     var runningScene = director.getRunningScene();
-    if( runningScene == null )
+    if( runningScene === null )
         director.runWithScene( scene );
     else
         director.replaceScene( cc.TransitionFade.create(0.5, scene ) );
