@@ -19,9 +19,15 @@ People/companies who were/are contributing code to cocos2d for iPhone (alphabeti
 
 * CJ Hanson (myBuddyCJ) (http://www.hansoninteractive.com/):
 	Director: Fixed the initial flicker + correct size at startup
+	Director: onExitTransitionDidFinish when the director is ended and other "corner" cases.
+	LabelBMFont: If the character is not supported, logs a warning
 
 * Goffredo Marocchi (https://github.com/panajev):
 	LabelBMFont: removed forward declarations for tFontDefHashElement and tKerningHashElement. They are in the header now.
+	GLProgram: Better error reporting on link
+
+* Ian Oliver (http://www.trivialtechnology.com)
+	GLProgram: Better error reporting on link
 
 * Lam Pham (http://www.fancyratstudios.com/)
 	New RotationalSkew action that matches flash functionality
@@ -43,6 +49,9 @@ People/companies who were/are contributing code to cocos2d for iPhone (alphabeti
 
 * Viktor Lidholt (http://www.cocosbuilder.com)
 	LabelTTF loads custom fonts correctly on Mac
+
+* yichao.zhang (https://github.com/zeaster)
+	Fixed possible double 'fire' of instant actions inside a sequence (issue #1398)
 
 
 cocos2d for iPhone 2.0 authors
