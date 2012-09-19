@@ -26,12 +26,18 @@ People/companies who were/are contributing code to cocos2d for iPhone (alphabeti
 	LabelBMFont: removed forward declarations for tFontDefHashElement and tKerningHashElement. They are in the header now.
 	GLProgram: Better error reporting on link
 
+* Greg Harding (http://www.flightless.co.nz/):
+	Toggle fullscreen honors the support for touches on Mac
+
 * Ian Oliver (http://www.trivialtechnology.com)
 	GLProgram: Better error reporting on link
 
 * Lam Pham (http://www.fancyratstudios.com/)
 	New RotationalSkew action that matches flash functionality
 	Added Tests for RotationSkew feature
+
+* lbeck @ cocos2d community:
+	Fix for LabelTTF in MacBook Retina Display
 
 * michaelm (http://ironapegames.com/):
 	Patch for RENDER_IN_SUBPIXEL. It works as expected with negative numbers
