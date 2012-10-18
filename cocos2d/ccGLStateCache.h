@@ -32,7 +32,7 @@
 /** vertex attrib flags */
 enum {
 	kCCVertexAttribFlag_None		= 0,
-
+	
 	kCCVertexAttribFlag_Position	= 1 << 0,
 	kCCVertexAttribFlag_Color		= 1 << 1,
 	kCCVertexAttribFlag_TintColor	= 1 << 2,
@@ -54,15 +54,15 @@ typedef enum {
 //	CC_GL_ALL = ( CC_GL_SCISSOR_TEST | CC_GL_STENCIL_TEST | CC_GL_DEPTH_TEST | CC_GL_BLEND | CC_GL_DITHER ),
 //	CC_GL_ALL = ( CC_GL_BLEND ),
 	CC_GL_ALL = 0,
-
+	
 } ccGLServerState;
 
 #ifdef __cplusplus
 extern "C" {
 #endif
-
+	
 /** @file ccGLStateCache.h
-*/
+ */
 
 /** Invalidates the GL state cache.
  If CC_ENABLE_GL_STATE_CACHE it will reset the GL state cache.
@@ -101,13 +101,13 @@ void ccSetProjectionMatrixDirty( void );
 
 /** Will enable the vertex attribs that are passed as flags.
  Possible flags:
-
-	* kCCVertexAttribFlag_Position
-	* kCCVertexAttribFlag_Color
-	* kCCVertexAttribFlag_TexCoords
-
+ 
+ * kCCVertexAttribFlag_Position
+ * kCCVertexAttribFlag_Color
+ * kCCVertexAttribFlag_TexCoords
+ 
  These flags can be ORed. The flags that are not present, will be disabled.
-
+ 
  @since v2.0.0
  */
 void ccGLEnableVertexAttribs( unsigned int flags );
@@ -120,15 +120,21 @@ void ccGLBindTexture2D( GLuint textureId );
 
 /** If the texture is not already bound to a given unit, it binds it.
  If CC_ENABLE_GL_STATE_CACHE is disabled, it will call glBindTexture() directly.
- @since v2.0.0
+ @since v2.1.0
  */
 void ccGLBindTexture2DN( GLuint textureUnit, GLuint textureId );
 
-/** It will delete a given texture. If the texture was bound, it will invalidate the cached.
+/** It will delete a given texture. If the texture was bound, it will invalidate the cached for texture unit 0.
  If CC_ENABLE_GL_STATE_CACHE is disabled, it will call glDeleteTextures() directly.
  @since v2.0.0
  */
 void ccGLDeleteTexture(GLuint textureId);
+
+/** It will delete a given texture. If the texture was bound, it will invalidate the cached for the given texture unit.
+ If CC_ENABLE_GL_STATE_CACHE is disabled, it will call glDeleteTextures() directly.
+ @since v2.1.0
+ */
+void ccGLDeleteTextureN( GLuint textureUnit, GLuint textureId );
 
 /** If the vertex array is not already bound, it binds it.
  If CC_ENABLE_GL_STATE_CACHE is disabled, it will call glBindVertexArray() directly.
@@ -141,7 +147,7 @@ void ccGLBindVAO(GLuint vaoId);
  @since v2.0.0
  */
 void ccGLEnable( ccGLServerState flags );
-
+	
 #ifdef __cplusplus
 }
 #endif
