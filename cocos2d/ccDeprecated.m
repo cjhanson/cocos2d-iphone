@@ -41,6 +41,22 @@ void ccGLUniformModelViewProjectionMatrix( CCGLProgram* program )
 {
 	return [[CCDirector sharedDirector] scheduler];
 }
+-(void) scheduleSelector:(SEL)selector forTarget:(id)target interval:(ccTime)interval paused:(BOOL)paused repeat:(uint)repeat delay:(ccTime)delay
+{
+	[self scheduleSelector:selector forTarget:target interval:interval repeat:repeat delay:delay paused:paused];
+}
+-(void) unscheduleAllSelectorsForTarget:(id)target
+{
+	[self unscheduleAllForTarget:target];
+}
+-(void) unscheduleAllSelectorsWithMinPriority:(NSInteger)minPriority
+{
+	[self unscheduleAllWithMinPriority:minPriority];
+}
+-(void) unscheduleAllSelectors
+{
+	[self unscheduleAll];
+}
 @end
 
 #pragma mark - ActionManager
@@ -77,6 +93,11 @@ void ccGLUniformModelViewProjectionMatrix( CCGLProgram* program )
 #pragma mark - Director
 
 @implementation CCDirector (Deprecated)
+-(BOOL) getIsPaused
+{
+	return [self isPaused];
+}
+
 -(void) setDisplayFPS:(BOOL)display
 {
 	[self setDisplayStats:display];
@@ -128,7 +149,7 @@ void ccGLUniformModelViewProjectionMatrix( CCGLProgram* program )
 }
 -(void) setIsMouseEnabled:(BOOL)enabled
 {
-	[self setIsMouseEnabled:enabled];
+	[self setMouseEnabled:enabled];
 }
 -(NSInteger) mouseDelegatePriority
 {

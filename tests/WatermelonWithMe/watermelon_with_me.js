@@ -66,10 +66,10 @@ Z_LABEL = 30;
 Z_DEBUG_MENU = 30;
 
 // Game state
-STATE_PAUSE = 0;
-STATE_PLAYING = 1;
-STATE_GAME_OVER = 2;
-STATE_LEVEL_COMPLETE = 3;
+STATE_PAUSE = 1;
+STATE_PLAYING = 2;
+STATE_GAME_OVER = 3;
+STATE_LEVEL_COMPLETE = 4;
 
 audioEngine = cc.AudioEngine.getInstance();
 director = cc.Director.getInstance();
@@ -212,9 +212,7 @@ var GameLayer = cc.LayerGradient.extend({
     _carSmoke:null,
 
     ctor:function (level) {
-                                
-        var parent = new cc.LayerGradient();
-        __associateObjWithNative(this, parent);
+        cc.associateWithNative(this, cc.LayerGradient);
         this.init(cc.c4b(0, 0, 0, 255), cc.c4b(255, 255, 255, 255));
 
         this.scheduleUpdate();
@@ -226,13 +224,13 @@ var GameLayer = cc.LayerGradient.extend({
         var item1_pause = cc.MenuItemFont.create("Pause" );
         var item1_resume = cc.MenuItemFont.create("Resume" );
         var item1 = cc.MenuItemToggle.create( item1_pause, item1_resume );
-        item1.setCallback( this, this.onPause);
-        var item2 = cc.MenuItemFont.create("Debug On/Off", this, this.onToggleDebug);
+        item1.setCallback( this.onPause, this);
+        var item2 = cc.MenuItemFont.create("Debug On/Off", this.onToggleDebug, this);
         var menu = cc.Menu.create( item1, item2 );
         menu.alignItemsVertically();
         this.addChild( menu, Z_DEBUG_MENU );
-        menu.setPosition( cc._p( winSize.width-(50*sizeRatio), winSize.height-(80*sizeRatio) )  );
-    
+        menu.setPosition( winSize.width-(50*sizeRatio), winSize.height-(80*sizeRatio) );
+
         var animCache = cc.AnimationCache.getInstance();
         animCache.addAnimations("coins_animation.plist");
 
@@ -338,20 +336,22 @@ var GameLayer = cc.LayerGradient.extend({
     },
 
     onMouseDown:function(event) {
-        this.setThrottle(1);
+        if(this._state == STATE_PLAYING)
+            this.setThrottle(1);
         return true;
     },
     onMouseUp:function(event) {
-        this.setThrottle(0);
+        if(this._state == STATE_PLAYING)
+            this.setThrottle(0);
         return true;
     },
     onTouchesBegan:function( touches, event) {
-        this.setThrottle(1);
-        return true;
+        if(this._state == STATE_PLAYING)
+            this.setThrottle(1);
     },
     onTouchesEnded:function( touches, event) {
-        this.setThrottle(0);
-        return true;
+        if(this._state == STATE_PLAYING)
+            this.setThrottle(0);
     },
 
     onEnterTransitionDidFinish:function() {
@@ -369,14 +369,14 @@ var GameLayer = cc.LayerGradient.extend({
         var scale = cc.ScaleBy.create(1.1, 5);
         var fade = cc.FadeOut.create(1.1);
         var s = cc.Spawn.create( scale, fade );
-        var selfremove = cc.CallFunc.create(this, this.onRemoveMe );
+        var selfremove = cc.CallFunc.create(this.onRemoveMe, this );
         var seq = cc.Sequence.create(d, s, selfremove );
         label.runAction( seq );
-        
+
     },
 
     onRemoveMe:function( sender ) {
-        sender.removeFromParentAndCleanup( true );
+        sender.removeFromParent();
     },
 
     onExit:function() {
@@ -403,8 +403,6 @@ var GameLayer = cc.LayerGradient.extend({
             this._shapesToRemove.push( shapeCoin );
             audioEngine.playEffect("pickup_coin.wav");
 
-//            cc.log("Adding shape: " + shapeCoin[0] + " : " + shapeCoin[1] );
-            cc.log("Adding shape: " + shapeCoin );
             this.addScore(1);
         }
         return true;
@@ -451,15 +449,12 @@ var GameLayer = cc.LayerGradient.extend({
         for( var i=0; i < l; i++ ) {
             var shape = this._shapesToRemove[i];
 
-//            cc.log("removing shape: " + shape[0] + " : " + shape[1] );
-            cc.log("removing shape: " + shape );
-
             this._space.removeStaticShape( shape );
             // shape.free();
 
             var body = shape.getBody();
             var sprite = body.getUserData();
-            sprite.removeFromParentAndCleanup(true);
+            sprite.removeFromParent();
 
             // body.free();
 
@@ -480,7 +475,7 @@ var GameLayer = cc.LayerGradient.extend({
         var height = winSize.height;
 
         var level = levels[ lvl ];
-        
+
         var i=0;
         // Coins
         var coins = level['coins'];
@@ -526,8 +521,6 @@ var GameLayer = cc.LayerGradient.extend({
         // XXX: CCDrawNode#drawPoly is super expensive... using drawSegment instead
         // poly, fill color, border width, border color
 //        this._terrain.drawPoly( poly, cc.c4f(0,0,0,0 ), 1, cc.c4f(0.82,0.41,0.04,1) );
-
-        cc.log("World Boundary: " + x + " " + y + " " + width + " " + height );
 
         var rect = cc.rect(x,y,width,height);
         var a = cc.Follow.create( this._carSprite, rect );
@@ -631,7 +624,7 @@ var GameLayer = cc.LayerGradient.extend({
         // The rear strut is a swinging arm that holds the wheel a at a certain distance from a pivot on the chassis.
         // A perfect fit for a pin joint conected between the chassis and the wheel's center.
         var rearJoint = new cp.PinJoint( chassis, rear, cp.v.sub( cp._v(-14,-8), COG_ADJUSTMENT), cp.vzero );
-        
+
         // return cpvtoangle(cpvsub([_chassis.body local2world:_rearJoint.anchr1], _rearWheel.body.pos));
         var rearStrutRestAngle = cp.v.toangle( cp.v.sub(
                                                 chassis.local2World( rearJoint.getAnchr1() ),
@@ -643,16 +636,16 @@ var GameLayer = cc.LayerGradient.extend({
 
         // Attach a slide joint to the wheel to limit it's range of motion.
         var rearStrutLimit = new cp.SlideJoint( chassis, rear, rear_anchor, cp.vzero, 0, 20 );
-			
+
         // The main motor that drives the buggy.
         var motor = new cp.SimpleMotor( chassis, rear, ENGINE_MAX_W );
         motor.setMaxForce(  0.0 );
-			
+
         // I don't know if "differential" is the correct word, but it transfers a fraction of the rear torque to the front wheels.
         // In case the rear wheels are slipping. This makes the buggy less frustrating when climbing steep hills.
         var differential = new cp.SimpleMotor( rear, front, 0 );
         differential.setMaxForce( ENGINE_MAX_TORQUE*DIFFERENTIAL_TORQUE );
-			
+
         // Wheel brakes.
         // While you could reuse the main motor for the brakes, it's easier not to.
         // It won't cause a performance issue to have too many extra motors unless you have hundreds of buggies in the game.
@@ -765,7 +758,7 @@ var GameLayer = cc.LayerGradient.extend({
         // coins are static bodies and sensors
         var sprite = cc.PhysicsSprite.createWithSpriteFrameName("coin01.png");
         var radius = 0.95 * sprite.getContentSize().width / 2;
-        
+
         var body = new cp.BodyStatic();
 		body.setPos( pos );
         sprite.setBody( body.handle );
@@ -822,7 +815,7 @@ var GameLayer = cc.LayerGradient.extend({
     //
     // Game State
     //
-    
+
     // call the 'deferred' option if you want to modify Chipmunk's state from a Chipmunk's callback
     setGameStateDeferred: function( state ) {
         this._deferredState = state;
@@ -849,20 +842,20 @@ var GameLayer = cc.LayerGradient.extend({
 
         if( this._level+1 < levels.length ) {
             cc.MenuItemFont.setFontSize(16 * sizeRatio );
-            item1 = cc.MenuItemFont.create("Next Level", this, this.onNextLevel);
+            item1 = cc.MenuItemFont.create("Next Level", this.onNextLevel, this);
             menu = cc.Menu.create( item1 );
             menu.alignItemsVertically();
             this.addChild( menu, Z_DEBUG_MENU );
-            menu.setPosition( cc._p( winSize.width/2, winSize.height/3 )  );
+            menu.setPosition( winSize.width/2, winSize.height/3  );
 
             legend = "LEVEL COMPLETE";
         } else {
             cc.MenuItemFont.setFontSize(16 * sizeRatio );
-            item1 = cc.MenuItemFont.create("Main Menu", this, this.onMainMenu);
+            item1 = cc.MenuItemFont.create("Main Menu", this.onMainMenu, this);
             menu = cc.Menu.create( item1 );
             menu.alignItemsVertically();
             this.addChild( menu, Z_DEBUG_MENU );
-            menu.setPosition( cc._p( winSize.width/2, winSize.height/3 )  );
+            menu.setPosition( winSize.width/2, winSize.height/3 );
 
             legend = "GAME COMPLETE";
         }
@@ -904,12 +897,12 @@ var GameLayer = cc.LayerGradient.extend({
         audioEngine.playEffect("GameOver.wav");
 
         cc.MenuItemFont.setFontSize(16 * sizeRatio );
-        var item1 = cc.MenuItemFont.create("Play Again", this, this.onRestart);
-        var item2 = cc.MenuItemFont.create("Main Menu", this, this.onMainMenu);
+        var item1 = cc.MenuItemFont.create("Play Again", this.onRestart, this);
+        var item2 = cc.MenuItemFont.create("Main Menu", this.onMainMenu, this);
         var menu = cc.Menu.create( item1, item2 );
         menu.alignItemsVertically();
         this.addChild( menu, Z_DEBUG_MENU );
-        menu.setPosition( cc._p( winSize.width/2, winSize.height/3 )  );
+        menu.setPosition( winSize.width/2, winSize.height/3 );
     },
 
 
@@ -949,13 +942,11 @@ var GameLayer = cc.LayerGradient.extend({
 var BootLayer = cc.Layer.extend({
 
     ctor:function () {
-                                
-        var parent = new cc.Layer();
-        __associateObjWithNative(this, parent);
+        cc.associateWithNative(this, cc.Layer);
         this.init();
 
         // music
-        audioEngine.playBackgroundMusic("game-music.mp3");
+        audioEngine.playMusic("game-music.mp3");
         audioEngine.preloadEffect("pickup_coin.wav");
 
 		var cache = cc.SpriteFrameCache.getInstance();
@@ -964,7 +955,7 @@ var BootLayer = cc.Layer.extend({
         __jsc__.dumpRoot();
         __jsc__.garbageCollect();
     },
-    
+
     onEnter:function() {
         var scene = cc.Reader.loadAsScene("MainMenu.ccbi");
         director.replaceScene( scene );
@@ -983,7 +974,7 @@ MenuLayerController.prototype.onDidLoadFromCCB = function()
 {
     // Spin the 'o' in the title
     var o = this.titleLabel.getChildByTag( 8 );
-    
+
     var a_delay = cc.DelayTime.create(6);
     var a_tint = cc.TintTo.create( 0.5, 0, 255, 0 );
     var a_rotate = cc.RotateBy.create( 4, 360 );
@@ -1025,13 +1016,13 @@ var AboutLayerController = function() {};
 
 AboutLayerController.prototype.onDidLoadFromCCB = function()
 {
-    var back = cc.MenuItemFont.create("Back", this, this.onBack );
+    var back = cc.MenuItemFont.create("Back", this.onBack, this );
     back.setColor( cc.BLACK );
     var menu = cc.Menu.create( back );
     this.rootNode.addChild( menu );
     menu.zOrder = 100;
     menu.alignItemsVertically();
-    menu.setPosition( cc._p( winSize.width - 50, 50) );
+    menu.setPosition( winSize.width - 50, 50 );
 };
 
 AboutLayerController.prototype.onBack = function()
@@ -1046,8 +1037,7 @@ AboutLayerController.prototype.onBack = function()
 var OptionsLayer = cc.LayerGradient.extend({
 
     ctor:function () {
-        var parent = new cc.LayerGradient();
-        __associateObjWithNative(this, parent);
+        cc.associateWithNative(this, cc.LayerGradient);
         this.init(cc.c4b(0, 0, 0, 255), cc.c4b(255, 255, 255, 255));
 
         var label1 = cc.LabelBMFont.create("MUSIC ON", "konqa32.fnt" );
@@ -1055,9 +1045,9 @@ var OptionsLayer = cc.LayerGradient.extend({
         var label2 = cc.LabelBMFont.create("MUSIC OFF", "konqa32.fnt" );
         var item2 = cc.MenuItemLabel.create(label2);
         var toggle = cc.MenuItemToggle.create( item1, item2 );
-        toggle.setCallback( this, this.onMusicToggle);
+        toggle.setCallback(this.onMusicToggle, this);
 
-        var back = cc.MenuItemFont.create("Back", this, this.onBack );
+        var back = cc.MenuItemFont.create("Back", this.onBack, this );
         var menu = cc.Menu.create( toggle, back );
         this.addChild( menu );
         menu.alignItemsVertically();
@@ -1074,10 +1064,10 @@ var OptionsLayer = cc.LayerGradient.extend({
 
     onMusicToggle:function( sender ) {
         // music
-        if ( audioEngine.isBackgroundMusicPlaying() ) {
-            audioEngine.stopBackgroundMusic();
+        if ( audioEngine.isMusicPlaying() ) {
+            audioEngine.stopMusic();
         } else {
-            audioEngine.playBackgroundMusic("game-music.mp3");
+            audioEngine.playMusic("game-music.mp3");
         }
     }
 });

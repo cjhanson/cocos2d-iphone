@@ -54,7 +54,7 @@ typedef enum {
  - It can receive Mouse events on Mac
 */
 #ifdef __CC_PLATFORM_IOS
-@interface CCLayer : CCNode <UIAccelerometerDelegate, CCTouchAllAtOnceDelegate, CCTouchOneByOneDelegate>
+@interface CCLayer : CCNode <CCAccelerometerDelegate, CCTouchAllAtOnceDelegate, CCTouchOneByOneDelegate>
 {
 	BOOL touchEnabled_;
 	BOOL touchPriority_;
@@ -84,11 +84,16 @@ typedef enum {
  */
 @property(nonatomic, assign) ccTouchesMode touchMode;
 
+/** sets the accelerometer's update frequency. A value of 1/2 means that the callback is going to be called twice per second.
+ @since v2.1
+ */
+-(void) setAccelerometerInterval:(float)interval;
+
 
 #elif defined(__CC_PLATFORM_MAC)
 
 
-@interface CCLayer : CCNode <CCKeyboardEventDelegate, CCMouseEventDelegate, CCTouchEventDelegate>
+@interface CCLayer : CCNode <CCKeyboardEventDelegate, CCMouseEventDelegate, CCTouchEventDelegate, CCGestureEventDelegate>
 {
 	BOOL		mouseEnabled_;
 	NSInteger	mousePriority_;
@@ -99,12 +104,21 @@ typedef enum {
 	BOOL		touchEnabled_;
 	NSInteger	touchPriority_;
 	NSInteger	touchMode_;
+    
+	BOOL		gestureEnabled_;
+	NSInteger	gesturePriority_;
 }
 
 /** whether or not it will receive touche events. */
 @property (nonatomic, readwrite, getter=isTouchEnabled) BOOL touchEnabled;
 /** priority of the touch events. Default is 0 */
 @property(nonatomic, assign) NSInteger touchPriority;
+
+/** whether or not it will receive gesture events. */
+@property (nonatomic, readwrite, getter=isGestureEnabled) BOOL gestureEnabled;
+/** priority of the gesture events. Default is 0 */
+@property(nonatomic, assign) NSInteger gesturePriority;
+
 
 /** whether or not it will receive mouse events.
 

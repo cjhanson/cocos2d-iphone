@@ -77,6 +77,8 @@
 #ifdef __CC_PLATFORM_IOS
 		accelerometerEnabled_ = NO;
 #elif defined(__CC_PLATFORM_MAC)
+        gestureEnabled_ = NO;
+        gesturePriority_ = 0;
 		mouseEnabled_ = NO;
 		keyboardEnabled_ = NO;
 #endif
@@ -109,11 +111,16 @@
 		accelerometerEnabled_ = enabled;
 		if( isRunning_ ) {
 			if( enabled )
-				[[UIAccelerometer sharedAccelerometer] setDelegate:self];
+				[[UIAccelerometer sharedAccelerometer] setDelegate:(id<UIAccelerometerDelegate>)self];
 			else
 				[[UIAccelerometer sharedAccelerometer] setDelegate:nil];
 		}
 	}
+}
+
+-(void) setAccelerometerInterval:(float)interval
+{
+	[[UIAccelerometer sharedAccelerometer] setUpdateInterval:interval];
 }
 
 -(BOOL) isTouchEnabled
@@ -279,6 +286,42 @@
 	}
 }
 
+-(BOOL) isGestureEnabled
+{
+	return gestureEnabled_;
+}
+
+-(void) setGestureEnabled:(BOOL)enabled
+{
+	if( gestureEnabled_ != enabled ) {
+		gestureEnabled_ = enabled;
+		if( isRunning_ ) {
+			CCDirector *director = [CCDirector sharedDirector];
+			if( enabled )
+				[[director eventDispatcher] addGestureDelegate:self priority:gesturePriority_];
+			else
+				[[director eventDispatcher] removeGestureDelegate:self];
+		}
+	}
+}
+
+-(NSInteger) gesturePriority
+{
+	return gesturePriority_;
+}
+
+-(void) setGesturePriority:(NSInteger)gesturePriority
+{
+	if( gesturePriority_ != gesturePriority ) {
+		gesturePriority_ = gesturePriority;
+		
+		if( gestureEnabled_) {
+			[self setGestureEnabled:NO];
+			[self setGestureEnabled:YES];
+		}
+	}
+}
+
 #endif // Mac
 
 
@@ -303,7 +346,10 @@
 
 	if( touchEnabled_)
 		[eventDispatcher addTouchDelegate:self priority:touchPriority_];
-
+    
+	if( gestureEnabled_)
+		[eventDispatcher addGestureDelegate:self priority:gesturePriority_];
+    
 #endif
 
 	// then iterate over all the children
@@ -316,7 +362,7 @@
 {
 #ifdef __CC_PLATFORM_IOS
 	if( accelerometerEnabled_ )
-		[[UIAccelerometer sharedAccelerometer] setDelegate:self];
+		[[UIAccelerometer sharedAccelerometer] setDelegate:(id<UIAccelerometerDelegate>)self];
 #endif
 
 	[super onEnterTransitionDidFinish];
@@ -344,7 +390,10 @@
 
 	if( touchEnabled_ )
 		[eventDispatcher removeTouchDelegate:self];
-
+    
+	if( gestureEnabled_ )
+		[eventDispatcher removeGestureDelegate:self];
+    
 #endif
 
 	[super onExit];
@@ -511,6 +560,11 @@
 + (id) layerWithColor: (ccColor4B) start fadingTo: (ccColor4B) end alongVector: (CGPoint) v
 {
     return [[[self alloc] initWithColor:start fadingTo:end alongVector:v] autorelease];
+}
+
+- (id) init
+{
+	return [self initWithColor:ccc4(0, 0, 0, 255) fadingTo:ccc4(0, 0, 0, 255)];
 }
 
 - (id) initWithColor: (ccColor4B) start fadingTo: (ccColor4B) end
